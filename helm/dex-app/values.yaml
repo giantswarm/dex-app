@@ -1,0 +1,21 @@
+# Default values for dex
+# This is a YAML-formatted file.
+# Declare name/value pairs to be passed into your templates.
+# name: value
+
+client:
+  image:
+    registry: quay.io
+    name: giantswarm/dex-k8s-authenticator
+    tag: 1.2.0
+    pullPolicy: IfNotPresent
+
+dex:
+  image:
+    registry: quay.io
+    name: giantswarm/dex
+    tag: v2.21.0
+    pullPolicy: IfNotPresent
+
+extraVolumes: []
+extraVolumeMounts: []

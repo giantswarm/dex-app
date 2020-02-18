@@ -1,0 +1,23 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: dex
+  labels:
+{{ include "dex.labels" . | indent 4 }}
+    app.kubernetes.io/component: dex
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    kubernetes.io/tls-acme: "true"
+spec:
+  tls:
+    - hosts:
+        - {{ .Values.Installation.V1.GiantSwarm.OIDC.IssuerAddress | quote }}
+      secretName: dex-tls
+  rules:
+    - host: {{ .Values.Installation.V1.GiantSwarm.OIDC.IssuerAddress | quote }}
+      http:
+        paths:
+          - path: /
+            backend:
+              serviceName: dex
+              servicePort: 32000

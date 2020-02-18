@@ -7,7 +7,7 @@ It provides customer authentication into control-plane Kubernetes.
 
 `dex-app` consists of two components:
   - `dex` - cluster issuer
-  - `dex-k8s-authentictor` - dex client, which simplifies token generation towards `dex` connectors.
+  - `dex-k8s-authenticator` - dex client, which simplifies token generation towards `dex` connectors.
 
 ## Installing the Chart
 

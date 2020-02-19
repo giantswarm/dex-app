@@ -11,7 +11,7 @@ data:
     web_path_prefix: "/"
     debug: "false"
     logo_uri: {{ .logoUrl }}
-    {{- if .Values.Installation.V1.Secret.OIDC.CA }}
+    {{- if ne .Values.Installation.V1.Secret.OIDC.CA "" }}
     idp_ca_pem: {{ toYaml .Values.Installation.V1.Secret.OIDC.CA | indent 4 }}
     {{- end }}
     clusters:

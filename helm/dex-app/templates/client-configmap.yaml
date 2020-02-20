@@ -20,6 +20,6 @@ data:
       description: "{{ .Values.Installation.V1.Name }} control-plane cluster customer authentication"
       client_secret: {{ .Values.Installation.V1.Secret.OIDC.ClientSecret }}
       issuer: https://{{ .Values.Installation.V1.GiantSwarm.OIDC.IssuerAddress }}
-      k8s_master_uri: https://{{ .Values.Installation.V1.BaseDomain }}
+      k8s_master_uri: https://{{ .Values.Installation.V1.Kubernetes.API.Address }}
       client_id: dex-k8s-authenticator
       redirect_uri: https://{{ .Values.Installation.V1.GiantSwarm.OIDC.ClientAddress }}/callback

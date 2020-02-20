@@ -11,9 +11,7 @@ data:
     web_path_prefix: "/"
     debug: "false"
     logo_uri: {{ .logoUrl }}
-    {{- if ne .Values.Installation.V1.Secret.OIDC.CA "" }}
-    idp_ca_pem: {{ toYaml .Values.Installation.V1.Secret.OIDC.CA | indent 4 }}
-    {{- end }}
+    idp_ca_pem: {{ toYaml .Values.Installation.V1.Secret.Kubernetes.CAPem | indent 4 }}
     clusters:
     - name: {{ .Values.Installation.V1.Name }}
       short_description: "{{ .Values.Installation.V1.Name }} control-plane"

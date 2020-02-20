@@ -11,7 +11,6 @@ data:
     web_path_prefix: "/"
     debug: "false"
     logo_uri: {{ .logoUrl }}
-    idp_ca_pem: {{ toYaml .Values.Installation.V1.Secret.Kubernetes.CAPem | indent 4 }}
     clusters:
     - name: {{ .Values.Installation.V1.Name }}
       short_description: "{{ .Values.Installation.V1.Name }} control-plane"
@@ -19,5 +18,6 @@ data:
       client_secret: {{ .Values.Installation.V1.Secret.OIDC.ClientSecret }}
       issuer: https://{{ .Values.Installation.V1.GiantSwarm.OIDC.IssuerAddress }}
       k8s_master_uri: https://{{ .Values.Installation.V1.Kubernetes.API.Address }}
+      k8s_ca_pem: {{ toYaml .Values.Installation.V1.Secret.Kubernetes.CAPem | indent 8 }}
       client_id: dex-k8s-authenticator
       redirect_uri: https://{{ .Values.Installation.V1.GiantSwarm.OIDC.ClientAddress }}/callback

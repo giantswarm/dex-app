@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dex-k8s-authenticator
+  labels:
+{{ include "dex.labels" . | indent 4 }}
+    app.kubernetes.io/component: dex-k8s-authenticator
+spec:
+  replicas: {{ if .Values.Installation.V1.GiantSwarm.OIDC.Enabled }}1{{ else }}0{{ end }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: dex-k8s-authenticator
+      release: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/component: dex-k8s-authenticator
+        release: {{ .Release.Name }}
+    spec:
+      containers:
+      - name: {{ .Chart.Name }}
+        image: "{{ .Values.client.image.registry }}/{{ .Values.client.image.name }}:{{ .Values.client.image.tag }}"
+        imagePullPolicy: {{ .Values.client.image.pullPolicy }}
+        args: [ "--config", "config.yaml" ]
+        ports:
+        - name: http
+          containerPort: 5555
+          protocol: TCP
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: http
+        readinessProbe:
+          httpGet:
+            path: /healthz
+            port: http
+        volumeMounts:
+        - name: config
+          subPath: config.yaml
+          mountPath: /app/config.yaml
+        resources:
+          limits:
+            cpu: 50m
+            memory: 64Mi
+          requests:
+            cpu: 50m
+            memory: 64Mi
+    {{- with .Values.nodeSelector }}
+      nodeSelector:
+{{ toYaml . | indent 6 }}
+    {{- end }}
+    {{- with .Values.affinity }}
+      affinity:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.tolerations }}
+      tolerations:
+{{ toYaml . | indent 6 }}
+    {{- end }}
+      volumes:
+      - name: config
+        configMap:
+          name: dex-k8s-authenticator

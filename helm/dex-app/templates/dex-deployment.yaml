@@ -1,0 +1,79 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dex
+  labels:
+{{ include "dex.labels" . | indent 4 }}
+    app.kubernetes.io/component: dex
+spec:
+  replicas: {{ if .Values.Installation.V1.GiantSwarm.OIDC.Enabled }}1{{ else }}0{{ end }}
+  strategy:
+    rollingUpdate:
+      maxSurge: 0
+      maxUnavailable: 1
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: {{ .Release.Name }}
+      app.kubernetes.io/component: dex
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/instance: {{ .Release.Name }}
+        app.kubernetes.io/component: dex
+      annotations:
+    spec:
+      serviceAccountName: dex
+      containers:
+      - name: dex
+        image: "{{ .Values.dex.image.registry }}/{{ .Values.dex.image.name }}:{{ .Values.dex.image.tag }}"
+        imagePullPolicy: {{ .Values.dex.image.pullPolicy }}
+        command:
+        - /usr/local/bin/dex
+        - serve
+        - /etc/dex/cfg/config.yaml
+        resources:
+          limits:
+            cpu: 100m
+            memory: 50Mi
+          requests:
+            cpu: 100m
+            memory: 50Mi
+        ports:
+        - name: http
+          containerPort: 5556
+          protocol: TCP
+
+        livenessProbe:
+          httpGet:
+            path: "/healthz"
+            port: http
+          initialDelaySeconds: 1
+          periodSeconds: 10
+          timeoutSeconds: 1
+          failureThreshold: 1
+        readinessProbe:
+          httpGet:
+            path: "/healthz"
+            port: http
+          initialDelaySeconds: 1
+          periodSeconds: 10
+          timeoutSeconds: 1
+          failureThreshold: 1
+        volumeMounts:
+        - mountPath: /etc/dex/cfg
+          name: config
+{{- if ne (len .Values.extraVolumeMounts) 0 }}
+{{ toYaml .Values.extraVolumeMounts | indent 8 }}
+{{- end }}
+      volumes:
+      - secret:
+          defaultMode: 420
+          items:
+          - key: config.yaml
+            path: config.yaml
+          secretName: dex
+        name: config
+{{- if ne (len .Values.extraVolumes) 0 }}
+{{ toYaml .Values.extraVolumes | indent 6 }}
+{{- end }}

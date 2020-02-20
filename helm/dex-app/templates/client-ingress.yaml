@@ -1,0 +1,24 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: dex-k8s-authenticator
+  labels:
+{{ include "dex.labels" . | indent 4 }}
+    app.kubernetes.io/component: dex-k8s-authenticator
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    kubernetes.io/tls-acme: "true"
+spec:
+  tls:
+  - hosts:
+    - {{ .Values.Installation.V1.GiantSwarm.OIDC.ClientAddress }}
+    secretName: k8s-dex-authenticator
+  rules:
+  - host: {{ .Values.Installation.V1.GiantSwarm.OIDC.ClientAddress }}
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: dex-k8s-authenticator
+          servicePort: http
+          

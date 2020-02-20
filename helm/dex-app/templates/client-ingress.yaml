@@ -21,3 +21,4 @@ spec:
         backend:
           serviceName: dex-k8s-authenticator
           servicePort: http
+          

@@ -35,4 +35,43 @@ workflows:
           filters:
             # Trigger the job also on git tag.
             tags:
-              only: /^v.*/ 
+              only: /^v.*/
+
+      # deploy to aws installations (only tags)
+      - architect/push-to-app-collection:
+          name: push-dex-app-to-aws-app-collection
+          app_name: "dex-app"
+          app_collection_repo: "aws-app-collection"
+          requires:
+            - push-dex-app-to-control-plane-app-catalog
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^v.*/
+
+      # deploy to azure installations (only tags)
+      - architect/push-to-app-collection:
+          name: push-dex-app-to-azure-app-collection
+          app_name: "dex-app"
+          app_collection_repo: "azure-app-collection"
+          requires:
+            - push-dex-app-to-control-plane-app-catalog
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^v.*/
+
+      # deploy to kvm installations (only tags)
+      - architect/push-to-app-collection:
+          name: push-dex-app-to-kvm-app-collection
+          app_name: "dex-app"
+          app_collection_repo: "kvm-app-collection"
+          requires:
+            - push-dex-app-to-control-plane-app-catalog
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^v.*/

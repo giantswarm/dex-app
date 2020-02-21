@@ -9,7 +9,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Add helm charts.
-- Add script to sync upstream changes in the helm chart.
+- Add helm chart for dex.
 
 [0.1.0]: https://github.com/giantswarm/dex-app/tag/v0.1.0

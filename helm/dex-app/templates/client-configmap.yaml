@@ -10,7 +10,7 @@ data:
     listen: http://0.0.0.0:5555
     web_path_prefix: "/"
     debug: "false"
-    logo_uri: {{ .logoUrl }}
+    logo_uri: {{ .Values.logoURI }}
     clusters:
     - name: {{ .Values.Installation.V1.Name }}
       short_description: "{{ .Values.Installation.V1.Name }} control-plane"

@@ -19,3 +19,4 @@ dex:
 
 extraVolumes: []
 extraVolumeMounts: []
+logoURI: http://styleguide.io/o/giantswarm/logo_simplified/giantswarm_logo_simplified.png

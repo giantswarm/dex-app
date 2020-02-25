@@ -19,7 +19,11 @@ spec:
     spec:
       containers:
       - name: {{ .Chart.Name }}
+        {{ if (.Values.Installation) }}
+        image: "{{ .Values.Installation.V1.Registry.Domain }}/{{ .Values.client.image.name }}:{{ .Values.client.image.tag }}"
+        {{ else }}
         image: "{{ .Values.client.image.registry }}/{{ .Values.client.image.name }}:{{ .Values.client.image.tag }}"
+        {{ end }}
         imagePullPolicy: {{ .Values.client.image.pullPolicy }}
         args: [ "--config", "config.yaml" ]
         ports:

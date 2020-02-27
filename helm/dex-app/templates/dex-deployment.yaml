@@ -26,7 +26,11 @@ spec:
       serviceAccountName: dex
       containers:
       - name: dex
+        {{ if (.Values.Installation) }}
+        image: "{{ .Values.Installation.V1.Registry.Domain }}/{{ .Values.dex.image.name }}:{{ .Values.dex.image.tag }}"
+        {{ else }}
         image: "{{ .Values.dex.image.registry }}/{{ .Values.dex.image.name }}:{{ .Values.dex.image.tag }}"
+        {{ end }}
         imagePullPolicy: {{ .Values.dex.image.pullPolicy }}
         command:
         - /usr/local/bin/dex

@@ -5,20 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-[Unreleased]
-
-### Added
-
-- Add support for internal Control Plane API access.
+## [Unreleased]
 
 
-## [0.2.0] - 2020-02-28
+## [1.0.0] - 2020-05-05
 
 ### Added
 
 - Add condition for ingress resource installation.
-
-[0.2.0]: https://github.com/giantswarm/dex-app/tag/v0.2.0
+- Add support for internal Control Plane API access.
 
 ## [0.1.0] - 2020-02-13
 
@@ -26,4 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add helm chart for dex.
 
+[Unreleased]: https://github.com/giantswarm/dex-app/compare/v1.0.0...HEAD
+
+[1.0.0]: https://github.com/giantswarm/dex-app/tag/compare/v0.1.0...v1.0.0
 [0.1.0]: https://github.com/giantswarm/dex-app/tag/v0.1.0

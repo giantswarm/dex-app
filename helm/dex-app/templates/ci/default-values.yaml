@@ -1,0 +1,29 @@
+Installation:
+  V1:
+    Kubernetes:
+      API:
+        Address:
+    GiantSwarm:
+      OIDC:
+        ClientAddress: "test"
+        Enabled: false
+        Kubernetes:
+          API:
+            Public: true
+        IssuerAddress:
+        Expiry:
+          SigningKeys:
+        StaticClients:
+          GSCLIAuth:
+            ClientID: ""
+    Name: 
+    Registry:
+      Domain:
+    Secret:
+      Kubernetes:
+        CAPem:
+      OIDC:
+        ConnectorConfig: test
+        StaticClients:
+          GSCLIAuth:
+            Secret: "test"

@@ -12,7 +12,7 @@ Installation:
             Public: true
         IssuerAddress:
         Expiry:
-          SigningKeys:
+          SigningKeys: ""
         StaticClients:
           GSCLIAuth:
             ClientID: ""

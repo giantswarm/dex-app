@@ -3,7 +3,6 @@ kind: ClusterRole
 metadata:
   labels:
 {{ include "dex.labels" . | indent 4 }}
-    app.kubernetes.io/component: dex
   name: dex
 rules:
 - apiGroups: ["dex.coreos.com"] # API group created by dex

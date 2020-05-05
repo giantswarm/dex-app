@@ -4,7 +4,6 @@ metadata:
   name: dex
   labels:
 {{ include "dex.labels" . | indent 4 }}
-    app.kubernetes.io/component: dex
 spec:
   replicas: {{ if .Values.Installation.V1.GiantSwarm.OIDC.Enabled }}1{{ else }}0{{ end }}
   strategy:

@@ -3,8 +3,7 @@ kind: Service
 metadata:
   name: dex-k8s-authenticator
   labels:
-{{ include "dex.labels" . | indent 4 }}
-    app.kubernetes.io/component: dex-k8s-authenticator
+{{ include "dexauthenticator.labels" . | indent 4 }}
 spec:
   type: ClusterIP
   ports:

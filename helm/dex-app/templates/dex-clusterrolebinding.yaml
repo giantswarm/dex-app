@@ -3,7 +3,6 @@ kind: ClusterRoleBinding
 metadata:
   labels:
 {{ include "dex.labels" . | indent 4 }}
-    app.kubernetes.io/component: dex
   name: dex
 roleRef:
   apiGroup: rbac.authorization.k8s.io

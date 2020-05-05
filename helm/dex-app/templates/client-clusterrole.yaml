@@ -2,7 +2,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   labels:
-{{ include "dex.authenticatorlabels" . | indent 4 }}
+{{ include "dexauthenticator.labels" . | indent 4 }}
   name: dex-k8s-authenticator
 rules:
 - apiGroups:

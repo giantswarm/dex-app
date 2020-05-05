@@ -16,7 +16,7 @@ Installation:
         StaticClients:
           GSCLIAuth:
             ClientID: ""
-    Name: 
+    Name:
     Registry:
       Domain:
     Secret:

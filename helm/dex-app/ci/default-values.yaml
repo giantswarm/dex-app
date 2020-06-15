@@ -16,6 +16,8 @@ Installation:
         StaticClients:
           GSCLIAuth:
             ClientID: ""
+          Happa:
+            ClientID: ""
     Name:
     Registry:
       Domain:
@@ -26,4 +28,6 @@ Installation:
         ConnectorConfig: test
         StaticClients:
           GSCLIAuth:
+            Secret: "test"
+          Happa:
             Secret: "test"

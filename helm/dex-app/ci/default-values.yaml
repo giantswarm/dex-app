@@ -18,6 +18,8 @@ Installation:
             ClientID: ""
           Happa:
             ClientID: ""
+      Happa:
+        Address: test
     Name:
     Registry:
       Domain:

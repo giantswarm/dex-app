@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Use `dex` `v2.24.0-giantswarm` tag, which includes Microsoft OIDC connector `offline_scope` fix (https://github.com/dexidp/dex/pull/1441).
+
 
 ## [1.0.0] - 2020-05-05
 

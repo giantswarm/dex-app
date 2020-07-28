@@ -7,7 +7,9 @@ metadata:
 {{ include "dex.labels" . | indent 4 }}
   annotations:
     kubernetes.io/ingress.class: nginx
+    {{- if .Values.Installation.V1.GiantSwarm.OIDC.Letsencrypt }}
     kubernetes.io/tls-acme: "true"
+    {{- end }}
 spec:
   tls:
     - hosts:

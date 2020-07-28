@@ -7,8 +7,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [1.2.2] - 2020-07-28
-
 ### Fixed
 
 - Fix github release workflow.
@@ -49,8 +47,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add helm chart for dex.
 
-[Unreleased]: https://github.com/giantswarm/dex-app/compare/v1.2.2...HEAD
-[1.2.2]: https://github.com/giantswarm/dex-app/compare/v1.2.1...v1.2.2
+[Unreleased]: https://github.com/giantswarm/dex-app/compare/v1.2.1...HEAD
 [1.2.1]: https://github.com/giantswarm/dex-app/compare/v1.2.0...v1.2.1
 [1.2.0]: https://github.com/giantswarm/dex-app/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/giantswarm/dex-app/compare/v1.0.0...v1.1.0

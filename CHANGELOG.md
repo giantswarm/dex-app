@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.0] - 2020-07-28
+
 ### Added
 
 - Add support for ingress raw tls certificates.
@@ -35,7 +37,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add helm chart for dex.
 
-[Unreleased]: https://github.com/giantswarm/dex-app/compare/v1.1.0...HEAD
+[Unreleased]: https://github.com/giantswarm/dex-app/compare/v1.2.0...HEAD
+[1.2.0]: https://github.com/giantswarm/dex-app/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/giantswarm/dex-app/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/giantswarm/dex-app/tag/compare/v0.1.0...v1.0.0
 [0.1.0]: https://github.com/giantswarm/dex-app/tag/v0.1.0

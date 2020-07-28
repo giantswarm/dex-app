@@ -24,6 +24,11 @@ Installation:
     Registry:
       Domain:
     Secret:
+      Certificate:
+        GiantSwarm:
+          CrtPem: ""
+          KeyPem: ""
+          CAPem: ""
       Kubernetes:
         CAPem:
       OIDC:

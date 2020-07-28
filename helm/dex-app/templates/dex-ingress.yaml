@@ -7,12 +7,18 @@ metadata:
 {{ include "dex.labels" . | indent 4 }}
   annotations:
     kubernetes.io/ingress.class: nginx
+    {{- if .Values.Installation.V1.GiantSwarm.OIDC.Letsencrypt }}
     kubernetes.io/tls-acme: "true"
+    {{- end }}
 spec:
   tls:
     - hosts:
         - {{ .Values.Installation.V1.GiantSwarm.OIDC.IssuerAddress | quote }}
+      {{- if .Values.Installation.V1.GiantSwarm.OIDC.Letsencrypt }}
+      secretName: dex-tls-le
+      {{- else }}
       secretName: dex-tls
+      {{- end }}
   rules:
     - host: {{ .Values.Installation.V1.GiantSwarm.OIDC.IssuerAddress | quote }}
       http:

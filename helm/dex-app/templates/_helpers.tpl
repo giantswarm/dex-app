@@ -15,10 +15,19 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
-app.kubernetes.io/component: dex
 app.kubernetes.io/managed-by: {{ .Release.Service }}
 app: dex-app
 giantswarm.io/service-type: "managed"
+{{- end -}}
+
+{{- define "dex.labels.customer" -}}
+{{ include "dex.labels" . | indent 4 }}
+app.kubernetes.io/component: dex-customer
+{{- end -}}
+
+{{- define "dex.labels.giantswarm" -}}
+{{ include "dex.labels" . | indent 4 }}
+app.kubernetes.io/component: dex-giantswarm
 {{- end -}}
 
 {{- define "dexauthenticator.labels" -}}

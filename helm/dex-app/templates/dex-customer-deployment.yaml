@@ -1,9 +1,9 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: dex
+  name: {{ include "resource.default.name.customer" . }}
   labels:
-{{ include "dex.labels" . | indent 4 }}
+{{ include "dex.labels.customer" . | indent 4 }}
 spec:
   replicas: {{ if .Values.Installation.V1.GiantSwarm.OIDC.Enabled }}1{{ else }}0{{ end }}
   strategy:
@@ -14,17 +14,17 @@ spec:
   selector:
     matchLabels:
       app.kubernetes.io/instance: {{ .Release.Name }}
-      app.kubernetes.io/component: dex
+      app.kubernetes.io/component: {{ include "resource.default.name.customer" . }}
   template:
     metadata:
       labels:
         app.kubernetes.io/instance: {{ .Release.Name }}
-        app.kubernetes.io/component: dex
+        app.kubernetes.io/component: {{ include "resource.default.name.customer" . }}
       annotations:
     spec:
-      serviceAccountName: dex
+      serviceAccountName: {{ include "resource.default.name.customer" . }}
       containers:
-      - name: dex
+      - name: {{ include "resource.default.name.customer" . }}
         {{ if (.Values.Installation) }}
         image: "{{ .Values.Installation.V1.Registry.Domain }}/{{ .Values.dex.image.name }}:{{ .Values.dex.image.tag }}"
         {{ else }}
@@ -75,7 +75,7 @@ spec:
           items:
           - key: config.yaml
             path: config.yaml
-          secretName: dex
+          secretName: {{ include "resource.default.name.customer" . }}
         name: config
 {{- if ne (len .Values.extraVolumes) 0 }}
 {{ toYaml .Values.extraVolumes | indent 6 }}

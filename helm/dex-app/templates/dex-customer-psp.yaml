@@ -1,7 +1,7 @@
 apiVersion: policy/v1beta1
 kind: PodSecurityPolicy
 metadata:
-  name: dex
+  name: {{ include "resource.default.name.customer" . }}
 spec:
   privileged: false
   fsGroup:

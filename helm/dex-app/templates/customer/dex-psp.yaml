@@ -1,7 +1,8 @@
+{{ if .Values.Installation.V1.GiantSwarm.OIDC.Enabled }}
 apiVersion: policy/v1beta1
 kind: PodSecurityPolicy
 metadata:
-  name: dex
+  name: {{ include "resource.dex.psp.name" . }}
 spec:
   privileged: false
   fsGroup:
@@ -26,3 +27,4 @@ spec:
   hostNetwork: false
   hostIPC: false
   hostPID: false
+{{ end }}

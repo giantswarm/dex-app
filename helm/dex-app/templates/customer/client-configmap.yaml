@@ -1,9 +1,10 @@
+{{ if .Values.Installation.V1.GiantSwarm.OIDC.Enabled }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: dex-k8s-authenticator
+  name: {{ include "resource.dexauthenticator.name" . }}
   labels:
-{{ include "dexauthenticator.labels" . | indent 4 }}
+    {{- include "dexauthenticator.labels" . | indent 4 }}
 data:
   config.yaml: |-
     listen: http://0.0.0.0:5555
@@ -24,3 +25,4 @@ data:
       k8s_ca_pem: {{ toYaml .Values.Installation.V1.Secret.Kubernetes.CAPem | indent 8 }}
       client_id: dex-k8s-authenticator
       redirect_uri: https://{{ .Values.Installation.V1.GiantSwarm.OIDC.ClientAddress }}/callback
+{{ end }}

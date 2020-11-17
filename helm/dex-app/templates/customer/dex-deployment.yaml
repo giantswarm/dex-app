@@ -1,11 +1,12 @@
+{{ if .Values.Installation.V1.GiantSwarm.OIDC.Enabled }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: dex
+  name: {{ include "resource.dex.name" . }}
   labels:
-{{ include "dex.labels" . | indent 4 }}
+    {{- include "dex.labels" . | indent 4 }}
 spec:
-  replicas: {{ if .Values.Installation.V1.GiantSwarm.OIDC.Enabled }}1{{ else }}0{{ end }}
+  replicas: 1
   strategy:
     rollingUpdate:
       maxSurge: 0
@@ -13,16 +14,14 @@ spec:
     type: RollingUpdate
   selector:
     matchLabels:
-      app.kubernetes.io/instance: {{ .Release.Name }}
-      app.kubernetes.io/component: dex
+      {{- include "dex.labels.selector" . | indent 6 }}
   template:
     metadata:
       labels:
-        app.kubernetes.io/instance: {{ .Release.Name }}
-        app.kubernetes.io/component: dex
+        {{- include "dexauthenticator.labels" . | indent 8 }}
       annotations:
     spec:
-      serviceAccountName: dex
+      serviceAccountName: {{ include "resource.dex.name" . }}
       containers:
       - name: dex
         {{ if (.Values.Installation) }}
@@ -75,8 +74,9 @@ spec:
           items:
           - key: config.yaml
             path: config.yaml
-          secretName: dex
+          secretName: {{ include "resource.dex.name" . }}
         name: config
 {{- if ne (len .Values.extraVolumes) 0 }}
 {{ toYaml .Values.extraVolumes | indent 6 }}
 {{- end }}
+{{ end }}

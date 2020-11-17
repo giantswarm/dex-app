@@ -1,7 +1,10 @@
+{{ if .Values.Installation.V1.GiantSwarm.OIDC.Enabled }}
 apiVersion: policy/v1beta1
 kind: PodSecurityPolicy
 metadata:
-  name: dex-k8s-authenticator
+  name: {{ include "resource.dexauthenticator.psp.name" . }}
+  labels:
+    {{- include "dexauthenticator.labels" . | indent 4 }}
 spec:
   privileged: false
   fsGroup:
@@ -26,3 +29,4 @@ spec:
   hostNetwork: false
   hostIPC: false
   hostPID: false
+{{ end }}

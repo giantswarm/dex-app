@@ -1,0 +1,18 @@
+{{ if .Values.Installation.V1.GiantSwarm.OIDC.Enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "resource.dex.name" . }}
+  labels:
+    {{- include "dex.labels" . | indent 4 }}
+  annotations:
+spec:
+  type: ClusterIP
+  sessionAffinity: None
+  ports:
+  - name: http
+    targetPort: http
+    port: 32000
+  selector:
+    {{- include "dex.labels.selector" . | indent 4 }}
+{{ end }}

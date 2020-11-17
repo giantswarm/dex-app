@@ -1,4 +1,11 @@
 {{/*
+Expand the name of the chart.
+*/}}
+{{- define "name" -}}
+dex-app-customer
+{{- end -}}
+
+{{/*
 Create chart name and version as used by the chart label. 
 */}}
 {{- define "dex.chart" -}}
@@ -9,24 +16,37 @@ Create chart name and version as used by the chart label.
 Common labels
 */}}
 {{- define "dex.labels" -}}
-app.kubernetes.io/name: dex-app
+{{ include "labels.selector" . }}
 helm.sh/chart: {{ include "dex.chart" . }}
-app.kubernetes.io/instance: {{ .Release.Name }}
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
-app.kubernetes.io/component: dex
 app.kubernetes.io/managed-by: {{ .Release.Service }}
-app: dex-app
 giantswarm.io/service-type: "managed"
 {{- end -}}
 
+{{/*
+Selector dex labels
+*/}}
+{{- define "dex.labels.selector" -}}
+app.kubernetes.io/name: {{ include "name" . }}
+app.kubernetes.io/component: {{ include "name" . }}-server
+app.kubernetes.io/instance: {{ .Release.Name | quote }}
+{{- end -}}
+
 {{- define "dexauthenticator.labels" -}}
-app.kubernetes.io/name: dex-app
+{{ include "labels.selector" . }}
 helm.sh/chart: {{ include "dex.chart" . }}
-app.kubernetes.io/instance: {{ .Release.Name }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
-app.kubernetes.io/component: dex-k8s-authenticator
-app: dex-app
 giantswarm.io/service-type: "managed"
 {{- end -}}
+
+{{/*
+Selector dex labels
+*/}}
+{{- define "dexauthenticator.labels.selector" -}}
+app.kubernetes.io/name: {{ include "name" . }}
+app.kubernetes.io/component: {{ include "name" . }}-client
+app.kubernetes.io/instance: {{ .Release.Name | quote }}
+{{- end -}}
+

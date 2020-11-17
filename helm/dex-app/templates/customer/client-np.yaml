@@ -1,0 +1,21 @@
+{{ if .Values.Installation.V1.GiantSwarm.OIDC.Enabled }}
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: {{ include "resource.dexauthenticator.networkPolicy.name" . }}
+  labels:
+    {{- include "dexauthenticator.labels" . | indent 4 }}
+spec:
+  podSelector:
+    matchLabels:
+      {{- include "dexauthenticator.labels.selector" . | indent 6 }}
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress:
+  - ports:
+    - port: 5555
+      protocol: TCP
+  egress:
+  - {}
+{{ end }}

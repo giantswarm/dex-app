@@ -1,9 +1,9 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "resource.default.name" . }}
+  name: {{ include "resource.dex.name" . }}
   labels:
-    {{- include "labels.common" . | nindent 4 }}
+    {{- include "dex.labels.common" . | nindent 4 }}
 spec:
   replicas: 1
   strategy:
@@ -13,14 +13,14 @@ spec:
     type: RollingUpdate
   selector:
     matchLabels:
-      {{- include "labels.selector" . | nindent 6 }}
+      {{- include "dex.labels.selector" . | nindent 6 }}
   template:
     metadata:
       labels:
-        {{- include "labels.common" . | nindent 8 }}
+        {{- include "dex.labels.common" . | nindent 8 }}
       annotations:
     spec:
-      serviceAccountName: {{ include "resource.default.name" . }}
+      serviceAccountName: {{ include "resource.dex.name" . }}
       containers:
       - name: dex
         {{ if (.Values.Installation) }}
@@ -73,7 +73,7 @@ spec:
           items:
           - key: config.yaml
             path: config.yaml
-          secretName: {{ include "resource.default.name" . }}
+          secretName: {{ include "resource.dex.name" . }}
         name: config
 {{- if ne (len .Values.extraVolumes) 0 }}
 {{ toYaml .Values.extraVolumes | nindent 6 }}

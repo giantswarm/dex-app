@@ -2,9 +2,9 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "resource.default.name" . }}
+  name: {{ include "resource.dexk8sauth.customer.name" . }}
   labels:
-    {{- include "labels.common" . | nindent 4 }}
+    {{- include "dexk8sauth.customer.labels.common" . | nindent 4 }}
 spec:
   type: ClusterIP
   ports:
@@ -13,5 +13,5 @@ spec:
     protocol: TCP
     name: http
   selector:
-    {{- include "labels.selector" . | nindent 4 }}
+    {{- include "dexk8sauth.customer.labels.selector" . | nindent 4 }}
 {{ end }}

@@ -2,8 +2,8 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   labels:
-    {{- include "labels.common" . | nindent 4 }}
-  name: {{ include "resource.default.name" . }}
+    {{- include "dex.labels.common" . | nindent 4 }}
+  name: {{ include "resource.dex.name" . }}
 rules:
 - apiGroups: ["dex.coreos.com"] # API group created by dex
   resources: ["*"]
@@ -16,6 +16,6 @@ rules:
   resources:
   - podsecuritypolicies
   resourceNames:
-  - {{ include "resource.psp.name" . }}
+  - {{ include "resource.dex.psp.name" . }}
   verbs:
   - use

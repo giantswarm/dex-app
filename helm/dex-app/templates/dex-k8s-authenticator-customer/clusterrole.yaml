@@ -3,15 +3,15 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   labels:
-    {{- include "labels.common" . | nindent 4 }}
-  name: {{ include "resource.default.name" . }}
+    {{- include "dexk8sauth.customer.labels.common" . | nindent 4 }}
+  name: {{ include "resource.dexk8sauth.customer.name" . }}
 rules:
 - apiGroups:
   - policy
   resources:
   - podsecuritypolicies
   resourceNames:
-  - {{ include  "resource.psp.name" . }}
+  - {{ include  "resource.dexk8sauth.customer.psp.name" . }}
   verbs:
   - use
 {{ end }}

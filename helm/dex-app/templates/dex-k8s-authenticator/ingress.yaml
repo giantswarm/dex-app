@@ -22,7 +22,8 @@ spec:
   - host: {{ .Values.Installation.V1.GiantSwarm.OIDC.ClientAddress }}
     http:
       paths:
-      - path: /admin
+      - path: /admin/
+        pathType: Prefix
         backend:
           serviceName: {{ include "resource.dexk8sauth.name" . }}-giantswarm
           servicePort: http

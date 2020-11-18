@@ -64,5 +64,5 @@ spec:
       volumes:
       - name: config
         configMap:
-          name: {{ include "resource.dexk8sauth.name" . }}
+          name: {{ include "resource.dexk8sauth.name" . }}-customer
 {{ end }}

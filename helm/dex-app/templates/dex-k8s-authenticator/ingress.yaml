@@ -1,4 +1,3 @@
-{{ if .Values.Installation.V1.GiantSwarm.OIDC.Enabled }}
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
@@ -23,6 +22,11 @@ spec:
   - host: {{ .Values.Installation.V1.GiantSwarm.OIDC.ClientAddress }}
     http:
       paths:
+      - path: /admin
+        backend:
+          serviceName: {{ include "resource.dexk8sauth.name" . }}-giantswarm
+          servicePort: http
+{{ if .Values.Installation.V1.GiantSwarm.OIDC.Enabled }}
       - path: /
         backend:
           serviceName: {{ include "resource.dexk8sauth.name" . }}-customer

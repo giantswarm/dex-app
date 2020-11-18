@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "resource.dexk8sauth.name" . }}-giantswarm
+  labels:
+    {{- include "dexk8sauth.labels.common" . | nindent 4 }}
+spec:
+  type: ClusterIP
+  ports:
+  - port: 5555
+    targetPort: http
+    protocol: TCP
+    name: http
+  selector:
+    {{- include "dexk8sauth.giantswarm.labels.selector" . | nindent 4 }}

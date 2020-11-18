@@ -1,0 +1,66 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "resource.dexk8sauth.name" . }}-giantswarm
+  labels:
+    {{- include "dexk8sauth.labels.common" . | nindent 4 }}
+    {{- include "dexk8sauth.customer.labels.selector" . | nindent 4 }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "dexk8sauth.customer.labels.selector" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "dexk8sauth.labels.common" . | nindent 8 }}
+        {{- include "dexk8sauth.customer.labels.selector" . | nindent 8 }}
+    spec:
+      containers:
+      - name: {{ .Chart.Name }}
+        {{ if (.Values.Installation) }}
+        image: "{{ .Values.Installation.V1.Registry.Domain }}/{{ .Values.client.image.name }}:{{ .Values.client.image.tag }}"
+        {{ else }}
+        image: "{{ .Values.client.image.registry }}/{{ .Values.client.image.name }}:{{ .Values.client.image.tag }}"
+        {{ end }}
+        imagePullPolicy: {{ .Values.client.image.pullPolicy }}
+        args: [ "--config", "config.yaml" ]
+        ports:
+        - name: http
+          containerPort: 5555
+          protocol: TCP
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: http
+        readinessProbe:
+          httpGet:
+            path: /healthz
+            port: http
+        volumeMounts:
+        - name: config
+          subPath: config.yaml
+          mountPath: /app/config.yaml
+        resources:
+          limits:
+            cpu: 50m
+            memory: 64Mi
+          requests:
+            cpu: 50m
+            memory: 64Mi
+    {{- with .Values.nodeSelector }}
+      nodeSelector:
+{{ toYaml . | indent 6 }}
+    {{- end }}
+    {{- with .Values.affinity }}
+      affinity:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.tolerations }}
+      tolerations:
+{{ toYaml . | indent 6 }}
+    {{- end }}
+      volumes:
+      - name: config
+        configMap:
+          name: {{ include "resource.dexk8sauth.name" . }}-giantswarm

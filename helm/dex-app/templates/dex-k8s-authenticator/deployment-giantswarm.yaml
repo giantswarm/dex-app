@@ -31,11 +31,11 @@ spec:
           protocol: TCP
         livenessProbe:
           httpGet:
-            path: /healthz
+            path: /admin/healthz
             port: http
         readinessProbe:
           httpGet:
-            path: /healthz
+            path: /admin/healthz
             port: http
         volumeMounts:
         - name: config

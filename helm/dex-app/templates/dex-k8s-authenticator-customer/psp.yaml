@@ -2,7 +2,9 @@
 apiVersion: policy/v1beta1
 kind: PodSecurityPolicy
 metadata:
-  name: {{ include "resource.dex.psp.name" . }}
+  name: {{ include "resource.psp.name" . }}
+  labels:
+    {{- include "labels.common" . | nindent 4 }}
 spec:
   privileged: false
   fsGroup:
@@ -22,7 +24,7 @@ spec:
   supplementalGroups:
     rule: RunAsAny
   volumes:
-    - 'secret'
+    - 'configMap'
   allowPrivilegeEscalation: false
   hostNetwork: false
   hostIPC: false

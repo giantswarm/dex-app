@@ -2,9 +2,9 @@
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
-  name: {{ include "resource.dex.name" . }}
+  name: {{ include "resource.default.name" . }}
   labels:
-    {{- include "dex.labels" . | indent 4 }}
+    {{- include "labels.common" . | nindent 4 }}
   annotations:
     kubernetes.io/ingress.class: nginx
     {{- if .Values.Installation.V1.GiantSwarm.OIDC.Letsencrypt }}
@@ -15,9 +15,9 @@ spec:
     - hosts:
         - {{ .Values.Installation.V1.GiantSwarm.OIDC.IssuerAddress | quote }}
       {{- if .Values.Installation.V1.GiantSwarm.OIDC.Letsencrypt }}
-      secretName: {{ include "resource.dex.name" . }}-tls-le
+      secretName: {{ include "resource.default.name" . }}-tls-le
       {{- else }}
-      secretName: {{ include "resource.dex.name" . }}-tls
+      secretName: {{ include "resource.default.name" . }}-tls
       {{- end }}
   rules:
     - host: {{ .Values.Installation.V1.GiantSwarm.OIDC.IssuerAddress | quote }}
@@ -25,6 +25,6 @@ spec:
         paths:
           - path: /
             backend:
-              serviceName: {{ include "resource.dex.name" . }}
+              serviceName: {{ include "resource.default.name" . }}
               servicePort: 32000
 {{ end }}

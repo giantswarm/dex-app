@@ -1,10 +1,9 @@
-{{ if .Values.Installation.V1.GiantSwarm.OIDC.Enabled }}
 apiVersion: policy/v1beta1
 kind: PodSecurityPolicy
 metadata:
-  name: {{ include "resource.dexauthenticator.psp.name" . }}
   labels:
-    {{- include "dexauthenticator.labels" . | indent 4 }}
+    {{- include "labels.common" . | nindent 4 }}
+  name: {{ include "resource.psp.name" . }}
 spec:
   privileged: false
   fsGroup:
@@ -24,9 +23,8 @@ spec:
   supplementalGroups:
     rule: RunAsAny
   volumes:
-    - 'configMap'
+    - 'secret'
   allowPrivilegeEscalation: false
   hostNetwork: false
   hostIPC: false
   hostPID: false
-{{ end }}

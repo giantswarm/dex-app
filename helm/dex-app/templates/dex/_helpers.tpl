@@ -2,7 +2,7 @@
 Expand the name of the chart.
 */}}
 {{- define "name" -}}
-dex-app-customer
+dex
 {{- end -}}
 
 {{/*
@@ -15,7 +15,7 @@ Create chart name and version as used by the chart label.
 {{/*
 Common labels
 */}}
-{{- define "dex.labels" -}}
+{{- define "labels,common" -}}
 {{ include "labels.selector" . }}
 helm.sh/chart: {{ include "dex.chart" . }}
 {{- if .Chart.AppVersion }}
@@ -28,25 +28,8 @@ giantswarm.io/service-type: "managed"
 {{/*
 Selector dex labels
 */}}
-{{- define "dex.labels.selector" -}}
+{{- define "labels.selector" -}}
 app.kubernetes.io/name: {{ include "name" . }}
-app.kubernetes.io/component: {{ include "name" . }}-server
+app.kubernetes.io/component: {{ include "name" . }}
 app.kubernetes.io/instance: {{ .Release.Name | quote }}
 {{- end -}}
-
-{{- define "dexauthenticator.labels" -}}
-{{ include "labels.selector" . }}
-helm.sh/chart: {{ include "dex.chart" . }}
-app.kubernetes.io/managed-by: {{ .Release.Service }}
-giantswarm.io/service-type: "managed"
-{{- end -}}
-
-{{/*
-Selector dex labels
-*/}}
-{{- define "dexauthenticator.labels.selector" -}}
-app.kubernetes.io/name: {{ include "name" . }}
-app.kubernetes.io/component: {{ include "name" . }}-client
-app.kubernetes.io/instance: {{ .Release.Name | quote }}
-{{- end -}}
-

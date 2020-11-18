@@ -1,10 +1,9 @@
-{{ if .Values.Installation.V1.GiantSwarm.OIDC.Enabled }}
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   labels:
-    {{- include "dex.labels" . | indent 4 }}
-  name: {{ include "resource.dex.name" . }}
+    {{- include "labels.common" . | nindent 4 }}
+  name: {{ include "resource.default.name" . }}
 rules:
 - apiGroups: ["dex.coreos.com"] # API group created by dex
   resources: ["*"]
@@ -17,7 +16,6 @@ rules:
   resources:
   - podsecuritypolicies
   resourceNames:
-  - {{ include "resource.dex.psp.name" . }}
+  - {{ include "resource.psp.name" . }}
   verbs:
   - use
-{{ end }}

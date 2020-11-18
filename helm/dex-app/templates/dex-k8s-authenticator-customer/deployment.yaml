@@ -2,18 +2,18 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "resource.dexauthenticator.name" . }}
+  name: {{ include "resource.default.name" . }}
   labels:
-    {{- include "dexauthenticator.labels" . | indent 4 }}
+    {{- include "labels.common" . | nindent 4 }}
 spec:
   replicas: 1
   selector:
     matchLabels:
-      {{- include "dexauthenticator.labels.selector" . | indent 6 }}
+      {{- include "labels.selector" . | nindent 6 }}
   template:
     metadata:
       labels:
-        {{- include "dexauthenticator.labels" . | indent 8 }}
+        {{- include "labels.common" . | nindent 8 }}
     spec:
       containers:
       - name: {{ .Chart.Name }}
@@ -62,5 +62,5 @@ spec:
       volumes:
       - name: config
         configMap:
-          name: {{ include "resource.dexauthenticator.name" . }}
+          name: {{ include "resource.default.name" . }}
 {{ end }}

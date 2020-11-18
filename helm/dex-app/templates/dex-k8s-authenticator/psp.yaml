@@ -2,9 +2,9 @@
 apiVersion: policy/v1beta1
 kind: PodSecurityPolicy
 metadata:
-  name: {{ include "resource.dexk8sauth.customer.psp.name" . }}
+  name: {{ include "resource.dexk8sauth.psp.name" . }}
   labels:
-    {{- include "dexk8sauth.customer.labels.common" . | nindent 4 }}
+    {{- include "dexk8sauth.labels.common" . | nindent 4 }}
 spec:
   privileged: false
   fsGroup:

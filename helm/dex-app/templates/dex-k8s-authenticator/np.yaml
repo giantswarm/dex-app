@@ -2,13 +2,13 @@
 kind: NetworkPolicy
 apiVersion: networking.k8s.io/v1
 metadata:
-  name: {{ include "resource.dexk8sauth.customer.networkPolicy.name" . }}
+  name: {{ include "resource.dexk8sauth.networkPolicy.name" . }}
   labels:
-    {{- include "dexk8sauth.customer.labels.common" . | nindent 4 }}
+    {{- include "dexk8sauth.labels.common" . | nindent 4 }}
 spec:
   podSelector:
     matchLabels:
-      {{- include "dexk8sauth.customer.labels.selector" . | nindent 6 }}
+      {{- include "dexk8sauth.labels.common" . | nindent 6 }}
   policyTypes:
   - Ingress
   - Egress

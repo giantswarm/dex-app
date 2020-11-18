@@ -2,9 +2,9 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "resource.dexk8sauth.customer.name" . }}
+  name: {{ include "resource.dexk8sauth.name" . }}-customer
   labels:
-    {{- include "dexk8sauth.customer.labels.common" . | nindent 4 }}
+    {{- include "dexk8sauth.labels.common" . | nindent 4 }}
 spec:
   type: ClusterIP
   ports:

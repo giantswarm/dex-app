@@ -35,17 +35,16 @@ app.kubernetes.io/instance: {{ .Release.Name | quote }}
 {{- end -}}
 
 {{/*
-Helpers for customer dex-k8s-authenticator.
+Helpers for dex-k8s-authenticator.
 */}}
 {{- define "dexk8sauth.customer.name" -}}
-dex-k8s-authenticator-customer
+dex-k8s-authenticator
 {{- end -}}
 
 {{/*
-Common dex labels
+Common dex-k8s-authenticator labels
 */}}
-{{- define "dexk8sauth.customer.labels.common" -}}
-{{ include "dexk8sauth.customer.labels.selector" . }}
+{{- define "dexk8sauth.labels.common" -}}
 helm.sh/chart: {{ include "dex.chart" . }}
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
@@ -55,10 +54,10 @@ giantswarm.io/service-type: "managed"
 {{- end -}}
 
 {{/*
-Selector dex labels
+Selector dex-k8s-authenticator customer labels
 */}}
 {{- define "dexk8sauth.customer.labels.selector" -}}
-app.kubernetes.io/name: {{ include "dexk8sauth.customer.name" . }}
-app.kubernetes.io/component: {{ include "dexk8sauth.customer.name" . }}
+app.kubernetes.io/name: dex-k8s-authenticator-customer
+app.kubernetes.io/component: dex-k8s-authenticator-customer
 app.kubernetes.io/instance: {{ .Release.Name | quote }}
 {{- end -}}

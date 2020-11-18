@@ -12,14 +12,14 @@ dex
 {{- include "resource.dex.name" . -}}-psp
 {{- end -}}
 
-{{- define "resource.dexk8sauth.customer.name" -}}
-dex-k8s-authenticator-customer
+{{- define "resource.dexk8sauth.name" -}}
+dex-k8s-authenticator
 {{- end -}}
 
-{{- define "resource.dexk8sauth.customer.networkPolicy.name" -}}
-{{- include "resource.dexk8sauth.customer.name" . -}}-network-policy
+{{- define "resource.dexk8sauth.networkPolicy.name" -}}
+{{- include "resource.dexk8sauth.name" . -}}-network-policy
 {{- end -}}
 
-{{- define "resource.dexk8sauth.customer.psp.name" -}}
-{{- include "resource.dexk8sauth.customer.name" . -}}-psp
+{{- define "resource.dexk8sauth.psp.name" -}}
+{{- include "resource.dexk8sauth.name" . -}}-psp
 {{- end -}}

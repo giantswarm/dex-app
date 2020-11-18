@@ -2,9 +2,10 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "resource.dexk8sauth.customer.name" . }}
+  name: {{ include "resource.dexk8sauth.name" . }}-customer
   labels:
-    {{- include "dexk8sauth.customer.labels.common" . | nindent 4 }}
+    {{- include "dexk8sauth.labels.common" . | nindent 4 }}
+    {{- include "dexk8sauth.customer.labels.selector" . | nindent 4 }}
 spec:
   replicas: 1
   selector:
@@ -13,7 +14,8 @@ spec:
   template:
     metadata:
       labels:
-        {{- include "dexk8sauth.customer.labels.common" . | nindent 8 }}
+        {{- include "dexk8sauth.labels.common" . | nindent 8 }}
+        {{- include "dexk8sauth.customer.labels.selector" . | nindent 8 }}
     spec:
       containers:
       - name: {{ .Chart.Name }}
@@ -62,5 +64,5 @@ spec:
       volumes:
       - name: config
         configMap:
-          name: {{ include "resource.dexk8sauth.customer.name" . }}
+          name: {{ include "resource.dexk8sauth.name" . }}
 {{ end }}

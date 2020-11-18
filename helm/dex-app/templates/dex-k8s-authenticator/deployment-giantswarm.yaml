@@ -9,7 +9,7 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      {{- include "dexk8sauth.customer.labels.selector" . | nindent 6 }}
+      {{- include "dexk8sauth.giantswarm.labels.selector" . | nindent 6 }}
   template:
     metadata:
       labels:

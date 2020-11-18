@@ -4,7 +4,7 @@ metadata:
   name: {{ include "resource.dexk8sauth.name" . }}-giantswarm
   labels:
     {{- include "dexk8sauth.labels.common" . | nindent 4 }}
-    {{- include "dexk8sauth.customer.labels.selector" . | nindent 4 }}
+    {{- include "dexk8sauth.giantswarm.labels.selector" . | nindent 4 }}
 spec:
   replicas: 1
   selector:
@@ -14,7 +14,7 @@ spec:
     metadata:
       labels:
         {{- include "dexk8sauth.labels.common" . | nindent 8 }}
-        {{- include "dexk8sauth.customer.labels.selector" . | nindent 8 }}
+        {{- include "dexk8sauth.giantswarm.labels.selector" . | nindent 8 }}
     spec:
       containers:
       - name: {{ .Chart.Name }}

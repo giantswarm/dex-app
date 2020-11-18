@@ -14,7 +14,7 @@ data:
     clusters:
     - name: {{ .Values.Installation.V1.Name }}
       short_description: "{{ .Values.Installation.V1.Name }} control-plane"
-      description: "{{ .Values.Installation.V1.Name }} control-plane cluster customer authentication"
+      description: "{{ .Values.Installation.V1.Name }} control-plane cluster giantswarm authentication"
       client_id: dex-k8s-authenticator
       client_secret: {{ .Values.Installation.V1.Secret.OIDC.ClientSecret }}
       connector_id: giantswarm

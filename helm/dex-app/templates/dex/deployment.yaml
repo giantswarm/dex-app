@@ -64,6 +64,8 @@ spec:
         volumeMounts:
         - mountPath: /etc/dex/cfg
           name: config
+        - mountPath: /data
+          name: dex-google-auth
 {{- if ne (len .Values.extraVolumeMounts) 0 }}
 {{ toYaml .Values.extraVolumeMounts | nindent 8 }}
 {{- end }}
@@ -75,6 +77,13 @@ spec:
             path: config.yaml
           secretName: {{ include "resource.dex.name" . }}
         name: config
+      - name: dex-google-auth
+        secret:
+          defaultMode: 420
+          items:
+          - key: googleAuth.json
+            path: googleAuth.json
+          secretName: dex-google-auth
 {{- if ne (len .Values.extraVolumes) 0 }}
 {{ toYaml .Values.extraVolumes | nindent 6 }}
 {{- end }}

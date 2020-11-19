@@ -51,6 +51,7 @@ app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
 giantswarm.io/service-type: "managed"
+app.kubernetes.io/instance: {{ .Release.Name | quote }}
 {{- end -}}
 
 {{/*
@@ -59,5 +60,12 @@ Selector dex-k8s-authenticator customer labels
 {{- define "dexk8sauth.customer.labels.selector" -}}
 app.kubernetes.io/name: dex-k8s-authenticator-customer
 app.kubernetes.io/component: dex-k8s-authenticator-customer
-app.kubernetes.io/instance: {{ .Release.Name | quote }}
+{{- end -}}
+
+{{/*
+Selector dex-k8s-authenticator giantswarm labels
+*/}}
+{{- define "dexk8sauth.giantswarm.labels.selector" -}}
+app.kubernetes.io/name: dex-k8s-authenticator-giantswarm
+app.kubernetes.io/component: dex-k8s-authenticator-giantswarm
 {{- end -}}

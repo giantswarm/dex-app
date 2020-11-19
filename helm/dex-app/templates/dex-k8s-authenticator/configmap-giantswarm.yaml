@@ -15,8 +15,8 @@ data:
     - name: {{ .Values.Installation.V1.Name }}
       short_description: "{{ .Values.Installation.V1.Name }} control-plane"
       description: "{{ .Values.Installation.V1.Name }} control-plane cluster giantswarm authentication"
-      client_id: dex-k8s-authenticator
-      client_secret: {{ .Values.Installation.V1.Secret.OIDC.ClientSecret }}
+      client_id: dex-k8s-authenticator-giantswarm
+      client_secret: {{ .Values.Installation.V1.Secret.OIDC.GSClientSecret }}
       connector_id: giantswarm
       issuer: https://{{ .Values.Installation.V1.GiantSwarm.OIDC.IssuerAddress }}
       {{if .Values.Installation.V1.GiantSwarm.OIDC.Kubernetes.API.Public }}

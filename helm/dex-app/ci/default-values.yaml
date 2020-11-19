@@ -36,6 +36,7 @@ Installation:
         GSConnectorConfig:
           ClientID: clientid
           ClientSecret: clientsecret
+          ServiceAccountFile: filecontent
         StaticClients:
           GSCLIAuth:
             Secret: "test"

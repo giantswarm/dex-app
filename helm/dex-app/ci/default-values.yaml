@@ -33,6 +33,9 @@ Installation:
         CAPem:
       OIDC:
         ConnectorConfig: test
+        GSConnectorConfig:
+          ClientID: clientid
+          ClientSecret: clientsecret
         StaticClients:
           GSCLIAuth:
             Secret: "test"

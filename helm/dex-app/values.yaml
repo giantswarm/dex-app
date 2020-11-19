@@ -7,7 +7,8 @@ client:
   image:
     registry: quay.io
     name: giantswarm/dex-k8s-authenticator
-    tag: 1.2.0
+    # tag with connector_id support
+    tag: 1.2.0-giantswarm
     pullPolicy: IfNotPresent
 
 dex:

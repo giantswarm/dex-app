@@ -1,7 +1,9 @@
 apiVersion: policy/v1beta1
 kind: PodSecurityPolicy
 metadata:
-  name: dex
+  labels:
+    {{- include "dex.labels.common" . | nindent 4 }}
+  name: {{ include "resource.dex.psp.name" . }}
 spec:
   privileged: false
   fsGroup:

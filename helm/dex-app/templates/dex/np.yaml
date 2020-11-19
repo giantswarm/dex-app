@@ -1,20 +1,19 @@
 kind: NetworkPolicy
 apiVersion: networking.k8s.io/v1
 metadata:
-  name: dex-k8s-authenticator
+  name: {{ include "resource.dex.networkPolicy.name" . }}
   labels:
-{{ include "dexauthenticator.labels" . | indent 4 }}
+    {{- include "dex.labels.common" . | nindent 4 }}
 spec:
   podSelector:
     matchLabels:
-      app.kubernetes.io/component: dex-k8s-authenticator
-      release: {{ .Release.Name }}
+      {{- include "dex.labels.selector" . | nindent 6 }}
   policyTypes:
   - Ingress
   - Egress
   ingress:
   - ports:
-    - port: 5555
+    - port: 5556
       protocol: TCP
   egress:
   - {}

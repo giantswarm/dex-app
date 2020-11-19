@@ -1,0 +1,17 @@
+{{ if .Values.Installation.V1.GiantSwarm.OIDC.Enabled }}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    {{- include "dexk8sauth.labels.common" . | nindent 4 }}
+  name: {{ include "resource.dexk8sauth.name" . }}
+rules:
+- apiGroups:
+  - policy
+  resources:
+  - podsecuritypolicies
+  resourceNames:
+  - {{ include  "resource.dexk8sauth.psp.name" . }}
+  verbs:
+  - use
+{{ end }}

@@ -1,9 +1,10 @@
+{{ if .Values.Installation.V1.GiantSwarm.OIDC.Enabled }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: dex-k8s-authenticator
+  name: {{ include "resource.dexk8sauth.name" . }}
   labels:
-{{ include "dexauthenticator.labels" . | indent 4 }}
+    {{- include "dexk8sauth.labels.common" . | nindent 4 }}
 data:
   config.yaml: |-
     listen: http://0.0.0.0:5555
@@ -14,7 +15,9 @@ data:
     - name: {{ .Values.Installation.V1.Name }}
       short_description: "{{ .Values.Installation.V1.Name }} control-plane"
       description: "{{ .Values.Installation.V1.Name }} control-plane cluster customer authentication"
+      client_id: dex-k8s-authenticator
       client_secret: {{ .Values.Installation.V1.Secret.OIDC.ClientSecret }}
+      connector_id: customer
       issuer: https://{{ .Values.Installation.V1.GiantSwarm.OIDC.IssuerAddress }}
       {{if .Values.Installation.V1.GiantSwarm.OIDC.Kubernetes.API.Public }}
       k8s_master_uri: https://{{ .Values.Installation.V1.Kubernetes.API.Address }}
@@ -22,5 +25,5 @@ data:
       k8s_master_uri: https://{{ .Values.Installation.V1.Kubernetes.API.InternalAddress }}
       {{ end }}
       k8s_ca_pem: {{ toYaml .Values.Installation.V1.Secret.Kubernetes.CAPem | indent 8 }}
-      client_id: dex-k8s-authenticator
       redirect_uri: https://{{ .Values.Installation.V1.GiantSwarm.OIDC.ClientAddress }}/callback
+{{ end }}

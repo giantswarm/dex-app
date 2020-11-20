@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Fix helm template to always install required `dex`/`dex-k8s-authenticator` workloads.
+- Route `dex-k8s-authenticator` to proper `/callback` endpoint.
 
 ## [1.3.0] - 2020-11-20
 

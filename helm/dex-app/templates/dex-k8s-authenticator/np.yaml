@@ -1,4 +1,3 @@
-{{ if .Values.Installation.V1.GiantSwarm.OIDC.Enabled }}
 kind: NetworkPolicy
 apiVersion: networking.k8s.io/v1
 metadata:
@@ -18,4 +17,3 @@ spec:
       protocol: TCP
   egress:
   - {}
-{{ end }}

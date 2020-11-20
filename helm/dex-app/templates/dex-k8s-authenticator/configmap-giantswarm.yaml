@@ -1,4 +1,3 @@
-{{ if .Values.Installation.V1.GiantSwarm.OIDC.Enabled }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -26,4 +25,3 @@ data:
       {{ end }}
       k8s_ca_pem: {{ toYaml .Values.Installation.V1.Secret.Kubernetes.CAPem | indent 8 }}
       redirect_uri: https://{{ .Values.Installation.V1.GiantSwarm.OIDC.ClientAddress }}/callback
-{{ end }}

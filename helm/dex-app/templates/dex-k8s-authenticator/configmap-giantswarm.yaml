@@ -24,4 +24,8 @@ data:
       k8s_master_uri: https://{{ .Values.Installation.V1.Kubernetes.API.InternalAddress }}
       {{ end }}
       k8s_ca_pem: {{ toYaml .Values.Installation.V1.Secret.Kubernetes.CAPem | indent 8 }}
+      {{- if .Values.Installation.V1.GiantSwarm.OIDC.Enabled }}
+      redirect_uri: https://{{ .Values.Installation.V1.GiantSwarm.OIDC.ClientAddress }}/callback
+      {{- else }}
       redirect_uri: https://{{ .Values.Installation.V1.GiantSwarm.OIDC.ClientAddress }}/admin/callback
+      {{- end }}

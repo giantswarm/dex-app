@@ -10,6 +10,9 @@ data:
     web_path_prefix: "/admin"
     debug: "false"
     logo_uri: {{ .Values.logoURI }}
+    {{ if not .Values.Installation.V1.GiantSwarm.OIDC.Letsencrypt }}
+    trusted_root_ca_file: /app/ssl/ca.crt
+    {{ end }}
     clusters:
     - name: {{ .Values.Installation.V1.Name }}
       short_description: "{{ .Values.Installation.V1.Name }} control-plane"
@@ -24,9 +27,6 @@ data:
       k8s_master_uri: https://{{ .Values.Installation.V1.Kubernetes.API.InternalAddress }}
       {{ end }}
       k8s_ca_pem: {{ toYaml .Values.Installation.V1.Secret.Kubernetes.CAPem | indent 8 }}
-      {{ if not .Values.Installation.V1.GiantSwarm.OIDC.Letsencrypt }}
-      trusted_root_ca_file: /app/ssl/ca.crt
-      {{ end }}
       {{ if .Values.Installation.V1.GiantSwarm.OIDC.Enabled }}
       redirect_uri: https://{{ .Values.Installation.V1.GiantSwarm.OIDC.ClientAddress }}/callback
       {{ else }}

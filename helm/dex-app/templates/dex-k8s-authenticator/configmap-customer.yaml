@@ -27,7 +27,7 @@ data:
       k8s_ca_pem: {{ toYaml .Values.Installation.V1.Secret.Kubernetes.CAPem | indent 8 }}
       {{- if not .Values.Installation.V1.GiantSwarm.OIDC.Letsencrypt }}
       trusted_root_ca:
-      - "{{ .Values.Installation.V1.Secret.Certificate.GiantSwarm.CaPem }}"
+      - "{{ .Values.Installation.V1.Secret.Certificate.GiantSwarm.CAPem }}"
       {{- end }}
       redirect_uri: https://{{ .Values.Installation.V1.GiantSwarm.OIDC.ClientAddress }}/callback
 {{ end }}

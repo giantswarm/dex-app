@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add root CA for `dex-k8s-authenticator`, installed into environments with disabled Letsencrypt.
+
 ## [1.4.0] - 2020-11-20
 
 ### Changed

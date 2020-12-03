@@ -11,6 +11,9 @@ data:
     web_path_prefix: "/"
     debug: "false"
     logo_uri: {{ .Values.logoURI }}
+    {{- if not .Values.Installation.V1.GiantSwarm.OIDC.Letsencrypt }}
+    trusted_root_ca_file: /app/ssl/ca.crt
+    {{- end }}
     clusters:
     - name: {{ .Values.Installation.V1.Name }}
       short_description: "{{ .Values.Installation.V1.Name }} control-plane"

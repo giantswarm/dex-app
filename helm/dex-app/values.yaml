@@ -7,15 +7,14 @@ client:
   image:
     registry: quay.io
     name: giantswarm/dex-k8s-authenticator
-    # tag with connector_id support
-    tag: 1.2.0-giantswarm
+    tag: 1.4.0
     pullPolicy: IfNotPresent
 
 dex:
   image:
     registry: quay.io
     name: giantswarm/dex
-    tag: v2.24.0-giantswarm
+    tag: v2.27.0
     pullPolicy: IfNotPresent
 
 extraVolumes: []

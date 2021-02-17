@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Update `dex` to `v2.27.0`.
+- Update `dex-k8s-authenticator` to `v1.4.0`.
+
 ## [1.5.0] - 2020-12-03
 
 ### Added

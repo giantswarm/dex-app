@@ -1,6 +1,6 @@
 version: 2.1
 orbs:
-  architect: giantswarm/architect@2.1.0
+  architect: giantswarm/architect@2.2.0
 
 workflows:
   build:
@@ -20,7 +20,6 @@ workflows:
           name: push-dex-app-to-aws-app-collection
           app_name: "dex-app"
           app_collection_repo: "aws-app-collection"
-          unique: "true"
           requires:
             - push-dex-app-to-control-plane-app-catalog
           filters:
@@ -34,7 +33,6 @@ workflows:
           name: push-dex-app-to-azure-app-collection
           app_name: "dex-app"
           app_collection_repo: "azure-app-collection"
-          unique: "true"
           requires:
             - push-dex-app-to-control-plane-app-catalog
           filters:
@@ -48,7 +46,6 @@ workflows:
           name: push-dex-app-to-kvm-app-collection
           app_name: "dex-app"
           app_collection_repo: "kvm-app-collection"
-          unique: "true"
           requires:
             - push-dex-app-to-control-plane-app-catalog
           filters:

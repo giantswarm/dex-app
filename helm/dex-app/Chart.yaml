@@ -24,3 +24,5 @@ maintainers:
   email: aaron@roydhouse.com
 - name: Nick Badger
   email: nbadger@mintel.com
+annotations:
+  application.giantswarm.io/team: "biscuit"

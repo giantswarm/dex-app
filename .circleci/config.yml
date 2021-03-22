@@ -53,3 +53,17 @@ workflows:
               ignore: /.*/
             tags:
               only: /^v.*/
+              
+      # deploy to vmware installations (only tags)
+      - architect/push-to-app-collection:
+          name: push-dex-app-to-vmware-app-collection
+          app_name: "dex-app"
+          app_collection_repo: "vmware-app-collection"
+          requires:
+            - push-dex-app-to-control-plane-app-catalog
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^v.*/
+

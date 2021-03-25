@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Update `dex` to v2.28.1.
+
 ## [1.8.0] - 2021-03-10
 
 ## [1.7.0] - 2021-03-04

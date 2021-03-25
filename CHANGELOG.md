@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+- Add annotation for owning team
+- Update devctl and architect version
+- Add pushing to VMware app collection
+- Fix Giant Swarm logo URL
+
 ## [1.8.0] - 2021-03-10
 
 ## [1.7.0] - 2021-03-04

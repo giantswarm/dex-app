@@ -1,6 +1,6 @@
 version: 2.1
 orbs:
-  architect: giantswarm/architect@2.2.0
+  architect: giantswarm/architect@2.4.2
 
 workflows:
   build:
@@ -12,6 +12,19 @@ workflows:
           chart: "dex-app"
           filters:
             # Trigger the job also on git tag.
+            tags:
+              only: /^v.*/
+
+      # deploy to all installationss (only tags)
+      - architect/push-to-app-collection:
+          name: push-dex-app-to-shared-app-collection
+          app_name: "dex-app"
+          app_collection_repo: "shared-app-collection"
+          requires:
+            - push-dex-app-to-control-plane-app-catalog
+          filters:
+            branches:
+              ignore: /.*/
             tags:
               only: /^v.*/
 
@@ -66,4 +79,3 @@ workflows:
               ignore: /.*/
             tags:
               only: /^v.*/
-

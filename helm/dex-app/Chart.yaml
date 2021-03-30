@@ -1,7 +1,7 @@
 apiVersion: v1
 name: dex-app
 version: [[ .Version ]]
-appVersion: v2.27.0
+appVersion: v2.28.1
 description: CoreOS Dex
 keywords:
 - dex

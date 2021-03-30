@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Update `dex` to v2.28.1.
 - Add annotation for owning team
 - Update devctl and architect version
 - Add pushing to VMware app collection

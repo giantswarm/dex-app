@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Start using forked `dex` version with connector IDs as OIDC groups prefixes.
+
 ## [1.8.1] - 2021-03-25
 
 ### Changed

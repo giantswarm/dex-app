@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.9.1] - 2021-04-29
+
+### Changed
+
+- Add group name prefix also when refreshing a token.
+
 ## [1.9.0] - 2021-04-26
 
 ### Changed
@@ -101,7 +107,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add helm chart for dex.
 
-[Unreleased]: https://github.com/giantswarm/dex-app/compare/v1.9.0...HEAD
+[Unreleased]: https://github.com/giantswarm/dex-app/compare/v1.9.1...HEAD
+[1.9.1]: https://github.com/giantswarm/dex-app/compare/v1.9.0...v1.9.1
 [1.9.0]: https://github.com/giantswarm/dex-app/compare/v1.8.1...v1.9.0
 [1.8.1]: https://github.com/giantswarm/dex-app/compare/v1.8.0...v1.8.1
 [1.8.0]: https://github.com/giantswarm/dex-app/compare/v1.7.0...v1.8.0

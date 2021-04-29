@@ -9,8 +9,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.9.1] - 2021-04-29
 
-## [1.9.1] - 2021-04-29
-
 ### Changed
 
 - Add group name prefix also when refreshing a token.

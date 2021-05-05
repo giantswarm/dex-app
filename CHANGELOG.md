@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add Grafana as static client.
+
 ## [1.9.1] - 2021-04-29
 
 ### Changed

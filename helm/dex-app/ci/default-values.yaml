@@ -14,12 +14,17 @@ Installation:
         Expiry:
           SigningKeys: ""
         StaticClients:
+          Grafana:
+            ClientID: ""
           GSCLIAuth:
             ClientID: ""
           Happa:
             ClientID: ""
       Happa:
         Address: test
+    Monitoring:
+      Grafana:
+        Address: ""
     Name:
     Registry:
       Domain:

@@ -1,4 +1,8 @@
-apiVersion: extensions/v1beta1
+{{ if .Capabilities.APIVersions.Has "networking.k8s.io/v1" }}
+apiVersion: networking.k8s.io/v1
+{{ else }}
+apiVersion: networking.k8s.io/v1beta1
+{{ end }}
 kind: Ingress
 metadata:
   name: {{ include "resource.dexk8sauth.name" . }}
@@ -25,11 +29,16 @@ spec:
       - path: /admin/
         pathType: Prefix
         backend:
-          serviceName: {{ include "resource.dexk8sauth.name" . }}-giantswarm
-          servicePort: http
+          service:
+            name: {{ include "resource.dexk8sauth.name" . }}-giantswarm
+            port:
+              name: http
 {{ if .Values.Installation.V1.GiantSwarm.OIDC.Enabled }}
       - path: /
+        pathType: Prefix
         backend:
-          serviceName: {{ include "resource.dexk8sauth.name" . }}-customer
-          servicePort: http
+          service:
+            name: {{ include "resource.dexk8sauth.name" . }}-customer
+            port:
+              name: http
 {{ end }}

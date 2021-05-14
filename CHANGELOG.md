@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+- Change ingress API version to `networking.k8s.io/v1` (falling back to `networking.k8s.io/v1beta1` where the first is not available).
+
 ## [1.10.0] - 2021-05-05
 
 ### Added

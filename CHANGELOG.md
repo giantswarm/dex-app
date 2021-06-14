@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Set more explicit name for the Giant Swarm staff connector, to make it easy to distinguish it from a customer's connector
+
 ## [1.10.0] - 2021-05-05
 
 ### Added

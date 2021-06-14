@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Set more explicit name for the Giant Swarm staff connector, to make it easy to distinguish it from a customer's connector
+- Update architect-orb to v2.11.0
 
 ## [1.10.0] - 2021-05-05
 

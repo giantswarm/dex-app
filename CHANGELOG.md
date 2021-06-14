@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.11.1] - 2021-06-14
 
+- New release after updating architect-orb
+
 ## [1.11.0] - 2021-06-14
 
 ### Changed

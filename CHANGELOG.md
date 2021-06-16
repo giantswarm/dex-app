@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Avoid connectors from failing immediately after launch by adding an initial readiness delay to the dex pod.
+
 ## [1.11.1] - 2021-06-14
 
 - New release after updating architect-orb

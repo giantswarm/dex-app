@@ -1,4 +1,4 @@
-{{ if .Capabilities.APIVersions.Has "networking.k8s.io/v1" }}
+{{ if .Capabilities.APIVersions.Has "networking.k8s.io/v1/Ingress" }}
 apiVersion: networking.k8s.io/v1
 {{ else }}
 apiVersion: networking.k8s.io/v1beta1
@@ -29,16 +29,26 @@ spec:
       - path: /admin/
         pathType: Prefix
         backend:
+{{ if .Capabilities.APIVersions.Has "networking.k8s.io/v1/Ingress" }}
           service:
             name: {{ include "resource.dexk8sauth.name" . }}-giantswarm
             port:
               name: http
+{{ else }}
+          serviceName: {{ include "resource.dexk8sauth.name" . }}-giantswarm
+          servicePort: http
+{{ end }}
 {{ if .Values.Installation.V1.GiantSwarm.OIDC.Enabled }}
       - path: /
         pathType: Prefix
         backend:
+{{ if .Capabilities.APIVersions.Has "networking.k8s.io/v1/Ingress" }}
           service:
             name: {{ include "resource.dexk8sauth.name" . }}-customer
             port:
               name: http
+{{ else }}
+          serviceName: {{ include "resource.dexk8sauth.name" . }}-customer
+          servicePort: http
+{{ end }}
 {{ end }}

@@ -16,8 +16,8 @@ data:
     {{- end }}
     clusters:
     - name: {{ .Values.Installation.V1.Name }}
-      short_description: "{{ .Values.Installation.V1.Name }} control-plane"
-      description: "{{ .Values.Installation.V1.Name }} control-plane cluster customer authentication"
+      short_description: "{{ .Values.Installation.V1.Name }} management cluster"
+      description: "Management cluster Kubernetes API for installation '{{ .Values.Installation.V1.Name }}', as a Giant Swarm customer"
       client_id: dex-k8s-authenticator
       client_secret: {{ .Values.Installation.V1.Secret.OIDC.ClientSecret }}
       connector_id: customer

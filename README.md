@@ -30,19 +30,11 @@ Deployment to Control-Plane is handled by [app-operator](https://github.com/gian
 ## Release Process
 
 * Ensure CHANGELOG.md is up to date.
-* Create a new GitHub release with the version e.g. `v0.1.0` and link the
-changelog entry.
+* Create a branch `master#release#v<major.minor.patch>`, wait for the according release PR to be created, approve it, merge it.
 * This will push a new git tag and trigger a new tarball to be pushed to the
-[control-plane-catalog].  
-* Update app-collections repositories with respective App CR:
-  - [aws-app-collection]: https://github.com/giantswarm/aws-app-collection
-  - [azure-app-collection]: https://github.com/giantswarm/azure-app-collection
-  - [kvm-app-collection]: https://github.com/giantswarm/kvm-app-collection
+[control-plane-catalog](https://github.com/giantswarm/control-plane-catalog).
 
 ## Links
 
-[app-operator]: https://github.com/giantswarm/app-operator
-[default-catalog]: https://github.com/giantswarm/control-plane-catalog
-[default-test-catalog]: https://github.com/giantswarm/control-plane-test-catalog
-[dex]: https://github.com/dexidp/dex
-[dex-k8s-authenticator]: https://github.com/mintel/dex-k8s-authenticator
+- [dex](https://github.com/dexidp/dex)
+- [dex-k8s-authenticator](https://github.com/mintel/dex-k8s-authenticator)

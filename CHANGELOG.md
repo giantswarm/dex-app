@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Wording update: change "control plane" to "management cluster"
+- Make customer connector descriptions more user friendly
+
 ## [1.11.2] - 2021-06-17
 
 ### Changed

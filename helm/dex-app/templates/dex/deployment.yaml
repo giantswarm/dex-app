@@ -44,6 +44,7 @@ spec:
         - name: http
           containerPort: 5556
           protocol: TCP
+        - containerPort: 5557
 
         livenessProbe:
           httpGet:

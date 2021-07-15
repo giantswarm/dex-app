@@ -12,6 +12,7 @@ spec:
   - name: http
     targetPort: http
     port: 32000
-  - port: 5557
+  - name: telemetry
+    port: 5557
   selector:
     {{- include "dex.labels.selector" . | nindent 4 }}

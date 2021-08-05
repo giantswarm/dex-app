@@ -48,7 +48,7 @@ oidc:
       redirectURI: ""
     dexK8SAuthenticator:
       clientAddress: ""
-      clientSecret:  ""
+      clientSecret: ""
   giantswarm:
     connectorConfig:
       clientID: ""

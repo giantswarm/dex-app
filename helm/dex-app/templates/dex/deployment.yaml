@@ -23,7 +23,7 @@ spec:
       serviceAccountName: {{ include "resource.dex.name" . }}
       containers:
       - name: dex
-        {{ if eq .Values.isManagementCluster "true" }}
+        {{ if .Values.isManagementCluster }}
         image: "{{ .Values.registry.domain }}/{{ .Values.dex.image.name }}:{{ .Values.dex.image.tag }}"
         {{ else }}
         image: "{{ .Values.dex.image.registry }}/{{ .Values.dex.image.name }}:{{ .Values.dex.image.tag }}"

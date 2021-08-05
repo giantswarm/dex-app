@@ -1,4 +1,4 @@
-{{ if .Values.Installation.V1.GiantSwarm.OIDC.Enabled }}
+{{ if .Values.oidc.customer.enabled }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -19,8 +19,8 @@ spec:
     spec:
       containers:
       - name: {{ .Chart.Name }}
-        {{ if (.Values.Installation) }}
-        image: "{{ .Values.Installation.V1.Registry.Domain }}/{{ .Values.client.image.name }}:{{ .Values.client.image.tag }}"
+        {{ if .Values.isManagementCluster }}
+        image: "{{ .Values.registry.doomain }}/{{ .Values.client.image.name }}:{{ .Values.client.image.tag }}"
         {{ else }}
         image: "{{ .Values.client.image.registry }}/{{ .Values.client.image.name }}:{{ .Values.client.image.tag }}"
         {{ end }}
@@ -42,7 +42,7 @@ spec:
         - name: config
           subPath: config.yaml
           mountPath: /app/config.yaml
-        {{- if not .Values.Installation.V1.GiantSwarm.OIDC.Letsencrypt }}
+        {{- if not .Values.ingress.tls.letsencrypt }}
         - mountPath: /app/ssl/ca.crt
           name: ca-cert
           subPath: ca.crt
@@ -70,7 +70,7 @@ spec:
       - name: config
         configMap:
           name: {{ include "resource.dexk8sauth.name" . }}-customer
-      {{- if not .Values.Installation.V1.GiantSwarm.OIDC.Letsencrypt }}
+      {{- if not .Values.ingress.tls.etsencrypt }}
       - secret:
           defaultMode: 420
           items:

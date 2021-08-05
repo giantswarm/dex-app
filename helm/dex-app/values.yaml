@@ -21,10 +21,58 @@ extraVolumes: []
 extraVolumeMounts: []
 logoURI: https://s.giantswarm.io/brand/1/logo.svg
 
-Installation:
-  V1:
-    GiantSwarm:
-      OIDC:
-        Kubernetes:
-          API:
-            Public: true
+isManagementCluster: false
+managementCluster:
+  name: ""
+
+ingress:
+  tls:
+    letsencrypt: true
+    caPemB64: ""
+    crtPemB64: ""
+    keyPemB64: ""
+
+oidc:
+  issuerAddress: ""
+  expiry:
+    signingKeys: ""
+    idTokens: ""
+  staticClients:
+    grafana:
+      cliendID: ""
+      redirectURI: ""
+    gsCLIAuth:
+      clientID: ""
+    happa:
+      clientID: ""
+      redirectURI: ""
+    dexK8SAuthenticator:
+      clientAddress: ""
+      clientSecret:  ""
+  giantswarm:
+    connectorConfig:
+      clientID: ""
+      clientSecret: ""
+      team: ""
+    write_all_group: ""
+  customer:
+    enabled: false
+    connectorType: ""
+    connectorName: ""
+    connectorConfig: ""
+    write_all_group: ""
+
+services:
+  kubernetes:
+    api:
+      public: true
+      address: ""
+      internalAddress: ""
+      caPem: ""
+  happa:
+    address: ""
+  grafana:
+    address: ""
+
+registry:
+  domain: docker.io

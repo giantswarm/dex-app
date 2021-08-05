@@ -10,20 +10,20 @@ metadata:
     {{- include "dexk8sauth.labels.common" . | nindent 4 }}
   annotations:
     kubernetes.io/ingress.class: nginx
-    {{- if .Values.Installation.V1.GiantSwarm.OIDC.Letsencrypt }}
+    {{- if .Values.ingress.tls.letsencrypt }}
     kubernetes.io/tls-acme: "true"
     {{- end }}
 spec:
   tls:
   - hosts:
-    - {{ .Values.Installation.V1.GiantSwarm.OIDC.ClientAddress }}
-    {{- if .Values.Installation.V1.GiantSwarm.OIDC.Letsencrypt }}
+    - {{ .Values.oidc.staticClients.dexK8SAuthenticator.clientAddress }}
+    {{- if .Values.ingress.tls.letsencrypt }}
     secretName: {{ include "resource.dexk8sauth.name" . }}-le
     {{- else }}
     secretName: {{ include "resource.dexk8sauth.name" . }}
     {{- end }}
   rules:
-  - host: {{ .Values.Installation.V1.GiantSwarm.OIDC.ClientAddress }}
+  - host: {{ .Values.oidc.staticClients.dexK8SAuthenticator.clientAddress }}
     http:
       paths:
       - path: /admin/
@@ -38,7 +38,7 @@ spec:
           serviceName: {{ include "resource.dexk8sauth.name" . }}-giantswarm
           servicePort: http
 {{ end }}
-{{ if .Values.Installation.V1.GiantSwarm.OIDC.Enabled }}
+{{ if .Values.oidc.customer.enabled }}
       - path: /
         pathType: Prefix
         backend:

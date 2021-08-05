@@ -10,20 +10,20 @@ metadata:
     {{- include "dex.labels.common" . | nindent 4 }}
   annotations:
     kubernetes.io/ingress.class: nginx
-    {{- if .Values.Installation.V1.GiantSwarm.OIDC.Letsencrypt }}
+    {{- if .Values.ingress.tls.letsencrypt }}
     kubernetes.io/tls-acme: "true"
     {{- end }}
 spec:
   tls:
     - hosts:
-        - {{ .Values.Installation.V1.GiantSwarm.OIDC.IssuerAddress | quote }}
-      {{- if .Values.Installation.V1.GiantSwarm.OIDC.Letsencrypt }}
+        - {{ .Values.oidc.issuerAddress | quote }}
+      {{- if .Values.ingress.tls.letsencrypt }}
       secretName: {{ include "resource.dex.name" . }}-tls-le
       {{- else }}
       secretName: {{ include "resource.dex.name" . }}-tls
       {{- end }}
   rules:
-    - host: {{ .Values.Installation.V1.GiantSwarm.OIDC.IssuerAddress | quote }}
+    - host: {{ .Values.oidc.issuerAddress | quote }}
       http:
         paths:
           - path: /

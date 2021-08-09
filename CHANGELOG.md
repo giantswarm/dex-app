@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.12.0] - 2021-08-09
+
 ### Changed
 
 - Wording update: change "control plane" to "management cluster"
@@ -137,7 +139,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add helm chart for dex.
 
-[Unreleased]: https://github.com/giantswarm/dex-app/compare/v1.11.2...HEAD
+[Unreleased]: https://github.com/giantswarm/dex-app/compare/v1.12.0...HEAD
+[1.12.0]: https://github.com/giantswarm/dex-app/compare/v1.11.2...v1.12.0
 [1.11.2]: https://github.com/giantswarm/dex-app/compare/v1.11.1...v1.11.2
 [1.11.1]: https://github.com/giantswarm/dex-app/compare/v1.11.0...v1.11.1
 [1.11.0]: https://github.com/giantswarm/dex-app/compare/v1.10.0...v1.11.0

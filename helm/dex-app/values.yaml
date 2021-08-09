@@ -35,14 +35,15 @@ ingress:
 oidc:
   issuerAddress: ""
   expiry:
-    signingKeys: ""
-    idTokens: ""
+    signingKeys: 6h
+    idTokens: 30m
   staticClients:
     grafana:
       cliendID: ""
       redirectURI: ""
     gsCLIAuth:
       clientID: ""
+      address: http://localhost:8085/oauth/callback
     happa:
       clientID: ""
       redirectURI: ""

@@ -20,7 +20,7 @@ spec:
       containers:
       - name: {{ .Chart.Name }}
         {{ if .Values.isManagementCluster }}
-        image: "{{ .Values.registry.doomain }}/{{ .Values.client.image.name }}:{{ .Values.client.image.tag }}"
+        image: "{{ .Values.registry.domain }}/{{ .Values.client.image.name }}:{{ .Values.client.image.tag }}"
         {{ else }}
         image: "{{ .Values.client.image.registry }}/{{ .Values.client.image.name }}:{{ .Values.client.image.tag }}"
         {{ end }}
@@ -70,7 +70,7 @@ spec:
       - name: config
         configMap:
           name: {{ include "resource.dexk8sauth.name" . }}-customer
-      {{- if not .Values.ingress.tls.etsencrypt }}
+      {{- if not .Values.ingress.tls.letsencrypt }}
       - secret:
           defaultMode: 420
           items:

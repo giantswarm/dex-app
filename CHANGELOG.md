@@ -12,7 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Wording update: change "control plane" to "management cluster"
 - Make customer connector descriptions more user friendly
 - Prepare helm values to configuration management.
-- Update architect-orb to v3.0.0.
+- Update architect-orb to v4.0.0.
 
 ## [1.11.2] - 2021-06-17
 

@@ -10,25 +10,25 @@ data:
     web_path_prefix: "/admin"
     debug: "false"
     logo_uri: {{ .Values.logoURI }}
-    {{- if not .Values.Installation.V1.GiantSwarm.OIDC.Letsencrypt }}
+    {{- if not .Values.ingress.tls.letsencrypt }}
     trusted_root_ca_file: /app/ssl/ca.crt
     {{- end }}
     clusters:
-    - name: {{ .Values.Installation.V1.Name }}
-      short_description: "{{ .Values.Installation.V1.Name }} control-plane"
-      description: "{{ .Values.Installation.V1.Name }} control-plane cluster giantswarm authentication"
+    - name: {{ .Values.managementCluster.name }}
+      short_description: "{{ .Values.managementCluster.name }} control-plane"
+      description: "{{ .Values.managementCluster.name }} control-plane cluster giantswarm authentication"
       client_id: dex-k8s-authenticator
-      client_secret: {{ .Values.Installation.V1.Secret.OIDC.ClientSecret }}
+      client_secret: {{ .Values.oidc.staticClients.dexK8SAuthenticator.clientSecret }}
       connector_id: giantswarm
-      issuer: https://{{ .Values.Installation.V1.GiantSwarm.OIDC.IssuerAddress }}
-      {{if .Values.Installation.V1.GiantSwarm.OIDC.Kubernetes.API.Public }}
-      k8s_master_uri: https://{{ .Values.Installation.V1.Kubernetes.API.Address }}
+      issuer: https://{{ .Values.oidc.issuerAddress }}
+      {{if .Values.services.kubernetes.api.public }}
+      k8s_master_uri: https://{{ .Values.services.kubernetes.api.address }}
       {{ else }}
-      k8s_master_uri: https://{{ .Values.Installation.V1.Kubernetes.API.InternalAddress }}
+      k8s_master_uri: https://{{ .Values.services.kubernetes.api.internalAddress }}
       {{ end }}
-      k8s_ca_pem: {{ toYaml .Values.Installation.V1.Secret.Kubernetes.CAPem | indent 8 }}
-      {{ if .Values.Installation.V1.GiantSwarm.OIDC.Enabled }}
-      redirect_uri: https://{{ .Values.Installation.V1.GiantSwarm.OIDC.ClientAddress }}/callback
+      k8s_ca_pem: {{ toYaml .Values.services.kubernetes.api.caPem | indent 8 }}
+      {{ if .Values.oidc.customer.enabled }}
+      redirect_uri: https://{{ .Values.oidc.staticClients.dexK8SAuthenticator.clientAddress }}/callback
       {{ else }}
-      redirect_uri: https://{{ .Values.Installation.V1.GiantSwarm.OIDC.ClientAddress }}/admin/callback
+      redirect_uri: https://{{ .Values.oidc.staticClients.dexK8SAuthenticator.clientAddress }}/admin/callback
       {{ end }}

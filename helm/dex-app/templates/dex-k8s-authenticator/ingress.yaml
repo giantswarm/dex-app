@@ -9,11 +9,11 @@ metadata:
   labels:
     {{- include "dexk8sauth.labels.common" . | nindent 4 }}
   annotations:
-    kubernetes.io/ingress.class: nginx
     {{- if .Values.ingress.tls.letsencrypt }}
     kubernetes.io/tls-acme: "true"
     {{- end }}
 spec:
+  ingressClassName: nginx
   tls:
   - hosts:
     - {{ .Values.oidc.staticClients.dexK8SAuthenticator.clientAddress }}

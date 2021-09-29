@@ -11,6 +11,6 @@ updates:
       time: "04:00"
     open-pull-requests-limit: 10
     reviewers:
-      - giantswarm/team-biscuit
+      - giantswarm/team-rainbow
     ignore:
       - dependency-name: zricethezav/gitleaks-action

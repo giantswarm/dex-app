@@ -69,3 +69,11 @@ Selector dex-k8s-authenticator giantswarm labels
 app.kubernetes.io/name: dex-k8s-authenticator-giantswarm
 app.kubernetes.io/component: dex-k8s-authenticator-giantswarm
 {{- end -}}
+
+{{- define "giantswarm-connector" -}}
+{{- if .Values.oidc.giantswarm.connectorConfig.clientID -}}
+  {{- printf "true" }}
+{{- else -}}
+  {{- printf "false" }}
+{{- end -}}
+{{- end -}}

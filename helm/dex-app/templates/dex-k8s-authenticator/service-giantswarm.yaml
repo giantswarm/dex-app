@@ -1,3 +1,4 @@
+{{- if eq (include "giantswarm-connector" .) "true" -}}
 apiVersion: v1
 kind: Service
 metadata:
@@ -13,3 +14,4 @@ spec:
     name: http
   selector:
     {{- include "dexk8sauth.giantswarm.labels.selector" . | nindent 4 }}
+{{ end }}

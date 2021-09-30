@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Adapt it to be run in a Giant Swarm Workload Cluster too.
+
 ## [1.13.0] - 2021-08-13
 
 ### Fixed

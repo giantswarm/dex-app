@@ -1,4 +1,4 @@
-{{ if or (eq (include "giantswarm-connector" .) "true") .Values.oidc.customer.enabled }}
+{{ if or (eq (include "has-giantswarm-connector" .) "true") .Values.oidc.customer.enabled }}
 {{ if .Capabilities.APIVersions.Has "networking.k8s.io/v1/Ingress" }}
 apiVersion: networking.k8s.io/v1
 {{ else }}
@@ -27,7 +27,7 @@ spec:
   - host: {{ .Values.oidc.staticClients.dexK8SAuthenticator.clientAddress }}
     http:
       paths:
-{{- if eq (include "giantswarm-connector" .) "true" }}
+{{- if eq (include "has-giantswarm-connector" .) "true" }}
       - path: /admin/
         pathType: Prefix
         backend:

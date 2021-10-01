@@ -70,7 +70,10 @@ app.kubernetes.io/name: dex-k8s-authenticator-giantswarm
 app.kubernetes.io/component: dex-k8s-authenticator-giantswarm
 {{- end -}}
 
-{{- define "giantswarm-connector" -}}
+{{/*
+Abstract the knowledge to know if it needs a Giant Swarm connector or not
+*/}}
+{{- define "has-giantswarm-connector" -}}
 {{- if .Values.oidc.giantswarm.connectorConfig.clientID -}}
   {{- printf "true" }}
 {{- else -}}

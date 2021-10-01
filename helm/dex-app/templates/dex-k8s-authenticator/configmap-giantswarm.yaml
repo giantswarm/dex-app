@@ -1,4 +1,4 @@
-{{- if eq (include "giantswarm-connector" .) "true" -}}
+{{- if eq (include "has-giantswarm-connector" .) "true" -}}
 apiVersion: v1
 kind: ConfigMap
 metadata:

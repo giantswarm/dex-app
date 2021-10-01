@@ -1,4 +1,4 @@
-{{- if eq (include "giantswarm-connector" .) "true" -}}
+{{- if eq (include "has-giantswarm-connector" .) "true" -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:

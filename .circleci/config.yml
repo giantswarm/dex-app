@@ -79,3 +79,14 @@ workflows:
               ignore: /.*/
             tags:
               only: /^v.*/
+
+      # make it available to customers (only tags)
+      - architect/push-to-app-catalog:
+          name: "package and push dex-app chart"
+          app_catalog: "giantswarm-playground-catalog"
+          app_catalog_test: "giantswarm-playground-test-catalog"
+          chart: "dex-app"
+          # Trigger job on git tag.
+          filters:
+            tags:
+              only: /^v.*/

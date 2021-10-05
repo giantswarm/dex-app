@@ -21,6 +21,7 @@ extraVolumes: []
 extraVolumeMounts: []
 logoURI: https://s.giantswarm.io/brand/1/logo.svg
 
+# Giant Swarm properties for management clusters
 isManagementCluster: false
 managementCluster:
   name: ""
@@ -50,6 +51,7 @@ oidc:
     dexK8SAuthenticator:
       clientAddress: ""
       clientSecret: ""
+  # Giant Swarm OIDC values to run DEX in the management clusters
   giantswarm:
     connectorConfig:
       clientID: ""

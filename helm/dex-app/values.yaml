@@ -14,17 +14,12 @@ dex:
   image:
     registry: quay.io
     name: giantswarm/dex
-    tag: v2.28.1-giantswarm-2
+    tag: v2.30.0-giantswarm
     pullPolicy: IfNotPresent
 
 extraVolumes: []
 extraVolumeMounts: []
 logoURI: https://s.giantswarm.io/brand/1/logo.svg
-
-# Giant Swarm properties for management clusters
-isManagementCluster: false
-managementCluster:
-  name: ""
 
 ingress:
   tls:
@@ -79,3 +74,11 @@ services:
 
 registry:
   domain: docker.io
+
+# Giant Swarm properties for management clusters
+isManagementCluster: false
+managementCluster:
+  name: ""
+
+# Giant Swarm properties for workload clusters
+isWorkloadCluster: false

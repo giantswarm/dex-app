@@ -15,18 +15,35 @@ data:
     trusted_root_ca_file: /app/ssl/ca.crt
     {{- end }}
     clusters:
+     {{- if .Values.isWorkloadCluster }}
+    - name: {{ .Values.clusterID }}
+     {{- else }}
     - name: {{ .Values.managementCluster.name }}
-      short_description: "{{ .Values.managementCluster.name }} {{ if .Values.isManagementCluster }}management{{ end }} cluster"
-      description: "{{ if .Values.isManagementCluster }}Management{{ end }} cluster Kubernetes API for installation '{{ .Values.managementCluster.name }}', as a Giant Swarm customer"
+     {{- end }}
+      {{- if .Values.isWorkloadCluster }}
+      description: "Cluster Kubernetes API {{ .Values.clusterID }}"
+      short_description: "{{ .Values.clusterID }} cluster"
+      {{- else }}
+      description: "Management Cluster Kubernetes API for installation '{{ .Values.managementCluster.name }}', as a Giant Swarm customer"
+      short_description: "{{ .Values.managementCluster.name }} management cluster"
+      {{- end }}
       client_id: dex-k8s-authenticator
       client_secret: {{ .Values.oidc.staticClients.dexK8SAuthenticator.clientSecret }}
       connector_id: customer
+      {{- if .Values.isWorkloadCluster }}
+      issuer: https://dex.{{ .Values.baseDomain }}
+      {{- else }}
       issuer: https://{{ .Values.oidc.issuerAddress }}
-      {{if .Values.services.kubernetes.api.public }}
+      {{- end }}
+      {{- if .Values.services.kubernetes.api.public }}
+        {{- if .Values.isWorkloadCluster }}
+      k8s_master_uri: https://api.{{ .Values.baseDomain }}
+        {{- else }}
       k8s_master_uri: {{ .Values.services.kubernetes.api.address }}
-      {{ else }}
+        {{- end }}
+      {{- else }}
       k8s_master_uri: {{ .Values.services.kubernetes.api.internalAddress }}
-      {{ end }}
+      {{- end }}
       k8s_ca_pem: {{ toYaml .Values.services.kubernetes.api.caPem | indent 8 }}
       redirect_uri: https://{{ .Values.oidc.staticClients.dexK8SAuthenticator.clientAddress }}/callback
 {{ end }}

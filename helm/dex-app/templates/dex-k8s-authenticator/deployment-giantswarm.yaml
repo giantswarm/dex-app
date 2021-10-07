@@ -19,11 +19,11 @@ spec:
     spec:
       containers:
       - name: {{ .Chart.Name }}
-        {{ if .Values.isManagementCluster }}
+        {{- if .Values.isManagementCluster }}
         image: "{{ .Values.registry.domain }}/{{ .Values.client.image.name }}:{{ .Values.client.image.tag }}"
-        {{ else }}
+        {{- else }}
         image: "{{ .Values.client.image.registry }}/{{ .Values.client.image.name }}:{{ .Values.client.image.tag }}"
-        {{ end }}
+        {{- end }}
         imagePullPolicy: {{ .Values.client.image.pullPolicy }}
         args: [ "--config", "config.yaml" ]
         ports:

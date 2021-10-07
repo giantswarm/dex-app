@@ -16,10 +16,10 @@ spec:
   ingressClassName: nginx
   tls:
     - hosts:
-       {{- if .Values.isWorkloadCluster }}
-        - {{ .Values.baseDomain | quote }}
+      {{- if .Values.isWorkloadCluster }}
+        - dex.{{ .Values.baseDomain }}
       {{- else }}
-        - {{ .Values.oidc.issuerAddress | quote }}
+        - {{ .Values.oidc.issuerAddress }}
       {{- end }}
       {{- if .Values.ingress.tls.letsencrypt }}
       secretName: {{ include "resource.dex.name" . }}-tls-le
@@ -28,9 +28,9 @@ spec:
       {{- end }}
   rules:
   {{- if .Values.isWorkloadCluster }}
-    - host: {{ .Values.baseDomain | quote }}
+    - host: dex.{{ .Values.baseDomain }}
   {{- else }}
-    - host: {{ .Values.oidc.issuerAddress | quote }}
+    - host: {{ .Values.oidc.issuerAddress }}
   {{- end }}
       http:
         paths:

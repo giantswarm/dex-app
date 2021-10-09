@@ -34,8 +34,6 @@ data:
       {{- else }}
       redirect_uri: https://{{ .Values.oidc.staticClients.dexK8SAuthenticator.clientAddress }}/admin/callback
       {{- end }}
-    {{- end }}
-
     {{- else if .Values.isWorkloadCluster }}
     - name: {{ .Values.clusterID }}
       description: "Cluster Kubernetes API {{ .Values.clusterID }}"

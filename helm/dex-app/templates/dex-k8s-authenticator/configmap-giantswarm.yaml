@@ -36,7 +36,7 @@ data:
       {{- end }}
     {{- end }}
 
-    {{- if .Values.isWorkloadCluster }}
+    {{- else if .Values.isWorkloadCluster }}
     - name: {{ .Values.clusterID }}
       description: "Cluster Kubernetes API {{ .Values.clusterID }}"
       short_description: "{{ .Values.clusterID }} cluster"

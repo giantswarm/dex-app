@@ -38,6 +38,8 @@ oidc:
   expiry:
     signingKeys: 6h
     idTokens: 30m
+    refreshTokensTimeout: 2160h
+    refreshTokensLifetime: 3960h
   staticClients:
     grafana:
       cliendID: ""

@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Make refresh token expiration times configurable.
+
 ## [1.14.0] - 2021-10-05
 
 ### Changed

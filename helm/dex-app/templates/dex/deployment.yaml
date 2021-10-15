@@ -23,6 +23,11 @@ spec:
       serviceAccountName: {{ include "resource.dex.name" . }}
       containers:
       - name: dex
+        env:
+          - name: KUBERNETES_POD_NAMESPACE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
         {{ if .Values.isManagementCluster }}
         image: "{{ .Values.registry.domain }}/{{ .Values.dex.image.name }}:{{ .Values.dex.image.tag }}"
         {{ else }}

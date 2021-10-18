@@ -6,7 +6,7 @@ description: CoreOS Dex
 keywords:
 - dex
 - oidc
-icon: https://github.com/dexidp/dex/raw/master/Documentation/logos/dex-glyph-color.png
+icon: https://s.giantswarm.io/app-icons/dex/1/light.svg
 home: https://github.com/dexidp/dex/
 sources:
 - https://github.com/dexidp/dex/

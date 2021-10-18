@@ -44,6 +44,6 @@ data:
       k8s_master_uri: {{ .Values.services.kubernetes.api.internalAddress }}
       {{- end }}
       k8s_ca_pem: {{ toYaml .Values.services.kubernetes.api.caPem | indent 8 }}
-      redirect_uri: https://{{ .Values.oidc.staticClients.dexK8SAuthenticator.clientAddress }}/callback
+      redirect_uri: https://dex.{{ .Values.baseDomain }}/callback
     {{- end }}
 {{ end }}

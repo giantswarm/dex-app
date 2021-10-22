@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.15.0] - 2021-10-22
 
+### Changed
+
+- Make easier the configuration for Workload Clusters.
+- Bring the changes needed to run in Kubernetes 1.21.
+
 ## [1.14.1] - 2021-10-18
 
 ### Changed

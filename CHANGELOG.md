@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Adapt it to be run in a Giant Swarm Workload Cluster too.
+- Bring new dex 2.30.0 version to be compatible with Kuberentes 1.21.x.
 
 ## [1.13.0] - 2021-08-13
 

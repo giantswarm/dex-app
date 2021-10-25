@@ -11,6 +11,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Change dex image to fix refreshing token
 
+## [1.15.0] - 2021-10-22
+
+### Changed
+
+- Make easier the configuration for Workload Clusters.
+- Bring the changes needed to run in Kubernetes 1.21.
+
 ## [1.14.1] - 2021-10-18
 
 ### Changed
@@ -168,7 +175,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add helm chart for dex.
 
-[Unreleased]: https://github.com/giantswarm/dex-app/compare/v1.14.1...HEAD
+[Unreleased]: https://github.com/giantswarm/dex-app/compare/v1.15.0...HEAD
+[1.15.0]: https://github.com/giantswarm/dex-app/compare/v1.14.1...v1.15.0
 [1.14.1]: https://github.com/giantswarm/dex-app/compare/v1.14.0...v1.14.1
 [1.14.0]: https://github.com/giantswarm/dex-app/compare/v1.13.0...v1.14.0
 [1.13.0]: https://github.com/giantswarm/dex-app/compare/v1.12.1...v1.13.0

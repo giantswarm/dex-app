@@ -54,11 +54,12 @@ oidc:
       team: ""
     write_all_group: ""
   customer:
-    enabled: false
+    enabled: true
     connectorType: ""
     connectorName: ""
     connectorConfig: ""
     write_all_group: ""
+    connectors:
 
 services:
   kubernetes:

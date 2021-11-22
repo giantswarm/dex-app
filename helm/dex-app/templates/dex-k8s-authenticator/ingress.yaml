@@ -50,6 +50,24 @@ spec:
   {{- end }}
 {{- end }}
 {{- if .Values.oidc.customer.enabled }}
+{{- if .Values.oidc.customer.connectors -}}
+{{ $values := .Values -}}
+{{ $resource := . }}
+{{- range .Values.oidc.customer.connectors }}
+      - path: /
+        pathType: Prefix
+        backend:
+  {{- if $resource.Capabilities.APIVersions.Has "networking.k8s.io/v1/Ingress" }}
+          service:
+            name: {{ include "resource.dexk8sauth.name" $resource }}-{{ .id }}
+            port:
+              name: http
+  {{- else }}
+          serviceName: {{ include "resource.dexk8sauth.name" $resource }}-{{ .id }}
+          servicePort: http
+  {{- end }}
+{{- end }}
+{{- else }}
       - path: /
         pathType: Prefix
         backend:
@@ -62,5 +80,6 @@ spec:
           serviceName: {{ include "resource.dexk8sauth.name" . }}-customer
           servicePort: http
   {{- end }}
+{{ end }}
 {{ end }}
 {{ end }}

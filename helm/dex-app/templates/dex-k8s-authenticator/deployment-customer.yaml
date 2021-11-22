@@ -10,17 +10,20 @@ metadata:
   name: {{ include "resource.dexk8sauth.name" $resource }}-{{ .id }}
   labels:
     {{- include "dexk8sauth.labels.common" $resource | nindent 4 }}
-    {{- include "dexk8sauth.customer.labels.selector" $resource | nindent 4 }}
+    app.kubernetes.io/name: dex-k8s-authenticator-{{ .id }}
+    app.kubernetes.io/component: dex-k8s-authenticator-{{ .id }}
 spec:
   replicas: 1
   selector:
     matchLabels:
-      {{- include "dexk8sauth.customer.labels.selector" $resource | nindent 6 }}
+      app.kubernetes.io/name: dex-k8s-authenticator-{{ .id }}
+      app.kubernetes.io/component: dex-k8s-authenticator-{{ .id }}
   template:
     metadata:
       labels:
         {{- include "dexk8sauth.labels.common" $resource | nindent 8 }}
-        {{- include "dexk8sauth.customer.labels.selector" $resource | nindent 8 }}
+        app.kubernetes.io/name: dex-k8s-authenticator-{{ .id }}
+        app.kubernetes.io/component: dex-k8s-authenticator-{{ .id }}
     spec:
       containers:
       - name: {{ $resource.Chart.Name }}

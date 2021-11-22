@@ -60,7 +60,7 @@ oidc:
     connectorConfig: ""
     write_all_group: ""
     connectors:
-      - id: ""
+      - id: customer
         connectorType: ""
         connectorName: ""
         connectorConfig: ""

@@ -18,7 +18,8 @@ spec:
     protocol: TCP
     name: http
   selector:
-    {{- include "dexk8sauth.customer.labels.selector" $resource | nindent 4 }}
+    app.kubernetes.io/name: dex-k8s-authenticator-{{ .id }}
+    app.kubernetes.io/component: dex-k8s-authenticator-{{ .id }}
 {{- end }}
 {{- else }}
 apiVersion: v1

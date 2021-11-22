@@ -59,12 +59,6 @@ oidc:
     connectorName: ""
     connectorConfig: ""
     write_all_group: ""
-    connectors:
-      - id: customer
-        connectorType: ""
-        connectorName: ""
-        connectorConfig: ""
-        write_all_group: ""
 
 services:
   kubernetes:

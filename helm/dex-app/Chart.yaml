@@ -26,4 +26,4 @@ maintainers:
   email: nbadger@mintel.com
 annotations:
   application.giantswarm.io/team: team-rainbow
-  config.giantswarm.io/version: multipleconnectors
+  config.giantswarm.io/version: 1.x.x

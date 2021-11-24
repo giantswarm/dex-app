@@ -1,4 +1,58 @@
 {{ if .Values.oidc.customer.enabled }}
+{{- if .Values.oidc.customer.connectors -}}
+{{ $values := .Values }}
+{{ $resource := . }}
+{{- range .Values.oidc.customer.connectors }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "resource.dexk8sauth.name" $resource }}-{{ .id }}
+  labels:
+    {{- include "dexk8sauth.labels.common" $resource | nindent 4 }}
+data:
+  config.yaml: |-
+    listen: http://0.0.0.0:5555
+    web_path_prefix: "/"
+    debug: "false"
+    logo_uri: {{ $values.logoURI }}
+    {{- if not $values.ingress.tls.letsencrypt }}
+    trusted_root_ca_file: /app/ssl/ca.crt
+    {{- end }}
+    clusters:
+    {{- if $values.isManagementCluster }}
+    - name: {{ $values.managementCluster.name }}
+      description: "Management Cluster Kubernetes API for installation '{{ $values.managementCluster.name }}', as a Giant Swarm customer"
+      short_description: "{{ $values.managementCluster.name }} management cluster"
+      client_id: dex-k8s-authenticator
+      client_secret: {{ $values.oidc.staticClients.dexK8SAuthenticator.clientSecret }}
+      connector_id: {{ .id }}
+      issuer: https://{{ $values.oidc.issuerAddress }}
+      {{- if $values.services.kubernetes.api.public }}
+      k8s_master_uri: {{ $values.services.kubernetes.api.address }}
+      {{- else }}
+      k8s_master_uri: {{ $values.services.kubernetes.api.internalAddress }}
+      {{- end }}
+      k8s_ca_pem: {{ toYaml $values.services.kubernetes.api.caPem | indent 8 }}
+      redirect_uri: https://{{ $values.oidc.staticClients.dexK8SAuthenticator.clientAddress }}/callback
+    {{- else if $values.isWorkloadCluster }}
+    - name: {{ $values.clusterID }}
+      description: "Cluster Kubernetes API {{ $values.clusterID }}"
+      short_description: "{{ $values.clusterID }} cluster"
+      client_id: dex-k8s-authenticator
+      client_secret: {{ $values.oidc.staticClients.dexK8SAuthenticator.clientSecret }}
+      connector_id: {{ .id }}
+      issuer: https://dex.{{ $values.baseDomain }}
+      {{- if $values.services.kubernetes.api.public }}
+      k8s_master_uri: https://api.{{ $values.baseDomain }}
+      {{- else }}
+      k8s_master_uri: {{ $values.services.kubernetes.api.internalAddress }}
+      {{- end }}
+      k8s_ca_pem: {{ toYaml $values.services.kubernetes.api.caPem | indent 8 }}
+      redirect_uri: https://login.{{ $values.baseDomain }}/callback
+    {{- end }}
+{{- end }}
+{{- else }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -46,4 +100,5 @@ data:
       k8s_ca_pem: {{ toYaml .Values.services.kubernetes.api.caPem | indent 8 }}
       redirect_uri: https://login.{{ .Values.baseDomain }}/callback
     {{- end }}
+{{ end }}
 {{ end }}

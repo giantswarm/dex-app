@@ -53,40 +53,48 @@ data:
         idTokens: 30m
       customer:
         enabled: true
-        connectorName: test
+        connectors:
         ## For Keyclock
-        connectorType: oidc
-        connectorConfig: >-
-          clientID: <CLIENT-ID-SET-IN-YOUR-IdP>
-          clientSecret: <CLIENT-SECRET-SET-IN--YOUR-IdP>
-          insecureEnableGroups: true
-          scopes:
-          - email
-          - groups
-          - profile
-          issuer: https://<IDP_ENDPOINT>/auth/realms/master
-          redirectURI: https://dex.<CLUSTERID>.<BASEDOMAIN>/callback
+        - id: customer
+          connectorName: test
+          connectorType: oidc
+          connectorConfig: >-
+            clientID: <CLIENT-ID-SET-IN-YOUR-IdP>
+            clientSecret: <CLIENT-SECRET-SET-IN--YOUR-IdP>
+            insecureEnableGroups: true
+            scopes:
+            - email
+            - groups
+            - profile
+            issuer: https://<IDP_ENDPOINT>/auth/realms/master
+            redirectURI: https://dex.<CLUSTERID>.<BASEDOMAIN>/callback
         ## For Active Directory
-        connectorType: microsoft
-        connectorConfig: >-
-          clientID: <CLIENT-ID-SET-IN-YOUR-IdP>
-          clientSecret: <CLIENT-SECRET-SET-IN--YOUR-IdP>
-          tenant: <TENANT-SET-SET-IN--YOUR-IdP>
-          redirectURI: https://dex.<CLUSTERID>.<BASEDOMAIN>/callback
+        - id: customer
+          connectorName: test
+          connectorType: microsoft
+          connectorConfig: >-
+            clientID: <CLIENT-ID-SET-IN-YOUR-IdP>
+            clientSecret: <CLIENT-SECRET-SET-IN--YOUR-IdP>
+            tenant: <TENANT-SET-SET-IN--YOUR-IdP>
+            redirectURI: https://dex.<CLUSTERID>.<BASEDOMAIN>/callback
         ## For Github  
-        connectorType: github
-        connectorConfig: >-
-          clientID: <CLIENT-ID-SET-IN-YOUR-IdP>
-          clientSecret: <CLIENT-SECRET-SET-IN--YOUR-IdP>
-          loadAllGroups: false
-          orgs:
-          - name: <GITHUB_ORG_NAME>
-            teams:
-            - <GITHUB_TEAM_NAME>
-          redirectURI: https://dex.<CLUSTERID>.<BASEDOMAIN>/callback
+        - id: customer
+          connectorName: test
+          connectorType: github
+          connectorConfig: >-
+            clientID: <CLIENT-ID-SET-IN-YOUR-IdP>
+            clientSecret: <CLIENT-SECRET-SET-IN--YOUR-IdP>
+            loadAllGroups: false
+            orgs:
+            - name: <GITHUB_ORG_NAME>
+              teams:
+              - <GITHUB_TEAM_NAME>
+            redirectURI: https://dex.<CLUSTERID>.<BASEDOMAIN>/callback
 ```
 
 __Note__: In the above snippet you have to replace the `<CLUSTERID>` variable and add the Kubernetes Certificate Authority to ensure Dex can trust the API endpoint. Finally you have to use a connector. Here we show three example values.
+You can use more than one connector, but they need to have a different `id` value.
+We advice to use `- id: customer` for your primary connector.
 
 Later you create an App Custom Resource (CR) that points to our catalog with the values defined before
 

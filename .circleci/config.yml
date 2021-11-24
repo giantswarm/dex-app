@@ -79,6 +79,19 @@ workflows:
               ignore: /.*/
             tags:
               only: /^v.*/
+              
+      # deploy to openstack installations (only tags)
+      - architect/push-to-app-collection:
+          name: push-dex-app-to-openstack-app-collection
+          app_name: "dex-app"
+          app_collection_repo: "openstack-app-collection"
+          requires:
+            - push-dex-app-to-control-plane-app-catalog
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^v.*/
 
       # make it available to customers (only tags)
       - architect/push-to-app-catalog:

@@ -1,6 +1,6 @@
 version: 2.1
 orbs:
-  architect: giantswarm/architect@2.7.0
+  architect: giantswarm/architect@4.8.1
 
 workflows:
   build:
@@ -77,5 +77,29 @@ workflows:
           filters:
             branches:
               ignore: /.*/
+            tags:
+              only: /^v.*/
+              
+      # deploy to openstack installations (only tags)
+      - architect/push-to-app-collection:
+          name: push-dex-app-to-openstack-app-collection
+          app_name: "dex-app"
+          app_collection_repo: "openstack-app-collection"
+          requires:
+            - push-dex-app-to-control-plane-app-catalog
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^v.*/
+
+      # make it available to customers (only tags)
+      - architect/push-to-app-catalog:
+          name: "package and push dex-app chart"
+          app_catalog: "giantswarm-playground-catalog"
+          app_catalog_test: "giantswarm-playground-test-catalog"
+          chart: "dex-app"
+          # Trigger job on git tag.
+          filters:
             tags:
               only: /^v.*/

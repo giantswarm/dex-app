@@ -1,3 +1,4 @@
+{{- if eq (include "has-giantswarm-connector" .) "true" -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -18,11 +19,11 @@ spec:
     spec:
       containers:
       - name: {{ .Chart.Name }}
-        {{ if (.Values.Installation) }}
-        image: "{{ .Values.Installation.V1.Registry.Domain }}/{{ .Values.client.image.name }}:{{ .Values.client.image.tag }}"
-        {{ else }}
+        {{- if .Values.isManagementCluster }}
+        image: "{{ .Values.registry.domain }}/{{ .Values.client.image.name }}:{{ .Values.client.image.tag }}"
+        {{- else }}
         image: "{{ .Values.client.image.registry }}/{{ .Values.client.image.name }}:{{ .Values.client.image.tag }}"
-        {{ end }}
+        {{- end }}
         imagePullPolicy: {{ .Values.client.image.pullPolicy }}
         args: [ "--config", "config.yaml" ]
         ports:
@@ -41,7 +42,7 @@ spec:
         - name: config
           subPath: config.yaml
           mountPath: /app/config.yaml
-        {{- if not .Values.Installation.V1.GiantSwarm.OIDC.Letsencrypt }}
+        {{- if not .Values.ingress.tls.letsencrypt }}
         - mountPath: /app/ssl/ca.crt
           name: ca-cert
           subPath: ca.crt
@@ -69,7 +70,7 @@ spec:
       - name: config
         configMap:
           name: {{ include "resource.dexk8sauth.name" . }}-giantswarm
-      {{- if not .Values.Installation.V1.GiantSwarm.OIDC.Letsencrypt }}
+      {{- if not .Values.ingress.tls.letsencrypt }}
       - secret:
           defaultMode: 420
           items:
@@ -78,3 +79,4 @@ spec:
           secretName: {{ include "resource.dexk8sauth.name" . }}
         name: ca-cert
       {{- end }}
+{{ end }}

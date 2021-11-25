@@ -2,12 +2,12 @@ apiVersion: v1
 name: dex-app
 version: [[ .Version ]]
 appVersion: v2.28.1
-description: CoreOS Dex
+description: OpenID Connect (OIDC) identity and OAuth 2.0 provider with pluggable connectors
 keywords:
-- dex
+- authentication
 - oidc
-icon: https://github.com/dexidp/dex/raw/master/Documentation/logos/dex-glyph-color.png
-home: https://github.com/dexidp/dex/
+icon: https://s.giantswarm.io/app-icons/dex/1/light.svg
+home: https://github.com/giantswarm/dex-app
 sources:
 - https://github.com/dexidp/dex/
 - https://github.com/mintel/dex-k8s-authenticator
@@ -25,4 +25,5 @@ maintainers:
 - name: Nick Badger
   email: nbadger@mintel.com
 annotations:
-  application.giantswarm.io/team: "biscuit"
+  application.giantswarm.io/team: team-rainbow
+  config.giantswarm.io/version: 1.x.x

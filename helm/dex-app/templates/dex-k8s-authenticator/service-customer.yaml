@@ -1,4 +1,27 @@
-{{ if .Values.Installation.V1.GiantSwarm.OIDC.Enabled }}
+{{ if .Values.oidc.customer.enabled }}
+{{- if .Values.oidc.customer.connectors -}}
+{{ $values := .Values }}
+{{ $resource := . }}
+{{- range .Values.oidc.customer.connectors }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "resource.dexk8sauth.name" $resource }}-{{ .id }}
+  labels:
+    {{- include "dexk8sauth.labels.common" $resource | nindent 4 }}
+spec:
+  type: ClusterIP
+  ports:
+  - port: 5555
+    targetPort: http
+    protocol: TCP
+    name: http
+  selector:
+    app.kubernetes.io/name: dex-k8s-authenticator-{{ .id }}
+    app.kubernetes.io/component: dex-k8s-authenticator-{{ .id }}
+{{- end }}
+{{- else }}
 apiVersion: v1
 kind: Service
 metadata:
@@ -14,4 +37,5 @@ spec:
     name: http
   selector:
     {{- include "dexk8sauth.customer.labels.selector" . | nindent 4 }}
+{{ end }}
 {{ end }}

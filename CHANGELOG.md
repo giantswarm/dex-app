@@ -9,6 +9,82 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Enable telemetry under `/metrics` on port 5558.
 
+## [1.17.0] - 2021-11-24
+
+### Added
+
+- Add support for more than one customer connector.
+
+## [1.16.0] - 2021-10-25
+
+### Changed
+
+- Change dex image to fix refreshing token
+
+## [1.15.0] - 2021-10-22
+
+### Changed
+
+- Make easier the configuration for Workload Clusters.
+- Bring the changes needed to run in Kubernetes 1.21.
+
+## [1.14.1] - 2021-10-18
+
+### Changed
+
+- Use SVG icon from our own server
+
+## [1.14.0] - 2021-10-05
+
+### Changed
+
+- Adapt it to be run in a Giant Swarm Workload Cluster too.
+- Bring new dex 2.30.0 version to be compatible with Kuberentes 1.21.x.
+
+## [1.13.0] - 2021-08-13
+
+### Fixed
+
+- Fix Kubernetes API address in `dex-k8s-authenticator`.
+
+## [1.12.1] - 2021-08-09
+
+### Fixed
+
+- Fix certificate secret for dex-k8s-authenticator.
+
+## [1.12.0] - 2021-08-09
+
+### Changed
+
+- Wording update: change "control plane" to "management cluster"
+- Make customer connector descriptions more user friendly
+- Prepare helm values to configuration management.
+- Update architect-orb to v4.0.0.
+
+## [1.11.2] - 2021-06-17
+
+### Changed
+
+- Change ingress API version to `networking.k8s.io/v1` (falling back to `networking.k8s.io/v1beta1` where the first is not available).
+
+## [1.11.1] - 2021-06-14
+
+- New release after updating architect-orb
+
+## [1.11.0] - 2021-06-14
+
+### Changed
+
+- Set more explicit name for the Giant Swarm staff connector, to make it easy to distinguish it from a customer's connector
+- Update architect-orb to v2.11.0
+
+## [1.10.0] - 2021-05-05
+
+### Added
+
+- Add Grafana as static client.
+
 ## [1.9.1] - 2021-04-29
 
 ### Changed
@@ -109,7 +185,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add helm chart for dex.
 
-[Unreleased]: https://github.com/giantswarm/dex-app/compare/v1.9.1...HEAD
+[Unreleased]: https://github.com/giantswarm/dex-app/compare/v1.17.0...HEAD
+[1.17.0]: https://github.com/giantswarm/dex-app/compare/v1.16.0...v1.17.0
+[1.16.0]: https://github.com/giantswarm/dex-app/compare/v1.15.0...v1.16.0
+[1.15.0]: https://github.com/giantswarm/dex-app/compare/v1.14.1...v1.15.0
+[1.14.1]: https://github.com/giantswarm/dex-app/compare/v1.14.0...v1.14.1
+[1.14.0]: https://github.com/giantswarm/dex-app/compare/v1.13.0...v1.14.0
+[1.13.0]: https://github.com/giantswarm/dex-app/compare/v1.12.1...v1.13.0
+[1.12.1]: https://github.com/giantswarm/dex-app/compare/v1.12.0...v1.12.1
+[1.12.0]: https://github.com/giantswarm/dex-app/compare/v1.11.2...v1.12.0
+[1.11.2]: https://github.com/giantswarm/dex-app/compare/v1.11.1...v1.11.2
+[1.11.1]: https://github.com/giantswarm/dex-app/compare/v1.11.0...v1.11.1
+[1.11.0]: https://github.com/giantswarm/dex-app/compare/v1.10.0...v1.11.0
+[1.10.0]: https://github.com/giantswarm/dex-app/compare/v1.9.1...v1.10.0
 [1.9.1]: https://github.com/giantswarm/dex-app/compare/v1.9.0...v1.9.1
 [1.9.0]: https://github.com/giantswarm/dex-app/compare/v1.8.1...v1.9.0
 [1.8.1]: https://github.com/giantswarm/dex-app/compare/v1.8.0...v1.8.1

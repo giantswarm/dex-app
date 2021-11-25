@@ -14,17 +14,72 @@ dex:
   image:
     registry: quay.io
     name: giantswarm/dex
-    tag: v2.28.1-giantswarm-2
+    tag: v2.30.0-giantswarm-93504f9
     pullPolicy: IfNotPresent
 
 extraVolumes: []
 extraVolumeMounts: []
 logoURI: https://s.giantswarm.io/brand/1/logo.svg
 
-Installation:
-  V1:
-    GiantSwarm:
-      OIDC:
-        Kubernetes:
-          API:
-            Public: true
+ingress:
+  tls:
+    letsencrypt: true
+    caPemB64: ""
+    crtPemB64: ""
+    keyPemB64: ""
+
+oidc:
+  issuerAddress: ""
+  expiry:
+    signingKeys: 6h
+    idTokens: 30m
+  staticClients:
+    grafana:
+      cliendID: ""
+      redirectURI: ""
+    gsCLIAuth:
+      clientID: ""
+      address: http://localhost:8085/oauth/callback
+    happa:
+      clientID: ""
+      redirectURI: ""
+    dexK8SAuthenticator:
+      clientAddress: ""
+      clientSecret: "default-client-dex-authenticator-secret"
+  # Giant Swarm OIDC values to run DEX in the management clusters
+  giantswarm:
+    connectorConfig:
+      clientID: ""
+      clientSecret: ""
+      team: ""
+    write_all_group: ""
+  customer:
+    enabled: false
+    connectorType: ""
+    connectorName: ""
+    connectorConfig: ""
+    write_all_group: ""
+    connectors:
+
+services:
+  kubernetes:
+    api:
+      public: true
+      address: ""
+      internalAddress: ""
+      caPem: ""
+  happa:
+    address: ""
+  grafana:
+    address: ""
+
+registry:
+  domain: docker.io
+
+# Giant Swarm properties for management clusters
+isManagementCluster: false
+managementCluster:
+  name: ""
+
+# Giant Swarm properties for workload clusters
+isWorkloadCluster: false

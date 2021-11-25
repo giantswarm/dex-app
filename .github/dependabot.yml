@@ -1,6 +1,6 @@
 # DO NOT EDIT. Generated with:
 #
-#    devctl@4.4.0
+#    devctl@4.10.0
 #
 version: 2
 updates:
@@ -11,6 +11,6 @@ updates:
       time: "04:00"
     open-pull-requests-limit: 10
     reviewers:
-      - giantswarm/team-biscuit
+      - giantswarm/team-rainbow
     ignore:
       - dependency-name: zricethezav/gitleaks-action

@@ -1,35 +1,85 @@
-apiVersion: extensions/v1beta1
+{{ if or (eq (include "has-giantswarm-connector" .) "true") .Values.oidc.customer.enabled }}
+{{ if .Capabilities.APIVersions.Has "networking.k8s.io/v1/Ingress" }}
+apiVersion: networking.k8s.io/v1
+{{ else }}
+apiVersion: networking.k8s.io/v1beta1
+{{ end }}
 kind: Ingress
 metadata:
   name: {{ include "resource.dexk8sauth.name" . }}
   labels:
     {{- include "dexk8sauth.labels.common" . | nindent 4 }}
   annotations:
-    kubernetes.io/ingress.class: nginx
-    {{- if .Values.Installation.V1.GiantSwarm.OIDC.Letsencrypt }}
+    {{- if .Values.ingress.tls.letsencrypt }}
     kubernetes.io/tls-acme: "true"
     {{- end }}
 spec:
+  ingressClassName: nginx
   tls:
   - hosts:
-    - {{ .Values.Installation.V1.GiantSwarm.OIDC.ClientAddress }}
-    {{- if .Values.Installation.V1.GiantSwarm.OIDC.Letsencrypt }}
+    {{- if .Values.isWorkloadCluster }}
+      - login.{{ .Values.baseDomain }}
+    {{- else }}
+      - {{ .Values.oidc.staticClients.dexK8SAuthenticator.clientAddress }}
+    {{- end }}
+    {{- if .Values.ingress.tls.letsencrypt }}
     secretName: {{ include "resource.dexk8sauth.name" . }}-le
     {{- else }}
     secretName: {{ include "resource.dexk8sauth.name" . }}
     {{- end }}
   rules:
-  - host: {{ .Values.Installation.V1.GiantSwarm.OIDC.ClientAddress }}
+  {{- if .Values.isWorkloadCluster }}
+  - host: login.{{ .Values.baseDomain }}
+  {{- else }}
+  - host: {{ .Values.oidc.staticClients.dexK8SAuthenticator.clientAddress }}
+  {{- end }}
     http:
       paths:
+{{- if eq (include "has-giantswarm-connector" .) "true" }}
       - path: /admin/
         pathType: Prefix
         backend:
+  {{- if .Capabilities.APIVersions.Has "networking.k8s.io/v1/Ingress" }}
+          service:
+            name: {{ include "resource.dexk8sauth.name" . }}-giantswarm
+            port:
+              name: http
+  {{- else }}
           serviceName: {{ include "resource.dexk8sauth.name" . }}-giantswarm
           servicePort: http
-{{ if .Values.Installation.V1.GiantSwarm.OIDC.Enabled }}
+  {{- end }}
+{{- end }}
+{{- if .Values.oidc.customer.enabled }}
+{{- if .Values.oidc.customer.connectors -}}
+{{ $values := .Values -}}
+{{ $resource := . }}
+{{- range .Values.oidc.customer.connectors }}
       - path: /
+        pathType: Prefix
         backend:
+  {{- if $resource.Capabilities.APIVersions.Has "networking.k8s.io/v1/Ingress" }}
+          service:
+            name: {{ include "resource.dexk8sauth.name" $resource }}-{{ .id }}
+            port:
+              name: http
+  {{- else }}
+          serviceName: {{ include "resource.dexk8sauth.name" $resource }}-{{ .id }}
+          servicePort: http
+  {{- end }}
+{{- end }}
+{{- else }}
+      - path: /
+        pathType: Prefix
+        backend:
+  {{- if .Capabilities.APIVersions.Has "networking.k8s.io/v1/Ingress" }}
+          service:
+            name: {{ include "resource.dexk8sauth.name" . }}-customer
+            port:
+              name: http
+  {{- else }}
           serviceName: {{ include "resource.dexk8sauth.name" . }}-customer
           servicePort: http
+  {{- end }}
+{{ end }}
+{{ end }}
 {{ end }}

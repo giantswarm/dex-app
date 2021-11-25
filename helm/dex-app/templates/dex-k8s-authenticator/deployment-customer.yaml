@@ -1,4 +1,94 @@
-{{ if .Values.Installation.V1.GiantSwarm.OIDC.Enabled }}
+{{ if .Values.oidc.customer.enabled }}
+{{- if .Values.oidc.customer.connectors -}}
+{{ $values := .Values }}
+{{ $resource := . }}
+{{- range .Values.oidc.customer.connectors }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "resource.dexk8sauth.name" $resource }}-{{ .id }}
+  labels:
+    {{- include "dexk8sauth.labels.common" $resource | nindent 4 }}
+    app.kubernetes.io/name: dex-k8s-authenticator-{{ .id }}
+    app.kubernetes.io/component: dex-k8s-authenticator-{{ .id }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: dex-k8s-authenticator-{{ .id }}
+      app.kubernetes.io/component: dex-k8s-authenticator-{{ .id }}
+  template:
+    metadata:
+      labels:
+        {{- include "dexk8sauth.labels.common" $resource | nindent 8 }}
+        app.kubernetes.io/name: dex-k8s-authenticator-{{ .id }}
+        app.kubernetes.io/component: dex-k8s-authenticator-{{ .id }}
+    spec:
+      containers:
+      - name: {{ $resource.Chart.Name }}
+        {{- if $values.isManagementCluster }}
+        image: "{{ $values.registry.domain }}/{{ $values.client.image.name }}:{{ $values.client.image.tag }}"
+        {{- else }}
+        image: "{{ $values.client.image.registry }}/{{ $values.client.image.name }}:{{ $values.client.image.tag }}"
+        {{- end }}
+        imagePullPolicy: {{ $values.client.image.pullPolicy }}
+        args: [ "--config", "config.yaml" ]
+        ports:
+        - name: http
+          containerPort: 5555
+          protocol: TCP
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: http
+        readinessProbe:
+          httpGet:
+            path: /healthz
+            port: http
+        volumeMounts:
+        - name: config
+          subPath: config.yaml
+          mountPath: /app/config.yaml
+        {{- if not $values.ingress.tls.letsencrypt }}
+        - mountPath: /app/ssl/ca.crt
+          name: ca-cert
+          subPath: ca.crt
+        {{- end }}
+        resources:
+          limits:
+            cpu: 50m
+            memory: 64Mi
+          requests:
+            cpu: 50m
+            memory: 64Mi
+    {{- with $values.nodeSelector }}
+      nodeSelector:
+{{ toYaml . | indent 6 }}
+    {{- end }}
+    {{- with $values.affinity }}
+      affinity:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with $values.tolerations }}
+      tolerations:
+{{ toYaml . | indent 6 }}
+    {{- end }}
+      volumes:
+      - name: config
+        configMap:
+          name: {{ include "resource.dexk8sauth.name" $resource }}-{{ .id }}
+      {{- if not $values.ingress.tls.letsencrypt }}
+      - secret:
+          defaultMode: 420
+          items:
+          - key: ca.crt
+            path: ca.crt
+          secretName: {{ include "resource.dexk8sauth.name" $resource }}
+        name: ca-cert
+      {{- end }}
+{{- end }}
+{{- else }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -19,11 +109,11 @@ spec:
     spec:
       containers:
       - name: {{ .Chart.Name }}
-        {{ if (.Values.Installation) }}
-        image: "{{ .Values.Installation.V1.Registry.Domain }}/{{ .Values.client.image.name }}:{{ .Values.client.image.tag }}"
-        {{ else }}
+        {{- if .Values.isManagementCluster }}
+        image: "{{ .Values.registry.domain }}/{{ .Values.client.image.name }}:{{ .Values.client.image.tag }}"
+        {{- else }}
         image: "{{ .Values.client.image.registry }}/{{ .Values.client.image.name }}:{{ .Values.client.image.tag }}"
-        {{ end }}
+        {{- end }}
         imagePullPolicy: {{ .Values.client.image.pullPolicy }}
         args: [ "--config", "config.yaml" ]
         ports:
@@ -42,7 +132,7 @@ spec:
         - name: config
           subPath: config.yaml
           mountPath: /app/config.yaml
-        {{- if not .Values.Installation.V1.GiantSwarm.OIDC.Letsencrypt }}
+        {{- if not .Values.ingress.tls.letsencrypt }}
         - mountPath: /app/ssl/ca.crt
           name: ca-cert
           subPath: ca.crt
@@ -70,7 +160,7 @@ spec:
       - name: config
         configMap:
           name: {{ include "resource.dexk8sauth.name" . }}-customer
-      {{- if not .Values.Installation.V1.GiantSwarm.OIDC.Letsencrypt }}
+      {{- if not .Values.ingress.tls.letsencrypt }}
       - secret:
           defaultMode: 420
           items:
@@ -79,4 +169,5 @@ spec:
           secretName: {{ include "resource.dexk8sauth.name" . }}
         name: ca-cert
       {{- end }}
+{{ end }}
 {{ end }}

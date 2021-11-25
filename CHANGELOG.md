@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+- Enable telemetry under `/metrics` on port 5558.
+
 ## [1.17.0] - 2021-11-24
 
 ### Added

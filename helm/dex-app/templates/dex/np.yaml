@@ -15,5 +15,7 @@ spec:
   - ports:
     - port: 5556
       protocol: TCP
+    - port: 5558
+      protocol: TCP
   egress:
   - {}

@@ -1,0 +1,13 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ include "resource.dex.name"  . }}
+  labels:
+  {{- include "dex.labels.common" . | nindent 4 }}
+spec:
+  endpoints:
+    - path: /metrics
+      port: metrics
+  selector:
+    matchLabels:
+  {{- include "dex.labels.selector" . | nindent 6 }}

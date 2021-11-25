@@ -12,5 +12,8 @@ spec:
   - name: http
     targetPort: http
     port: 32000
+  - name: metrics
+    port: 5558
+    targetPort: metrics
   selector:
     {{- include "dex.labels.selector" . | nindent 4 }}

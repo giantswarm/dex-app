@@ -7,7 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Update `dex` to v2.30.2.
+
 ## [1.18.0] - 2021-11-25
+
+### Added
 
 - Enable telemetry under `/metrics` on port 5558.
 

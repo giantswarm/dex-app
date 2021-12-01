@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Drop support for Kubernetes < 1.19
+
 ## [1.18.0] - 2021-11-25
 
 - Enable telemetry under `/metrics` on port 5558.

@@ -1,8 +1,4 @@
-{{ if .Capabilities.APIVersions.Has "networking.k8s.io/v1/Ingress" }}
 apiVersion: networking.k8s.io/v1
-{{ else }}
-apiVersion: networking.k8s.io/v1beta1
-{{ end }}
 kind: Ingress
 metadata:
   name: {{ include "resource.dex.name" . }}
@@ -37,12 +33,7 @@ spec:
           - path: /
             pathType: Prefix
             backend:
-{{- if .Capabilities.APIVersions.Has "networking.k8s.io/v1/Ingress" }}
               service:
                 name: {{ include "resource.dex.name" . }}
                 port:
                   number: 32000
-{{- else }}
-              serviceName: {{ include "resource.dex.name" . }}
-              servicePort: 32000
-{{- end }}

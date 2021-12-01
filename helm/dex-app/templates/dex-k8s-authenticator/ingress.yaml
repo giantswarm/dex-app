@@ -1,9 +1,5 @@
 {{ if or (eq (include "has-giantswarm-connector" .) "true") .Values.oidc.customer.enabled }}
-{{ if .Capabilities.APIVersions.Has "networking.k8s.io/v1/Ingress" }}
 apiVersion: networking.k8s.io/v1
-{{ else }}
-apiVersion: networking.k8s.io/v1beta1
-{{ end }}
 kind: Ingress
 metadata:
   name: {{ include "resource.dexk8sauth.name" . }}
@@ -12,6 +8,7 @@ metadata:
   annotations:
     {{- if .Values.ingress.tls.letsencrypt }}
     kubernetes.io/tls-acme: "true"
+    cert-manager.io/cluster-issuer: "letsencrypt-giantswarm"
     {{- end }}
 spec:
   ingressClassName: nginx
@@ -39,15 +36,10 @@ spec:
       - path: /admin/
         pathType: Prefix
         backend:
-  {{- if .Capabilities.APIVersions.Has "networking.k8s.io/v1/Ingress" }}
           service:
             name: {{ include "resource.dexk8sauth.name" . }}-giantswarm
             port:
               name: http
-  {{- else }}
-          serviceName: {{ include "resource.dexk8sauth.name" . }}-giantswarm
-          servicePort: http
-  {{- end }}
 {{- end }}
 {{- if .Values.oidc.customer.enabled }}
 {{- if .Values.oidc.customer.connectors -}}
@@ -57,29 +49,19 @@ spec:
       - path: /
         pathType: Prefix
         backend:
-  {{- if $resource.Capabilities.APIVersions.Has "networking.k8s.io/v1/Ingress" }}
           service:
             name: {{ include "resource.dexk8sauth.name" $resource }}-{{ .id }}
             port:
               name: http
-  {{- else }}
-          serviceName: {{ include "resource.dexk8sauth.name" $resource }}-{{ .id }}
-          servicePort: http
-  {{- end }}
 {{- end }}
 {{- else }}
       - path: /
         pathType: Prefix
         backend:
-  {{- if .Capabilities.APIVersions.Has "networking.k8s.io/v1/Ingress" }}
           service:
             name: {{ include "resource.dexk8sauth.name" . }}-customer
             port:
               name: http
-  {{- else }}
-          serviceName: {{ include "resource.dexk8sauth.name" . }}-customer
-          servicePort: http
-  {{- end }}
 {{ end }}
 {{ end }}
 {{ end }}

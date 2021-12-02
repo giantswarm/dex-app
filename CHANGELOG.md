@@ -9,7 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Drop support for Kubernetes < 1.19
+- Drop support for Kubernetes < 1.19. ([#132](https://github.com/giantswarm/dex-app/pull/132))
+- Restore support for Kubernetes < 1.19. ([#133](https://github.com/giantswarm/dex-app/pull/133))
 
 ## [1.18.0] - 2021-11-25
 

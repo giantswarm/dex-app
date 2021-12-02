@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Drop support for Kubernetes < 1.19
+- Add Job allowing recreation of certificate secrets when upgrading and disabled lets encrypt.
 
 ## [1.18.0] - 2021-11-25
 

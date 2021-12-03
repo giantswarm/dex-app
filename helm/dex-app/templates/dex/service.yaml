@@ -4,7 +4,6 @@ metadata:
   name: {{ include "resource.dex.name" . }}
   labels:
     {{- include "dex.labels.common" . | nindent 4 }}
-    cluster_id: {{ .Values.clusterID }}
   annotations:
 spec:
   type: ClusterIP

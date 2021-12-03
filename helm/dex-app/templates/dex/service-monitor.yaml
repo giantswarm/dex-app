@@ -9,9 +9,10 @@ spec:
   endpoints:
     - path: /metrics
       port: metrics
+      relabelings:
+      - replacement: {{ .Values.clusterID }}
+        targetLabel: cluster_id
   selector:
     matchLabels:
   {{- include "dex.labels.selector" . | nindent 6 }}
-  targetLabels:
-    - cluster_id
 {{- end }}

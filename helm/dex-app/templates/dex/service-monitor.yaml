@@ -12,4 +12,6 @@ spec:
   selector:
     matchLabels:
   {{- include "dex.labels.selector" . | nindent 6 }}
+  targetLabels:
+    - cluster_id
 {{- end }}

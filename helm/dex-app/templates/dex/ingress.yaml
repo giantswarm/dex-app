@@ -1,8 +1,8 @@
-{{ if .Capabilities.APIVersions.Has "networking.k8s.io/v1/Ingress" }}
+{{- if .Capabilities.APIVersions.Has "networking.k8s.io/v1/Ingress" }}
 apiVersion: networking.k8s.io/v1
-{{ else }}
+{{- else }}
 apiVersion: networking.k8s.io/v1beta1
-{{ end }}
+{{- end }}
 kind: Ingress
 metadata:
   name: {{ include "resource.dex.name" . }}
@@ -11,6 +11,7 @@ metadata:
   annotations:
     {{- if .Values.ingress.tls.letsencrypt }}
     kubernetes.io/tls-acme: "true"
+    cert-manager.io/cluster-issuer: "letsencrypt-giantswarm"
     {{- end }}
 spec:
   ingressClassName: nginx

@@ -9,7 +9,7 @@ spec:
   endpoints:
     - path: /metrics
       port: metrics
-      relabelings:
+      metricRelabelings:
       - replacement: {{ .Values.clusterID }}
         targetLabel: cluster_id
   selector:

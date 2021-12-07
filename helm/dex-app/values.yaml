@@ -14,7 +14,7 @@ dex:
   image:
     registry: quay.io
     name: giantswarm/dex
-    tag: v2.30.2-gs2
+    tag: v2.30.0-giantswarm-93504f9
     pullPolicy: IfNotPresent
 
 extraVolumes: []

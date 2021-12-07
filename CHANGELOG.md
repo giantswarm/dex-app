@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Remove kubernetes version requirement from helm chart.
+
 ## [1.19.0] - 2021-12-07
 
 ### Changed

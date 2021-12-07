@@ -10,8 +10,12 @@ spec:
     - path: /metrics
       port: metrics
       metricRelabelings:
-      - replacement: {{ .Values.clusterID }}
-        targetLabel: cluster_id
+      - targetLabel: cluster_id
+        {{- if .Values.isManagementCluster }}
+        replacement: {{ .Values.managementCluster.name }}
+        {{- else if .Values.isWorkloadCluster }}
+        replacement: {{ .Values.clusterID }}
+        {{- end }}
   selector:
     matchLabels:
   {{- include "dex.labels.selector" . | nindent 6 }}

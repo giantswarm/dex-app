@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Add `cluster_id` label to telemetry metrics to allow filtering by workload clusters.
 - Update `dex` to v2.30.2.
 - Add Job allowing recreation of certificate secrets when upgrading and disabled lets encrypt.
 

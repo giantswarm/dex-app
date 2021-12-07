@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.20.0] - 2021-12-07
+
 ### Changed
 
 - Roll back to version 2.30.0
@@ -207,7 +209,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add helm chart for dex.
 
-[Unreleased]: https://github.com/giantswarm/dex-app/compare/v1.19.1...HEAD
+[Unreleased]: https://github.com/giantswarm/dex-app/compare/v1.20.0...HEAD
+[1.20.0]: https://github.com/giantswarm/dex-app/compare/v1.19.1...v1.20.0
 [1.19.1]: https://github.com/giantswarm/dex-app/compare/v1.19.0...v1.19.1
 [1.19.0]: https://github.com/giantswarm/dex-app/compare/v1.18.0...v1.19.0
 [1.18.0]: https://github.com/giantswarm/dex-app/compare/v1.17.0...v1.18.0

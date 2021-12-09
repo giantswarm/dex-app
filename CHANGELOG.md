@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Update `dex` to `v2.30.2-gs3` patch. This fixes a bug in `v2.30.2-gs2` which caused redundant group name prefixing to occur on token refresh.
+
 ## [1.20.0] - 2021-12-07
 
 ### Changed

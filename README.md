@@ -120,6 +120,22 @@ __Note__: When applying the example in the snippet above, please change the `<CL
 
 Now submitting both resources to the management API our automation will make sure your dex app is deployed and configured correctly.
 
+## Update Process
+
+Giant Swarm is currently building the `dex` app from [a fork](https://github.com/giantswarm/dex) of the [original project](https://github.com/dexidp/dex).
+We implement additional logic which adds the connector id as prefix to user groups.
+In order to update the image used in this chart it is currently needed to to do the following steps in our fork repo:
+
+- Fetch upstream changes.
+- Ensure that our commits with prefixing logic on token creation _and_ refresh are present on the branch we want to release from.
+- Ensure CircleCI builds are green
+- Create the version tag with -gs suffix to push the image to our registry
+
+Then in this repo:
+
+- Update the image version tag
+- Test the new version before releasing. Make sure to test token refresh as well.
+
 ## Release Process
 
 * Ensure CHANGELOG.md is up to date.

@@ -1,0 +1,287 @@
+{
+    "$schema": "http://json-schema.org/schema#",
+    "type": "object",
+    "properties": {
+        "client": {
+            "type": "object",
+            "properties": {
+                "image": {
+                    "type": "object",
+                    "properties": {
+                        "name": {
+                            "type": "string"
+                        },
+                        "pullPolicy": {
+                            "type": "string"
+                        },
+                        "registry": {
+                            "type": "string"
+                        },
+                        "tag": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "dex": {
+            "type": "object",
+            "properties": {
+                "image": {
+                    "type": "object",
+                    "properties": {
+                        "name": {
+                            "type": "string"
+                        },
+                        "pullPolicy": {
+                            "type": "string"
+                        },
+                        "registry": {
+                            "type": "string"
+                        },
+                        "tag": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "extraVolumeMounts": {
+            "type": "array"
+        },
+        "extraVolumes": {
+            "type": "array"
+        },
+        "fixJob": {
+            "type": "object",
+            "properties": {
+                "enabled": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "ingress": {
+            "type": "object",
+            "properties": {
+                "tls": {
+                    "type": "object",
+                    "properties": {
+                        "caPemB64": {
+                            "type": "string"
+                        },
+                        "crtPemB64": {
+                            "type": "string"
+                        },
+                        "keyPemB64": {
+                            "type": "string"
+                        },
+                        "letsencrypt": {
+                            "type": "boolean"
+                        }
+                    }
+                }
+            }
+        },
+        "isManagementCluster": {
+            "type": "boolean"
+        },
+        "isWorkloadCluster": {
+            "type": "boolean"
+        },
+        "logoURI": {
+            "type": "string"
+        },
+        "managementCluster": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "oidc": {
+            "type": "object",
+            "properties": {
+                "customer": {
+                    "type": "object",
+                    "properties": {
+                        "connectorConfig": {
+                            "type": "string"
+                        },
+                        "connectorName": {
+                            "type": "string"
+                        },
+                        "connectorType": {
+                            "type": "string"
+                        },
+                        "connectors": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "connectorConfig": {
+                                        "type": "string"
+                                    },
+                                    "connectorName": {
+                                        "type": "string"
+                                    },
+                                    "connectorType": {
+                                        "type": "string"
+                                    },
+                                    "id": {
+                                        "type": "string"
+                                    },
+                                    "write_all_group": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        },
+                        "enabled": {
+                            "type": "boolean"
+                        },
+                        "write_all_group": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "expiry": {
+                    "type": "object",
+                    "properties": {
+                        "idTokens": {
+                            "type": "string"
+                        },
+                        "signingKeys": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "giantswarm": {
+                    "type": "object",
+                    "properties": {
+                        "connectorConfig": {
+                            "type": "object",
+                            "properties": {
+                                "clientID": {
+                                    "type": "string"
+                                },
+                                "clientSecret": {
+                                    "type": "string"
+                                },
+                                "team": {
+                                    "type": "string"
+                                }
+                            }
+                        },
+                        "write_all_group": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "issuerAddress": {
+                    "type": "string"
+                },
+                "staticClients": {
+                    "type": "object",
+                    "properties": {
+                        "dexK8SAuthenticator": {
+                            "type": "object",
+                            "properties": {
+                                "clientAddress": {
+                                    "type": "string"
+                                },
+                                "clientSecret": {
+                                    "type": "string"
+                                }
+                            }
+                        },
+                        "grafana": {
+                            "type": "object",
+                            "properties": {
+                                "cliendID": {
+                                    "type": "string"
+                                },
+                                "redirectURI": {
+                                    "type": "string"
+                                }
+                            }
+                        },
+                        "gsCLIAuth": {
+                            "type": "object",
+                            "properties": {
+                                "address": {
+                                    "type": "string"
+                                },
+                                "clientID": {
+                                    "type": "string"
+                                }
+                            }
+                        },
+                        "happa": {
+                            "type": "object",
+                            "properties": {
+                                "clientID": {
+                                    "type": "string"
+                                },
+                                "redirectURI": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "registry": {
+            "type": "object",
+            "properties": {
+                "domain": {
+                    "type": "string"
+                }
+            }
+        },
+        "services": {
+            "type": "object",
+            "properties": {
+                "grafana": {
+                    "type": "object",
+                    "properties": {
+                        "address": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "happa": {
+                    "type": "object",
+                    "properties": {
+                        "address": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "kubernetes": {
+                    "type": "object",
+                    "properties": {
+                        "api": {
+                            "type": "object",
+                            "properties": {
+                                "address": {
+                                    "type": "string"
+                                },
+                                "caPem": {
+                                    "type": "string"
+                                },
+                                "internalAddress": {
+                                    "type": "string"
+                                },
+                                "public": {
+                                    "type": "boolean"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

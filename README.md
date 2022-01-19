@@ -139,6 +139,7 @@ Then in this repo:
 ## Release Process
 
 * Ensure CHANGELOG.md is up to date.
+* In case of changes to `values.yaml`, ensure that `values.schema.json` is updated to reflect all values and their types correctly.
 * Create a branch `master#release#v<major.minor.patch>`, wait for the according release PR to be created, approve it, merge it.
 * This will push a new git tag and trigger a new tarball to be pushed to the
 [control-plane-catalog](https://github.com/giantswarm/control-plane-catalog).

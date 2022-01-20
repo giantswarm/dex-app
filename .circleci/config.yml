@@ -10,12 +10,13 @@ workflows:
           app_catalog: "control-plane-catalog"
           app_catalog_test: "control-plane-test-catalog"
           chart: "dex-app"
+          persist_chart_archive: true
           filters:
             # Trigger the job also on git tag.
             tags:
               only: /^v.*/
 
-      # deploy to all installationss (only tags)
+      # deploy to all installations (only tags)
       - architect/push-to-app-collection:
           name: push-dex-app-to-shared-app-collection
           app_name: "dex-app"
@@ -112,4 +113,4 @@ workflows:
               ignore:
                 - master
           requires:
-            - "package and push dex-app chart"
+            - push-dex-app-to-control-plane-app-catalog

@@ -112,4 +112,4 @@ workflows:
               ignore:
                 - master
           requires:
-            - push-to-default-app-catalog
+            - "package and push dex-app chart"

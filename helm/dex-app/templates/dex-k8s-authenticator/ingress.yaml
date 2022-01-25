@@ -29,12 +29,7 @@ spec:
     secretName: {{ include "resource.dexk8sauth.name" . }}
     {{- end }}
   rules:
-  {{- if .Values.isWorkloadCluster }}
-  - host: login.{{ .Values.baseDomain }}
-  {{- else if .Values.isManagementCluster  }}
-  - host: {{ .Values.oidc.staticClients.dexK8SAuthenticator.clientAddress }}
-  {{- end }}
-    http:
+  - http:
       paths:
 {{- if eq (include "has-giantswarm-connector" .) "true" }}
       - path: /admin/
@@ -83,4 +78,9 @@ spec:
   {{- end }}
 {{ end }}
 {{ end }}
+  {{- if .Values.isWorkloadCluster }}
+    host: login.{{ .Values.baseDomain }}
+  {{- else if .Values.isManagementCluster  }}
+    host: {{ .Values.oidc.staticClients.dexK8SAuthenticator.clientAddress }}
+  {{- end }}
 {{ end }}

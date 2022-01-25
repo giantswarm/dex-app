@@ -19,7 +19,7 @@ spec:
     - hosts:
       {{- if .Values.isWorkloadCluster }}
         - dex.{{ .Values.baseDomain }}
-      {{- else }}
+      {{- else if .Values.isManagementCluster }}
         - {{ .Values.oidc.issuerAddress }}
       {{- end }}
       {{- if .Values.ingress.tls.letsencrypt }}

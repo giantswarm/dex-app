@@ -20,7 +20,7 @@ spec:
   - hosts:
     {{- if .Values.isWorkloadCluster }}
       - login.{{ .Values.baseDomain }}
-    {{- else }}
+    {{- else if .Values.isManagementCluster }}
       - {{ .Values.oidc.staticClients.dexK8SAuthenticator.clientAddress }}
     {{- end }}
     {{- if .Values.ingress.tls.letsencrypt }}

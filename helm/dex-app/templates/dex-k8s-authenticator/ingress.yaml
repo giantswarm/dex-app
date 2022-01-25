@@ -31,7 +31,7 @@ spec:
   rules:
   {{- if .Values.isWorkloadCluster }}
   - host: login.{{ .Values.baseDomain }}
-  {{- else }}
+  {{- else if .Values.isManagementCluster  }}
   - host: {{ .Values.oidc.staticClients.dexK8SAuthenticator.clientAddress }}
   {{- end }}
     http:

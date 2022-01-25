@@ -30,7 +30,7 @@ spec:
   rules:
   {{- if .Values.isWorkloadCluster }}
     - host: dex.{{ .Values.baseDomain }}
-  {{- else }}
+  {{- else if .Values.isManagementCluster }}
     - host: {{ .Values.oidc.issuerAddress }}
   {{- end }}
       http:

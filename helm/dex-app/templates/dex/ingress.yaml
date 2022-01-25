@@ -28,12 +28,7 @@ spec:
       secretName: {{ include "resource.dex.name" . }}-tls
       {{- end }}
   rules:
-  {{- if .Values.isWorkloadCluster }}
-    - host: dex.{{ .Values.baseDomain }}
-  {{- else if .Values.isManagementCluster }}
-    - host: {{ .Values.oidc.issuerAddress }}
-  {{- end }}
-      http:
+    - http:
         paths:
           - path: /
             pathType: Prefix
@@ -47,3 +42,8 @@ spec:
               serviceName: {{ include "resource.dex.name" . }}
               servicePort: 32000
 {{- end }}
+  {{- if .Values.isWorkloadCluster }}
+      host: dex.{{ .Values.baseDomain }}
+  {{- else if .Values.isManagementCluster }}
+      host: {{ .Values.oidc.issuerAddress }}
+  {{- end }}

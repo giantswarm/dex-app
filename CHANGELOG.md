@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Add `smoke` test scenario to check if the chart can be deployed.
 - Add schema validation for the `dex-app` helm chart.
 
 ## [1.21.0] - 2021-12-09

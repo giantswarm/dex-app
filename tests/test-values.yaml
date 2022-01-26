@@ -1,0 +1,31 @@
+isWorkloadCluster: false
+isManagementCluster: false
+
+ingress:
+  tls:
+    letsencrypt: true
+
+oidc:
+  issuerAddress: 127.0.0.1:5556
+  expiry:
+    signingKeys: 6h
+    idTokens: 30m
+  staticClients:
+    dexK8SAuthenticator:
+      clientAddress: 127.0.0.1:5555
+      clientSecret: ZXhhbXBsZS1hcHAtc2VjcmV0
+  customer:
+    enabled: true
+    connectors:
+      - connectorType: mockCallback
+        id: customer
+        connectorName: Kubernetes Dev Cluster
+        connectorConfig: |-
+          clientID: example-cluster-client-id
+          clientSecret: ZXhhbXBsZS1hcHAtc2VjcmV0
+          scopes:
+          - email
+          - groups
+          - profile
+          issuer: http://127.0.0.1:5556
+          redirectURI: http://127.0.0.1:5555/callback/example-cluster

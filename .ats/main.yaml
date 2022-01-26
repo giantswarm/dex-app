@@ -1,0 +1,5 @@
+smoke-tests-cluster-type: kind
+app-tests-app-config-file: tests/test-values.yaml
+smoke-tests-cluster-config-file: tests/kind_config.yaml
+
+skip-steps: [functional, upgrade]

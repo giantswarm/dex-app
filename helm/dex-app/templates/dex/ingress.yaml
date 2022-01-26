@@ -19,7 +19,7 @@ spec:
     - hosts:
       {{- if .Values.isWorkloadCluster }}
         - dex.{{ .Values.baseDomain }}
-      {{- else }}
+      {{- else if .Values.isManagementCluster }}
         - {{ .Values.oidc.issuerAddress }}
       {{- end }}
       {{- if .Values.ingress.tls.letsencrypt }}
@@ -28,12 +28,7 @@ spec:
       secretName: {{ include "resource.dex.name" . }}-tls
       {{- end }}
   rules:
-  {{- if .Values.isWorkloadCluster }}
-    - host: dex.{{ .Values.baseDomain }}
-  {{- else }}
-    - host: {{ .Values.oidc.issuerAddress }}
-  {{- end }}
-      http:
+    - http:
         paths:
           - path: /
             pathType: Prefix
@@ -47,3 +42,8 @@ spec:
               serviceName: {{ include "resource.dex.name" . }}
               servicePort: 32000
 {{- end }}
+  {{- if .Values.isWorkloadCluster }}
+      host: dex.{{ .Values.baseDomain }}
+  {{- else if .Values.isManagementCluster }}
+      host: {{ .Values.oidc.issuerAddress }}
+  {{- end }}

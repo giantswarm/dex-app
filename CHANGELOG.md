@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Add `clusterCA` in dex authenticator configmap from cluster values.
 - Add `smoke` test scenario to check if the chart can be deployed.
 - Add schema validation for the `dex-app` helm chart.
 

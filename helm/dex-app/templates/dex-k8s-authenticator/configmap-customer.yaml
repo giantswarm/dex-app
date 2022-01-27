@@ -20,22 +20,7 @@ data:
     trusted_root_ca_file: /app/ssl/ca.crt
     {{- end }}
     clusters:
-    {{- if $values.isManagementCluster }}
-    - name: {{ $values.managementCluster.name }}
-      description: "Management Cluster Kubernetes API for installation '{{ $values.managementCluster.name }}', as a Giant Swarm customer"
-      short_description: "{{ $values.managementCluster.name }} management cluster"
-      client_id: dex-k8s-authenticator
-      client_secret: {{ $values.oidc.staticClients.dexK8SAuthenticator.clientSecret }}
-      connector_id: {{ .id }}
-      issuer: https://{{ $values.oidc.issuerAddress }}
-      {{- if $values.services.kubernetes.api.public }}
-      k8s_master_uri: {{ $values.services.kubernetes.api.address }}
-      {{- else }}
-      k8s_master_uri: {{ $values.services.kubernetes.api.internalAddress }}
-      {{- end }}
-      k8s_ca_pem: {{ toYaml $values.services.kubernetes.api.caPem | indent 8 }}
-      redirect_uri: https://{{ $values.oidc.staticClients.dexK8SAuthenticator.clientAddress }}/callback
-    {{- else if $values.isWorkloadCluster }}
+    {{- if $values.isWorkloadCluster }}
     - name: {{ $values.clusterID }}
       description: "Cluster Kubernetes API {{ $values.clusterID }}"
       short_description: "{{ $values.clusterID }} cluster"
@@ -50,6 +35,21 @@ data:
       {{- end }}
       k8s_ca_pem: {{ toYaml $values.services.kubernetes.api.caPem | indent 8 }}
       redirect_uri: https://login.{{ $values.baseDomain }}/callback
+    {{- else }}
+    - name: {{ $values.managementCluster.name }}
+      description: "Management Cluster Kubernetes API for installation '{{ $values.managementCluster.name }}', as a Giant Swarm customer"
+      short_description: "{{ $values.managementCluster.name }} management cluster"
+      client_id: dex-k8s-authenticator
+      client_secret: {{ $values.oidc.staticClients.dexK8SAuthenticator.clientSecret }}
+      connector_id: {{ .id }}
+      issuer: https://{{ $values.oidc.issuerAddress }}
+      {{- if $values.services.kubernetes.api.public }}
+      k8s_master_uri: {{ $values.services.kubernetes.api.address }}
+      {{- else }}
+      k8s_master_uri: {{ $values.services.kubernetes.api.internalAddress }}
+      {{- end }}
+      k8s_ca_pem: {{ toYaml $values.services.kubernetes.api.caPem | indent 8 }}
+      redirect_uri: https://{{ $values.oidc.staticClients.dexK8SAuthenticator.clientAddress }}/callback
     {{- end }}
 {{- end }}
 {{- else }}

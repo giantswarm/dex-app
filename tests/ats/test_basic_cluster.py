@@ -29,6 +29,22 @@ nginx_ingress_controller_name = "nginx-ingress-controller-app"
 timeout: int = 360
 
 
+def prepare_service(kube_cluster: Cluster) -> None:
+    kubectl = partial(kube_cluster.kubectl,
+                      namespace=namespace_name, output_format="")
+    ingress_patch = dumps(
+        {
+            "spec": {
+                "type": "NodePort",
+                "ports": [{"name": "http", "port": 5555, "nodePort": 30012}],
+            }
+        }
+    )
+    kubectl(f"patch service dex-k8s-authenticator",
+            patch=ingress_patch)
+    logger.info("Patched dex-k8s-authenticator service")
+
+
 def load_yaml_from_path(filepath) -> Any:
     with open(filepath, 'r', encoding='utf-8') as values_file:
         values = values_file.read()
@@ -73,39 +89,23 @@ def nginx_ingress_controller_app_cr(app_factory: AppFactoryFunc) -> ConfiguredAp
         catalog_name="giantswarm-stable",  # catalog_name
         catalog_namespace="giantswarm",  # catalog_namespace
         catalog_url="https://giantswarm.github.io/giantswarm-catalog/",  # catalog_url
-        namespace=nginx_ingress_controller_name,
-        deployment_namespace=nginx_ingress_controller_name,
+        namespace=namespace_name,
+        deployment_namespace=namespace_name,
         config_values=load_yaml_from_path("ingress-values.yaml"),
         timeout_sec=timeout,
     )
     return res
 
-
-@pytest.mark.smoke
-def test_ingress_deployed(kube_cluster: Cluster, nginx_ingress_controller_app_cr: AppCR):
-    app_cr = AppCR.objects(kube_cluster.kube_client).filter(
-        namespace=nginx_ingress_controller_name).get_by_name(nginx_ingress_controller_name)
-    app_version = app_cr.obj["status"]["version"]
-    wait_for_deployments_to_run(
-        kube_cluster.kube_client,
-        [nginx_ingress_controller_name],
-        nginx_ingress_controller_name,
-        timeout,
-    )
-    assert app_version == nginx_ingress_controller_app_chart_version
-    logger.info(f"cni App CR shows installed appVersion {app_version}")
-
-
-# scope "module" means this is run only once, for the first test case requesting! It might be tricky
-# if you want to assert this multiple times
+    # scope "module" means this is run only once, for the first test case requesting! It might be tricky
+    # if you want to assert this multiple times
 
 
 @pytest.fixture(scope="module")
 def app_deployment(kube_cluster: Cluster) -> List[pykube.Deployment]:
     deployments = wait_for_deployments_to_run(
         kube_cluster.kube_client,
-        ["dex", "dex-k8s-authenticator-customer"],
-        "default",
+        ["dex"],
+        namespace_name,
         timeout,
     )
     return deployments
@@ -116,6 +116,19 @@ def app_deployment(kube_cluster: Cluster) -> List[pykube.Deployment]:
 
 @pytest.mark.smoke
 @pytest.mark.flaky(reruns=5, reruns_delay=10)
-def test_pods_available(kube_cluster: Cluster, app_deployment: List[pykube.Deployment]):
+def test_pods_available(kube_cluster: Cluster, nginx_ingress_controller_app_cr: AppCR, app_deployment: List[pykube.Deployment]):
+    prepare_service(kube_cluster)
+    app_cr = AppCR.objects(kube_cluster.kube_client).filter(
+        namespace=namespace_name).get_by_name(nginx_ingress_controller_name)
+    app_version = app_cr.obj["status"]["version"]
+    wait_for_deployments_to_run(
+        kube_cluster.kube_client,
+        [nginx_ingress_controller_name],
+        namespace_name,
+        timeout,
+    )
+    assert app_version == nginx_ingress_controller_app_chart_version
+    logger.info(
+        f"nginx ingress controller App CR shows installed appVersion {app_version}")
     for d in app_deployment:
         assert int(d.obj["status"]["readyReplicas"]) > 0

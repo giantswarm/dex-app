@@ -7,7 +7,7 @@ nodes:
         kind: ClusterConfiguration
         apiServer:
           extraArgs:
-            oidc-issuer-url: https://127.0.0.1:5556
+            oidc-issuer-url: https://dex.default.svc.cluster.local
             oidc-client-id: dex-k8s-authenticator
             oidc-username-claim: email
             oidc-groups-claim: groups
@@ -19,5 +19,9 @@ nodes:
     extraPortMappings:
       - containerPort: 30010
         hostPort: 8080
+        listenAddress: "127.0.0.1"
+        protocol: TCP
+      - containerPort: 30012
+        hostPort: 8082
         listenAddress: "127.0.0.1"
         protocol: TCP

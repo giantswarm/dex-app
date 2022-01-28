@@ -4,7 +4,6 @@ controller:
   autoscaling:
     enabled: false
   service:
-    suffix: "-test"
     type: NodePort
 cluster:
   profile: 1

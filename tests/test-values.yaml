@@ -3,7 +3,10 @@ isManagementCluster: true
 
 ingress:
   tls:
-    letsencrypt: true
+    letsencrypt: false
+    caPemB64: ""
+    crtPemB64: ""
+    keyPemB64: ""
 
 oidc:
   issuerAddress: dex.default.svc.cluster.local
@@ -27,5 +30,5 @@ oidc:
           - email
           - groups
           - profile
-          issuer: http://dex.default.svc.cluster.local:5556
-          redirectURI: http://dex-k8s-authenticator.default.svc.cluster.local:5555/callback/example-cluster
+          issuer: https://dex.default.svc.cluster.local
+          redirectURI: https://dex-k8s-authenticator.default.svc.cluster.local/callback

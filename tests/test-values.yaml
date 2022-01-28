@@ -1,18 +1,18 @@
 isWorkloadCluster: false
-isManagementCluster: false
+isManagementCluster: true
 
 ingress:
   tls:
     letsencrypt: true
 
 oidc:
-  issuerAddress: 127.0.0.1:5556
+  issuerAddress: dex.default.svc.cluster.local
   expiry:
     signingKeys: 6h
     idTokens: 30m
   staticClients:
     dexK8SAuthenticator:
-      clientAddress: 127.0.0.1:5555
+      clientAddress: dex-k8s-authenticator.default.svc.cluster.local
       clientSecret: ZXhhbXBsZS1hcHAtc2VjcmV0
   customer:
     enabled: true
@@ -27,5 +27,5 @@ oidc:
           - email
           - groups
           - profile
-          issuer: http://127.0.0.1:5556
-          redirectURI: http://127.0.0.1:5555/callback/example-cluster
+          issuer: http://dex.default.svc.cluster.local:5556
+          redirectURI: http://dex-k8s-authenticator.default.svc.cluster.local:5555/callback/example-cluster

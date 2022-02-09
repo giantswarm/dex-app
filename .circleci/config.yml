@@ -9,7 +9,7 @@ workflows:
           name: push-to-control-plane-app-catalog
           app_catalog: control-plane-catalog
           app_catalog_test: control-plane-test-catalog
-          chart: dex-app
+          chart: dex
           persist_chart_archive: true
           filters:
             # Trigger the job also on git tag.
@@ -19,7 +19,7 @@ workflows:
       # deploy to all installations (only tags)
       - architect/push-to-app-collection:
           name: push-to-shared-app-collection
-          app_name: dex-app
+          app_name: dex
           app_collection_repo: shared-app-collection
           requires:
             - push-to-control-plane-app-catalog
@@ -32,7 +32,7 @@ workflows:
       # deploy to aws installations (only tags)
       - architect/push-to-app-collection:
           name: push-to-aws-app-collection
-          app_name: dex-app
+          app_name: dex
           app_collection_repo: aws-app-collection
           requires:
             - push-to-control-plane-app-catalog
@@ -45,7 +45,7 @@ workflows:
       # deploy to azure installations (only tags)
       - architect/push-to-app-collection:
           name: push-to-azure-app-collection
-          app_name: dex-app
+          app_name: dex
           app_collection_repo: azure-app-collection
           requires:
             - push-to-control-plane-app-catalog
@@ -58,7 +58,7 @@ workflows:
       # deploy to kvm installations (only tags)
       - architect/push-to-app-collection:
           name: push-to-kvm-app-collection
-          app_name: dex-app
+          app_name: dex
           app_collection_repo: kvm-app-collection
           requires:
             - push-to-control-plane-app-catalog
@@ -71,7 +71,7 @@ workflows:
       # deploy to vmware installations (only tags)
       - architect/push-to-app-collection:
           name: push-to-vmware-app-collection
-          app_name: dex-app
+          app_name: dex
           app_collection_repo: vmware-app-collection
           requires:
             - push-to-control-plane-app-catalog
@@ -84,7 +84,7 @@ workflows:
       # deploy to openstack installations (only tags)
       - architect/push-to-app-collection:
           name: push-to-openstack-app-collection
-          app_name: dex-app
+          app_name: dex
           app_collection_repo: openstack-app-collection
           requires:
             - push-to-control-plane-app-catalog
@@ -99,7 +99,7 @@ workflows:
           name: package and push chart
           app_catalog: giantswarm-playground-catalog
           app_catalog_test: giantswarm-playground-test-catalog
-          chart: dex-app
+          chart: dex
           # Trigger job on git tag.
           filters:
             tags:

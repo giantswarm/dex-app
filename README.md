@@ -2,7 +2,7 @@
 
 # Dex
 
-[Dex](https://dexidp.io/) is an identity service that uses OpenID Connect to handle authentication for Kubernetes. It connects to third party identity providers like Active Directory, LDAP, and GitHub.
+[Dex](https://dexidp.io/) is an identity service that uses OpenID Connect to handle authentication for Kubernetes. It connects to third party identity providers like Active Directory, LDAP, and GitHub. While the Kubernetes API server only supports a single identity provider and OIDC token issuer, the use of Dex allows to use identities from various providers when authenticating for Kubernetes.
 
 This app is installed in Giant Swarm management clusters by default and is also ready to be deployed in workload clusters.
 

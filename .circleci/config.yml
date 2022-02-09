@@ -6,10 +6,10 @@ workflows:
   build:
     jobs:
       - architect/push-to-app-catalog:
-          name: push-dex-app-to-control-plane-app-catalog
-          app_catalog: "control-plane-catalog"
-          app_catalog_test: "control-plane-test-catalog"
-          chart: "dex-app"
+          name: push-to-control-plane-app-catalog
+          app_catalog: control-plane-catalog
+          app_catalog_test: control-plane-test-catalog
+          chart: dex-app
           persist_chart_archive: true
           filters:
             # Trigger the job also on git tag.
@@ -18,11 +18,11 @@ workflows:
 
       # deploy to all installations (only tags)
       - architect/push-to-app-collection:
-          name: push-dex-app-to-shared-app-collection
-          app_name: "dex-app"
-          app_collection_repo: "shared-app-collection"
+          name: push-to-shared-app-collection
+          app_name: dex-app
+          app_collection_repo: shared-app-collection
           requires:
-            - push-dex-app-to-control-plane-app-catalog
+            - push-to-control-plane-app-catalog
           filters:
             branches:
               ignore: /.*/
@@ -31,11 +31,11 @@ workflows:
 
       # deploy to aws installations (only tags)
       - architect/push-to-app-collection:
-          name: push-dex-app-to-aws-app-collection
-          app_name: "dex-app"
-          app_collection_repo: "aws-app-collection"
+          name: push-to-aws-app-collection
+          app_name: dex-app
+          app_collection_repo: aws-app-collection
           requires:
-            - push-dex-app-to-control-plane-app-catalog
+            - push-to-control-plane-app-catalog
           filters:
             branches:
               ignore: /.*/
@@ -44,11 +44,11 @@ workflows:
 
       # deploy to azure installations (only tags)
       - architect/push-to-app-collection:
-          name: push-dex-app-to-azure-app-collection
-          app_name: "dex-app"
-          app_collection_repo: "azure-app-collection"
+          name: push-to-azure-app-collection
+          app_name: dex-app
+          app_collection_repo: azure-app-collection
           requires:
-            - push-dex-app-to-control-plane-app-catalog
+            - push-to-control-plane-app-catalog
           filters:
             branches:
               ignore: /.*/
@@ -57,11 +57,11 @@ workflows:
 
       # deploy to kvm installations (only tags)
       - architect/push-to-app-collection:
-          name: push-dex-app-to-kvm-app-collection
-          app_name: "dex-app"
-          app_collection_repo: "kvm-app-collection"
+          name: push-to-kvm-app-collection
+          app_name: dex-app
+          app_collection_repo: kvm-app-collection
           requires:
-            - push-dex-app-to-control-plane-app-catalog
+            - push-to-control-plane-app-catalog
           filters:
             branches:
               ignore: /.*/
@@ -70,11 +70,11 @@ workflows:
 
       # deploy to vmware installations (only tags)
       - architect/push-to-app-collection:
-          name: push-dex-app-to-vmware-app-collection
-          app_name: "dex-app"
-          app_collection_repo: "vmware-app-collection"
+          name: push-to-vmware-app-collection
+          app_name: dex-app
+          app_collection_repo: vmware-app-collection
           requires:
-            - push-dex-app-to-control-plane-app-catalog
+            - push-to-control-plane-app-catalog
           filters:
             branches:
               ignore: /.*/
@@ -83,11 +83,11 @@ workflows:
 
       # deploy to openstack installations (only tags)
       - architect/push-to-app-collection:
-          name: push-dex-app-to-openstack-app-collection
-          app_name: "dex-app"
-          app_collection_repo: "openstack-app-collection"
+          name: push-to-openstack-app-collection
+          app_name: dex-app
+          app_collection_repo: openstack-app-collection
           requires:
-            - push-dex-app-to-control-plane-app-catalog
+            - push-to-control-plane-app-catalog
           filters:
             branches:
               ignore: /.*/
@@ -96,10 +96,10 @@ workflows:
 
       # make it available to customers (only tags)
       - architect/push-to-app-catalog:
-          name: "package and push dex-app chart"
-          app_catalog: "giantswarm-playground-catalog"
-          app_catalog_test: "giantswarm-playground-test-catalog"
-          chart: "dex-app"
+          name: package and push chart
+          app_catalog: giantswarm-playground-catalog
+          app_catalog_test: giantswarm-playground-test-catalog
+          chart: dex-app
           # Trigger job on git tag.
           filters:
             tags:
@@ -113,4 +113,4 @@ workflows:
               ignore:
                 - master
           requires:
-            - push-dex-app-to-control-plane-app-catalog
+            - push-to-control-plane-app-catalog

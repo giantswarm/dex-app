@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- App name changed from `dex-app` to `dex`.
+
 ## [1.21.1] - 2022-01-27
 
 ### Added

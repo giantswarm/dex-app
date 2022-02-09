@@ -83,12 +83,18 @@ Example connector configuration for GitHub:
         clientID: <CLIENT-ID-SET-IN-YOUR-IdP>
         clientSecret: <CLIENT-SECRET-SET-IN--YOUR-IdP>
         loadAllGroups: false
+        teamNameField: slug
         orgs:
         - name: <GITHUB_ORG_NAME>
           teams:
-          - <GITHUB_TEAM_NAME>
+          - <GITHUB_TEAM_SLUG>
         redirectURI: https://dex.<CLUSTERID>.<BASEDOMAIN>/callback
 ```
+
+Note:
+
+- `<GITHUB_ORG_NAME>` is your GitHub organization name. For example, the part `myorg` in `https://github.com/myorg`.
+- `<GITHUB_TEAM_SLUG>` is the part of the team's URL representing the team name. For example, the part `my-team` in `https://github.com/orgs/myorg/teams/my-team`.
 
 ### Installing the Chart in Giant Swarm workload clusters
 

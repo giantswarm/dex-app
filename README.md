@@ -1,124 +1,136 @@
 [![CircleCI](https://circleci.com/gh/giantswarm/dex-app.svg?style=shield&circle-token=7552290f91277c20801ee5bf7ff8c754a9f59d6d)](https://circleci.com/gh/giantswarm/dex-app)
 
-# dex-app chart
+# Dex
 
-Giant Swarm dex Managed App is installed in management clusters by default and ready to be deployed in workload clusters too.
-It provides customer authentication into control-plane Kubernetes.
+[Dex](https://dexidp.io/) is an identity service that uses OpenID Connect to handle authentication for Kubernetes. It connects to third party identity providers like Active Directory, LDAP, and GitHub.
 
-`dex-app` consists of two components:
-  - `dex` - cluster issuer
-  - `dex-k8s-authenticator` - dex client, which simplifies token generation towards `dex` connectors.
+This app is installed in Giant Swarm management clusters by default and is also ready to be deployed in workload clusters.
 
-## Installing the Chart
+In addition to Dex itself, this app provides [Dex K8s Authenticator](https://github.com/mintel/dex-k8s-authenticator), which helps to configure `kubectl` for clusters authenticated to via Dex.
 
-To install the chart locally:
+## Installing
 
-```bash
-$ git clone https://github.com/giantswarm/dex-app.git
-$ cd dex-app
-$ helm install helm/dex-app -f values.yaml # values provided explicitly
+There are several ways to install this app.
+
+1. [Using our web interface](https://docs.giantswarm.io/ui-api/web/app-platform/#installing-an-app)
+2. Creating the [App resource](https://docs.giantswarm.io/ui-api/management-api/crd/apps.application.giantswarm.io/) in the management cluster. Check the [getting start with app platform](https://docs.giantswarm.io/app-platform/getting-started/) guide for details.
+
+## Configuring
+
+You provide your configration via a custom `values.yaml` file. Here is an example using the connector for Azure Active Directory. More connector examples can be found below.
+
+```yaml
+isWorkloadCluster: true
+services:
+  kubernetes:
+    api:
+      caPem: |
+        -----BEGIN CERTIFICATE-----
+        M...=
+        -----END CERTIFICATE-----
+oidc:
+  expiry:
+    signingKeys: 6h
+    idTokens: 30m
+  customer:
+    enabled: true
+    connectors:
+    - id: customer
+      connectorName: test
+      connectorType: microsoft
+      connectorConfig: >-
+        clientID: <CLIENT-ID-SET-IN-YOUR-IdP>
+        clientSecret: <CLIENT-SECRET-SET-IN--YOUR-IdP>
+        tenant: <TENANT-SET-SET-IN--YOUR-IdP>
+        redirectURI: https://dex.<CLUSTER>.<BASEDOMAIN>/callback
 ```
 
-Provide a custom `values.yaml`:
+Some notes:
 
-```bash
-$ helm install dex-app -f values.yaml
+- `.service.kubernetes.api.caPem` is the CA certificate of your workload cluster in PEM format. At Giant Swarm, you can retrieve this certificate via the [kubectl gs login](https://docs.giantswarm.io/ui-api/kubectl-gs/login/) command, when creating a client certificate for the workload cluster. It ends up in Base46-encoded form in your kubectl config file. The CA certificate is required by Dex K8s Authenticator.
+
+- The `redirectURI` in your connector configuration must contain the proper host name for Dex's own ingress. In the default form, it contains the workload cluster name (replace `<CLUSTER>` with the actual name) and a base domain (replace `<BASEDOMAIN>` with the proper base domain).
+
+- If you configure more than one connector, make sure to set a unique `id` for each one. Be aware that this version of Dex is configured to prefix all user group names with the connector ID. So if your connector's `id` is `customer`, a membership in group `devops` will appear as `customer:devops`.
+
+### Other connector types
+
+Example connector configuration for Keycloak:
+
+```yaml
+    - id: customer
+      connectorName: test
+      connectorType: oidc
+      connectorConfig: >-
+        clientID: <CLIENT-ID-SET-IN-YOUR-IdP>
+        clientSecret: <CLIENT-SECRET-SET-IN--YOUR-IdP>
+        insecureEnableGroups: true
+        scopes:
+        - email
+        - groups
+        - profile
+        issuer: https://<IDP_ENDPOINT>/auth/realms/master
+        redirectURI: https://dex.<CLUSTERID>.<BASEDOMAIN>/callback
 ```
 
-Deployment to Management Cluster is handled by [app-operator](https://github.com/giantswarm/app-operator).
+Example connector configuration for GitHub:
+
+```yaml
+    - id: customer
+      connectorName: test
+      connectorType: github
+      connectorConfig: >-
+        clientID: <CLIENT-ID-SET-IN-YOUR-IdP>
+        clientSecret: <CLIENT-SECRET-SET-IN--YOUR-IdP>
+        loadAllGroups: false
+        orgs:
+        - name: <GITHUB_ORG_NAME>
+          teams:
+          - <GITHUB_TEAM_NAME>
+        redirectURI: https://dex.<CLUSTERID>.<BASEDOMAIN>/callback
+```
 
 ### Installing the Chart in Giant Swarm workload clusters
 
-In Giant Swarm we allow the customers to install Apps using our [App Platform](https://docs.giantswarm.io/app-platform/). You need to define the configuration (`values.yaml`) in a configmap upfront
+To install the app in a workload cluster, you'll use the methods of the [app platform](https://docs.giantswarm.io/app-platform/). Your `values.yaml` content is passed to the app via a `ConfigMap` resource that you'll have to create before installing the app, in the namespace named after the workload cluster.
 
 ```yaml
 apiVersion: v1
 kind: ConfigMap
 metadata:
   name: dex-app-user-values
-  namespace: <CLUSTERID>
+  namespace: <CLUSTER>
 data:
   values: |
-    isWorkloadCluster: true
-    services:
-      kubernetes:
-        api:
-          caPem: |
-            -----BEGIN CERTIFICATE-----
-            M...=
-            -----END CERTIFICATE-----
-    oidc:
-      expiry:
-        signingKeys: 6h
-        idTokens: 30m
-      customer:
-        enabled: true
-        connectors:
-        ## For Keyclock
-        - id: customer
-          connectorName: test
-          connectorType: oidc
-          connectorConfig: >-
-            clientID: <CLIENT-ID-SET-IN-YOUR-IdP>
-            clientSecret: <CLIENT-SECRET-SET-IN--YOUR-IdP>
-            insecureEnableGroups: true
-            scopes:
-            - email
-            - groups
-            - profile
-            issuer: https://<IDP_ENDPOINT>/auth/realms/master
-            redirectURI: https://dex.<CLUSTERID>.<BASEDOMAIN>/callback
-        ## For Active Directory
-        - id: customer
-          connectorName: test
-          connectorType: microsoft
-          connectorConfig: >-
-            clientID: <CLIENT-ID-SET-IN-YOUR-IdP>
-            clientSecret: <CLIENT-SECRET-SET-IN--YOUR-IdP>
-            tenant: <TENANT-SET-SET-IN--YOUR-IdP>
-            redirectURI: https://dex.<CLUSTERID>.<BASEDOMAIN>/callback
-        ## For Github  
-        - id: customer
-          connectorName: test
-          connectorType: github
-          connectorConfig: >-
-            clientID: <CLIENT-ID-SET-IN-YOUR-IdP>
-            clientSecret: <CLIENT-SECRET-SET-IN--YOUR-IdP>
-            loadAllGroups: false
-            orgs:
-            - name: <GITHUB_ORG_NAME>
-              teams:
-              - <GITHUB_TEAM_NAME>
-            redirectURI: https://dex.<CLUSTERID>.<BASEDOMAIN>/callback
+    <content of values.yaml>
 ```
 
-__Note__: In the above snippet you have to replace the `<CLUSTERID>` variable and add the Kubernetes Certificate Authority to ensure Dex can trust the API endpoint. Finally you have to use a connector. Here we show three example values.
-You can use more than one connector, but they need to have a different `id` value.
-We advice to use `- id: customer` for your primary connector.
-
-Later you create an App Custom Resource (CR) that points to our catalog with the values defined before
+Then you either install the app via our web UI, or you'll create an App resource in the following format:
 
 ```yaml
 apiVersion: application.giantswarm.io/v1alpha1
-
 kind: App
 metadata:
   labels:
     app.kubernetes.io/name: dex-app
   name: dex-app
-  namespace: <CLUSTERID>
+  namespace: <CLUSTER>
 spec:
   catalog: giantswarm-playground
   name: dex-app
   namespace: dex
   userConfig:
     configMap:
-      name: dex-app-user-values
-      namespace: <CLUSTERID>
+      name: <CONFIGMAPNAME>
+      namespace: <CLUSTER>
 ```
-__Note__: When applying the example in the snippet above, please change the `<CLUSTERID>` variable to the cluster ID of the workload cluster you are configuring.
 
-Now submitting both resources to the management API our automation will make sure your dex app is deployed and configured correctly.
+Notes:
+
+- `<CONFIGMAPNAME>` must be replaced with the name of the ConfigMap resource shown above.
+- `<CLUSTER>` is replaced with the name of your workload cluster.
+
+As a result, you should see Dex deployed in your workload cluster.
 
 ## Update Process
 
@@ -138,13 +150,8 @@ Then in this repo:
 
 ## Release Process
 
-* Ensure CHANGELOG.md is up to date.
-* In case of changes to `values.yaml`, ensure that `values.schema.json` is updated to reflect all values and their types correctly.
-* Create a branch `master#release#v<major.minor.patch>`, wait for the according release PR to be created, approve it, merge it.
-* This will push a new git tag and trigger a new tarball to be pushed to the
+- Ensure CHANGELOG.md is up to date.
+- In case of changes to `values.yaml`, ensure that `values.schema.json` is updated to reflect all values and their types correctly.
+- Create a branch `master#release#v<major.minor.patch>`, wait for the according release PR to be created, approve it, merge it.
+- This will push a new git tag and trigger a new tarball to be pushed to the
 [control-plane-catalog](https://github.com/giantswarm/control-plane-catalog).
-
-## Links
-
-- [dex](https://github.com/dexidp/dex)
-- [dex-k8s-authenticator](https://github.com/mintel/dex-k8s-authenticator)

@@ -13,7 +13,7 @@ In addition to Dex itself, this app provides [Dex K8s Authenticator](https://git
 There are several ways to install this app.
 
 1. [Using our web interface](https://docs.giantswarm.io/ui-api/web/app-platform/#installing-an-app)
-2. Creating the [App resource](https://docs.giantswarm.io/ui-api/management-api/crd/apps.application.giantswarm.io/) in the management cluster. Check the [getting start with app platform](https://docs.giantswarm.io/app-platform/getting-started/) guide for details.
+2. Creating the [App resource](https://docs.giantswarm.io/ui-api/management-api/crd/apps.application.giantswarm.io/) in the management cluster. Check the [getting started with app platform](https://docs.giantswarm.io/app-platform/getting-started/) guide for details.
 
 ## Configuring
 
@@ -98,7 +98,8 @@ Note:
 
 ### Installing the Chart in Giant Swarm workload clusters
 
-To install the app in a workload cluster, you'll use the methods of the [app platform](https://docs.giantswarm.io/app-platform/). Your `values.yaml` content is passed to the app via a `ConfigMap` resource that you'll have to create before installing the app, in the namespace named after the workload cluster.
+The app is installed in workload clusters, via our [app platform](https://docs.giantswarm.io/app-platform/). 
+Before doing so, please create the following `ConfigMap` resource in the namespace named after that workload cluster to provide the contents of your `values.yaml` file.
 
 ```yaml
 apiVersion: v1

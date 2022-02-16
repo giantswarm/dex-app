@@ -26,4 +26,5 @@ maintainers:
     email: nbadger@mintel.com
 annotations:
   application.giantswarm.io/team: team-rainbow
+  application.giantswarm.io/readme: https://raw.githubusercontent.com/giantswarm/dex-app/v[[ .Version ]]/README.md
   config.giantswarm.io/version: 1.x.x

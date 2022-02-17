@@ -1,0 +1,7 @@
+checks:
+  addAllBuiltIn: true
+  exclude:
+  - "no-read-only-root-fs"
+  - "required-annotation-email"
+  - "required-label-owner"
+  - "run-as-non-root"

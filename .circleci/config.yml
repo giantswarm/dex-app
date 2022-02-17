@@ -10,6 +10,7 @@ workflows:
           app_catalog: control-plane-catalog
           app_catalog_test: control-plane-test-catalog
           chart: dex-app
+          executor: "app-build-suite"
           persist_chart_archive: true
           filters:
             # Trigger the job also on git tag.
@@ -100,6 +101,7 @@ workflows:
           app_catalog: giantswarm-playground-catalog
           app_catalog_test: giantswarm-playground-test-catalog
           chart: dex-app
+          executor: "app-build-suite"
           # Trigger job on git tag.
           filters:
             tags:

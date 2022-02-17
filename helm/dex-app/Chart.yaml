@@ -1,4 +1,4 @@
-apiVersion: v1
+apiVersion: v2
 name: dex-app
 version: [[.Version]]
 appVersion: v2.30.2

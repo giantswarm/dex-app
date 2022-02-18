@@ -1,6 +1,6 @@
 # DO NOT EDIT. Generated with:
 #
-#    devctl@4.16.1
+#    devctl@4.18.0
 #
 version: 2
 updates:
@@ -14,3 +14,12 @@ updates:
       - giantswarm/team-rainbow
     ignore:
       - dependency-name: zricethezav/gitleaks-action
+      - dependency-name: actions/setup-go
+  - package-ecosystem: pip
+    directory: "/"
+    schedule:
+      interval: weekly
+      time: "04:00"
+    open-pull-requests-limit: 10
+    reviewers:
+      - giantswarm/team-rainbow

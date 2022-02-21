@@ -20,6 +20,15 @@ spec:
         {{- include "dex.labels.common" . | nindent 8 }}
       annotations:
     spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - podAffinityTerm:
+              labelSelector:
+                matchLabels:
+                  {{- include "dex.labels.selector" . | nindent 18 }}
+              topologyKey: kubernetes.io/hostname
+            weight: 100
       serviceAccountName: {{ include "resource.dex.name" . }}
       containers:
       - name: dex

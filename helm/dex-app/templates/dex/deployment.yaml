@@ -5,7 +5,7 @@ metadata:
   labels:
     {{- include "dex.labels.common" . | nindent 4 }}
 spec:
-  replicas: 1
+  replicas: 2
   strategy:
     rollingUpdate:
       maxSurge: 0

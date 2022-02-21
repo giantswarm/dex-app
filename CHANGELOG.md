@@ -7,7 +7,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-- Run two replicas of `dex`.
 
 ### Added
 
@@ -15,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Run two replicas of `dex`.
 - Update README for clarity.
 
 ## [1.21.1] - 2022-01-27

@@ -7,12 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+
 ### Added
 
 - Add `application.giantswarm.io/values-schema` and `application.giantswarm.io/readme` annotations to Chart.yaml; use `app-build-suite` to generate `application.giantswarm.io/metadata`.
 
 ### Changed
 
+- Run two replicas of `dex`.
 - Update README for clarity.
 
 ## [1.21.1] - 2022-01-27

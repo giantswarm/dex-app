@@ -28,8 +28,8 @@ spec:
       securityContext:
         allowPrivilegeEscalation: false
         runAsNonRoot: true
-        runAsUser: 999
-        runAsGroup: 999
+        runAsUser: 1000
+        runAsGroup: 1000
       containers:
       - name: {{ $resource.Chart.Name }}
         {{- if $values.isManagementCluster }}
@@ -115,8 +115,8 @@ spec:
       securityContext:
         allowPrivilegeEscalation: false
         runAsNonRoot: true
-        runAsUser: 999
-        runAsGroup: 999
+        runAsUser: 1000
+        runAsGroup: 1000
       containers:
       - name: {{ .Chart.Name }}
         {{- if .Values.isManagementCluster }}

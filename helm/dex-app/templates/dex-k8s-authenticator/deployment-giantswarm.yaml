@@ -20,8 +20,8 @@ spec:
       securityContext:
         allowPrivilegeEscalation: false
         runAsNonRoot: true
-        runAsUser: 65534
-        runAsGroup: 65534
+        runAsUser: 999
+        runAsGroup: 999
       containers:
       - name: {{ .Chart.Name }}
         {{- if .Values.isManagementCluster }}

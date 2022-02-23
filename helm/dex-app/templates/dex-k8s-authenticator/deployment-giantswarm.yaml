@@ -17,6 +17,9 @@ spec:
         {{- include "dexk8sauth.labels.common" . | nindent 8 }}
         {{- include "dexk8sauth.giantswarm.labels.selector" . | nindent 8 }}
     spec:
+      securityContext:
+        allowPrivilegeEscalation: false
+        runAsNonRoot: true
       containers:
       - name: {{ .Chart.Name }}
         {{- if .Values.isManagementCluster }}

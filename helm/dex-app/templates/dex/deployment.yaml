@@ -30,6 +30,11 @@ spec:
               topologyKey: kubernetes.io/hostname
             weight: 100
       serviceAccountName: {{ include "resource.dex.name" . }}
+      securityContext:
+        allowPrivilegeEscalation: false
+        runAsNonRoot: true
+        runAsUser: 999
+        runAsGroup: 999
       containers:
       - name: dex
         env:

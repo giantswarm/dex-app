@@ -25,6 +25,11 @@ spec:
         app.kubernetes.io/name: dex-k8s-authenticator-{{ .id }}
         app.kubernetes.io/component: dex-k8s-authenticator-{{ .id }}
     spec:
+      securityContext:
+        allowPrivilegeEscalation: false
+        runAsNonRoot: true
+        runAsUser: 999
+        runAsGroup: 999
       containers:
       - name: {{ $resource.Chart.Name }}
         {{- if $values.isManagementCluster }}
@@ -107,6 +112,11 @@ spec:
         {{- include "dexk8sauth.labels.common" . | nindent 8 }}
         {{- include "dexk8sauth.customer.labels.selector" . | nindent 8 }}
     spec:
+      securityContext:
+        allowPrivilegeEscalation: false
+        runAsNonRoot: true
+        runAsUser: 999
+        runAsGroup: 999
       containers:
       - name: {{ .Chart.Name }}
         {{- if .Values.isManagementCluster }}

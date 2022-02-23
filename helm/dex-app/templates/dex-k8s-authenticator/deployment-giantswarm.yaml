@@ -17,6 +17,11 @@ spec:
         {{- include "dexk8sauth.labels.common" . | nindent 8 }}
         {{- include "dexk8sauth.giantswarm.labels.selector" . | nindent 8 }}
     spec:
+      securityContext:
+        allowPrivilegeEscalation: false
+        runAsNonRoot: true
+        runAsUser: 999
+        runAsGroup: 999
       containers:
       - name: {{ .Chart.Name }}
         {{- if .Values.isManagementCluster }}

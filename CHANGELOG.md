@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Push to `giantswarm` app catalog.
 
 ## [1.22.1] - 2022-02-23
 

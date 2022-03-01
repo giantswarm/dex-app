@@ -52,13 +52,11 @@ oidc:
       clientID: ""
       clientSecret: ""
       team: ""
-    write_all_group: ""
   customer:
     enabled: false
     connectorType: ""
     connectorName: ""
     connectorConfig: ""
-    write_all_group: ""
     connectors: []
 
 services:

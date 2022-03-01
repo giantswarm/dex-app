@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Removed
+
+- Removed configuration value `write_all_group` which was unused (breaking change).
 
 ## [1.22.2] - 2022-02-24
 

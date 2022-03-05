@@ -1,0 +1,9 @@
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: {{ include "resource.dex.name" . }}
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      {{- include "dex.labels.common" . | nindent 6 }}

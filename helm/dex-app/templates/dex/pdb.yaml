@@ -1,3 +1,4 @@
+{{- if .Capabilities.APIVersions.Has "policy/v1/PodDisruptionBudget" }}
 apiVersion: policy/v1
 kind: PodDisruptionBudget
 metadata:
@@ -7,3 +8,4 @@ spec:
   selector:
     matchLabels:
       {{- include "dex.labels.common" . | nindent 6 }}
+{{- end }}

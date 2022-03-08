@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.23.0] - 2022-03-08
+
 ### Added
 
 - Add PodDisruptionBudget with `minAvailable: 1`
@@ -254,7 +256,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add helm chart for dex.
 
 
-[Unreleased]: https://github.com/giantswarm/dex-app/compare/v1.22.2...HEAD
+[Unreleased]: https://github.com/giantswarm/dex-app/compare/v1.23.0...HEAD
+[1.23.0]: https://github.com/giantswarm/dex-app/compare/v1.22.2...v1.23.0
 [1.22.2]: https://github.com/giantswarm/dex-app/compare/v1.22.1...v1.22.2
 [1.22.1]: https://github.com/giantswarm/dex-app/compare/v1.22.0...v1.22.1
 [1.22.0]: https://github.com/giantswarm/dex-app/compare/v1.21.1...v1.22.0

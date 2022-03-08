@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Enable upgrade tests again, now that there are two releases in the catalog.
+
 ## [1.23.0] - 2022-03-08
 
 ### Added

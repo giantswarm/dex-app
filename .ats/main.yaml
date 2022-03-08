@@ -6,5 +6,8 @@ upgrade-tests-cluster-config-file: tests/kind_config.yaml
 upgrade-tests-app-config-file: tests/test-values.yaml
 upgrade-tests-app-catalog-url: https://giantswarm.github.io/giantswarm-playground-catalog
 
-skip-steps: [functional upgrade]
+skip-steps:
+- functional
+- upgrade
+
 app-tests-app-config-file: tests/test-values.yaml

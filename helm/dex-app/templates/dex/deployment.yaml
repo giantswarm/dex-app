@@ -5,7 +5,7 @@ metadata:
   labels:
     {{- include "dex.labels.common" . | nindent 4 }}
   annotations:
-    app.giantswarm.io/secret-checksum: {{ include (print .Template.BasePath "/secret.yaml") . | sha256sum | quote }}
+    app.giantswarm.io/secret-checksum: {{ include (print .Template.BasePath "/dex/secret.yaml") . | sha256sum | quote }}
 spec:
   replicas: 2
   strategy:

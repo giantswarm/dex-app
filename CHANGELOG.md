@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.23.1] - 2022-03-10
+
 ### Added
 
 - Add annotation `app.giantswarm.io/secret-checksum` to dex deployment for automatic restarts of the dex pods on config changes.
@@ -264,7 +266,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add helm chart for dex.
 
 
-[Unreleased]: https://github.com/giantswarm/dex-app/compare/v1.23.0...HEAD
+[Unreleased]: https://github.com/giantswarm/dex-app/compare/v1.23.1...HEAD
+[1.23.1]: https://github.com/giantswarm/dex-app/compare/v1.23.0...v1.23.1
 [1.23.0]: https://github.com/giantswarm/dex-app/compare/v1.22.2...v1.23.0
 [1.22.2]: https://github.com/giantswarm/dex-app/compare/v1.22.1...v1.22.2
 [1.22.1]: https://github.com/giantswarm/dex-app/compare/v1.22.0...v1.22.1

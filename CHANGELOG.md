@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add annotation `app.giantswarm.io/secret-checksum` to dex deployment for automatic restarts of the dex pods on config changes.
+
 ### Changed
 
 - Enable upgrade tests again, now that there are two releases in the catalog.

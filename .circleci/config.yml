@@ -69,11 +69,11 @@ workflows:
             tags:
               only: /^v.*/
 
-      # deploy to vmware installations (only tags)
+      # deploy to vsphere installations (only tags)
       - architect/push-to-app-collection:
-          name: push-to-vmware-app-collection
+          name: push-to-vsphere-app-collection
           app_name: dex-app
-          app_collection_repo: vmware-app-collection
+          app_collection_repo: vsphere-app-collection
           requires:
             - push-to-control-plane-app-catalog
           filters:

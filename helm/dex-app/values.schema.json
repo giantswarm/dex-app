@@ -276,6 +276,9 @@
                                 },
                                 "public": {
                                     "type": "boolean"
+                                },
+                                "port": {
+                                    "type": "string"
                                 }
                             }
                         }

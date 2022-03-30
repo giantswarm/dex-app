@@ -278,7 +278,7 @@
                                     "type": "boolean"
                                 },
                                 "port": {
-                                    "type": "string"
+                                    "type": "integer"
                                 }
                             }
                         }

@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add default port to Kubernetes API values to make it configurable.
+
 ## [1.24.0] - 2022-03-17
 
 ### Changed

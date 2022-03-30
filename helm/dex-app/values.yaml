@@ -68,6 +68,7 @@ services:
       address: ""
       internalAddress: ""
       caPem: ""
+      port: 443
   happa:
     address: ""
   grafana:

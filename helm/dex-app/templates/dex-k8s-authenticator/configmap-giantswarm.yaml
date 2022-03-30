@@ -24,9 +24,9 @@ data:
       connector_id: giantswarm
       issuer: https://{{ .Values.oidc.issuerAddress }}
       {{if .Values.services.kubernetes.api.public }}
-      k8s_master_uri: {{ .Values.services.kubernetes.api.address }}
+      k8s_master_uri: {{ .Values.services.kubernetes.api.address }}:{{ .Values.services.kubernetes.api.port }}
       {{- else }}
-      k8s_master_uri: {{ .Values.services.kubernetes.api.internalAddress }}
+      k8s_master_uri: {{ .Values.services.kubernetes.api.internalAddress }}:{{ .Values.services.kubernetes.api.port }}
       {{- end }}
       k8s_ca_pem: {{ toYaml .Values.services.kubernetes.api.caPem | indent 8 }}
       {{- if .Values.oidc.customer.enabled }}
@@ -43,9 +43,9 @@ data:
       connector_id: giantswarm
       issuer: https://dex.{{ .Values.baseDomain }}
       {{if .Values.services.kubernetes.api.public }}
-      k8s_master_uri: https://api.{{ .Values.baseDomain }}
+      k8s_master_uri: https://api.{{ .Values.baseDomain }}:{{ .Values.services.kubernetes.api.port }}
       {{- else }}
-      k8s_master_uri: {{ .Values.services.kubernetes.api.internalAddress }}
+      k8s_master_uri: {{ .Values.services.kubernetes.api.internalAddress }}:{{ .Values.services.kubernetes.api.port }}
       {{- end }}
       k8s_ca_pem: {{ toYaml .Values.services.kubernetes.api.caPem | indent 8 }}
       {{- if .Values.oidc.customer.enabled }}

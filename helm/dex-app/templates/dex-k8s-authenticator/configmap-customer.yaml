@@ -29,9 +29,9 @@ data:
       connector_id: {{ .id }}
       issuer: https://{{ $values.oidc.issuerAddress }}
       {{- if $values.services.kubernetes.api.public }}
-      k8s_master_uri: {{ $values.services.kubernetes.api.address }}
+      k8s_master_uri: {{ $values.services.kubernetes.api.address }}:{{ $values.services.kubernetes.api.port }}
       {{- else }}
-      k8s_master_uri: {{ $values.services.kubernetes.api.internalAddress }}
+      k8s_master_uri: {{ $values.services.kubernetes.api.internalAddress }}:{{ $values.services.kubernetes.api.port }}
       {{- end }}
       k8s_ca_pem: {{ toYaml $values.services.kubernetes.api.caPem | indent 8 }}
       redirect_uri: https://{{ $values.oidc.staticClients.dexK8SAuthenticator.clientAddress }}/callback
@@ -44,9 +44,9 @@ data:
       connector_id: {{ .id }}
       issuer: https://dex.{{ $values.baseDomain }}
       {{- if $values.services.kubernetes.api.public }}
-      k8s_master_uri: https://api.{{ $values.baseDomain }}
+      k8s_master_uri: https://api.{{ $values.baseDomain }}:{{ $values.services.kubernetes.api.port }}
       {{- else }}
-      k8s_master_uri: {{ $values.services.kubernetes.api.internalAddress }}
+      k8s_master_uri: {{ $values.services.kubernetes.api.internalAddress }}:{{ $values.services.kubernetes.api.port }}
       {{- end }}
       k8s_ca_pem: {{ toYaml $values.clusterCA | indent 8 }}
       redirect_uri: https://login.{{ $values.baseDomain }}/callback
@@ -78,9 +78,9 @@ data:
       connector_id: customer
       issuer: https://{{ .Values.oidc.issuerAddress }}
       {{- if .Values.services.kubernetes.api.public }}
-      k8s_master_uri: {{ .Values.services.kubernetes.api.address }}
+      k8s_master_uri: {{ .Values.services.kubernetes.api.address }}:{{ .Values.services.kubernetes.api.port }}
       {{- else }}
-      k8s_master_uri: {{ .Values.services.kubernetes.api.internalAddress }}
+      k8s_master_uri: {{ .Values.services.kubernetes.api.internalAddress }}:{{ .Values.services.kubernetes.api.port }}
       {{- end }}
       k8s_ca_pem: {{ toYaml .Values.services.kubernetes.api.caPem | indent 8 }}
       redirect_uri: https://{{ .Values.oidc.staticClients.dexK8SAuthenticator.clientAddress }}/callback
@@ -93,9 +93,9 @@ data:
       connector_id: customer
       issuer: https://dex.{{ .Values.baseDomain }}
       {{- if .Values.services.kubernetes.api.public }}
-      k8s_master_uri: https://api.{{ .Values.baseDomain }}
+      k8s_master_uri: https://api.{{ .Values.baseDomain }}:{{ .Values.services.kubernetes.api.port }}
       {{- else }}
-      k8s_master_uri: {{ .Values.services.kubernetes.api.internalAddress }}
+      k8s_master_uri: {{ .Values.services.kubernetes.api.internalAddress }}:{{ .Values.services.kubernetes.api.port }}
       {{- end }}
       k8s_ca_pem: {{ toYaml .Values.clusterCA | indent 8 }}
       redirect_uri: https://login.{{ .Values.baseDomain }}/callback

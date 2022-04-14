@@ -10,7 +10,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Remove wildcards from RBAC rules
-- Increase minimum replicas to 3
 - Add team annotation
 
 ## [1.24.1] - 2022-03-30

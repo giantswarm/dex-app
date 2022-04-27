@@ -274,11 +274,11 @@
                                 "internalAddress": {
                                     "type": "string"
                                 },
-                                "public": {
-                                    "type": "boolean"
-                                },
                                 "port": {
                                     "type": "integer"
+                                },
+                                "public": {
+                                    "type": "boolean"
                                 }
                             }
                         }

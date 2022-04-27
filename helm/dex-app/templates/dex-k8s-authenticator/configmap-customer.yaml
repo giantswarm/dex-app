@@ -29,7 +29,7 @@ data:
       connector_id: {{ .id }}
       issuer: https://{{ $values.oidc.issuerAddress }}
       {{- if $values.services.kubernetes.api.public }}
-      k8s_master_uri: {{ $values.services.kubernetes.api.address }}:{{ $values.services.kubernetes.api.port }}
+      k8s_master_uri: {{ $values.services.kubernetes.api.address }}
       {{- else }}
       k8s_master_uri: {{ $values.services.kubernetes.api.internalAddress }}:{{ $values.services.kubernetes.api.port }}
       {{- end }}
@@ -78,7 +78,7 @@ data:
       connector_id: customer
       issuer: https://{{ .Values.oidc.issuerAddress }}
       {{- if .Values.services.kubernetes.api.public }}
-      k8s_master_uri: {{ .Values.services.kubernetes.api.address }}:{{ .Values.services.kubernetes.api.port }}
+      k8s_master_uri: {{ .Values.services.kubernetes.api.address }}
       {{- else }}
       k8s_master_uri: {{ .Values.services.kubernetes.api.internalAddress }}:{{ .Values.services.kubernetes.api.port }}
       {{- end }}

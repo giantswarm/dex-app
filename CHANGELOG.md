@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Remove public kubernetes api port in k8s-authenticator configmap template for MCs since the port is already included in the address.
 - Add team annotation
 
 ## [1.24.1] - 2022-03-30

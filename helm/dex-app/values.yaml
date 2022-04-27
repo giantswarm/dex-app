@@ -61,11 +61,11 @@ oidc:
     write_all_group: ""
     connectors: []
 
+# Note that the public address in Giant Swarm management cluster configurations already includes the port
 services:
   kubernetes:
     api:
       public: true
-      # Note that the public address in Giant Swarm management cluster configurations already includes the port
       address: ""
       internalAddress: ""
       caPem: ""

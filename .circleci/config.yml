@@ -12,6 +12,7 @@ workflows:
           chart: dex-app
           executor: "app-build-suite"
           persist_chart_archive: true
+          push_to_oci_registry: true
           filters:
             # Trigger the job also on git tag.
             tags:

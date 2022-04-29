@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Removed
+
+- Remove Job that allowed recreation of certificate secrets when upgrading and disabled lets encrypt.
+
+### Changed
+
+- Update Dex to `v2.31.1`.
+- Increase detail in token refresh logs for debugging purposes.
+- Support GS specific OIDC group prefixing for password connector types (e.g. LDAP)
+
 ## [1.24.2] - 2022-04-27
 
 ### Added

@@ -52,14 +52,6 @@
         "extraVolumes": {
             "type": "array"
         },
-        "fixJob": {
-            "type": "object",
-            "properties": {
-                "enabled": {
-                    "type": "boolean"
-                }
-            }
-        },
         "ingress": {
             "type": "object",
             "properties": {

@@ -81,22 +81,3 @@ Abstract the knowledge to know if it needs a Giant Swarm connector or not
   {{- printf "false" }}
 {{- end -}}
 {{- end -}}
-
-{{- define "dex.fixJob" -}}
-{{- printf "%s-%s" .Chart.Name "fix-job" -}}
-{{- end -}}
-
-{{- define "dex.fixJobSelectorLabels" -}}
-app.kubernetes.io/name: "{{ template "dex.fixJob" . }}"
-app.kubernetes.io/instance: "{{ template "dex.fixJob" . }}"
-{{- end -}}
-
-{{- define "dex.fixJobAnnotations" -}}
-"helm.sh/hook": "pre-upgrade"
-"helm.sh/hook-delete-policy": "before-hook-creation,hook-succeeded,hook-failed"
-{{- end -}}
-
-{{/* Create a label which can be used to select any orphaned fix-job hook resources */}}
-{{- define "dex.fixJobSelector" -}}
-{{- printf "%s" "fix-job-hook" -}}
-{{- end -}}

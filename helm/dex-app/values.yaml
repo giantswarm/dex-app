@@ -14,7 +14,7 @@ dex:
   image:
     registry: quay.io
     name: giantswarm/dex
-    tag: v2.31.0-gs1
+    tag: v2.31.1-gs2
     pullPolicy: IfNotPresent
 
 extraVolumes: []
@@ -85,12 +85,3 @@ managementCluster:
 
 # Giant Swarm properties for workload clusters
 isWorkloadCluster: false
-
-# Job installed by Helm hook to work
-# around type field being immutable
-# in Kubernetes secrets
-#
-# Has no effect for fresh installations
-# and ingress.tls.letsencrypt=true
-fixJob:
-  enabled: true

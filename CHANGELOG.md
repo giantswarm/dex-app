@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.25.0] - 2022-05-02
+
 ### Removed
 
 - Remove Job that allowed recreation of certificate secrets when upgrading and disabled lets encrypt.
@@ -299,7 +301,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add helm chart for dex.
 
 
-[Unreleased]: https://github.com/giantswarm/dex-app/compare/v1.24.2...HEAD
+[Unreleased]: https://github.com/giantswarm/dex-app/compare/v1.25.0...HEAD
+[1.25.0]: https://github.com/giantswarm/dex-app/compare/v1.24.2...v1.25.0
 [1.24.2]: https://github.com/giantswarm/dex-app/compare/v1.24.1...v1.24.2
 [1.24.1]: https://github.com/giantswarm/dex-app/compare/v1.24.0...v1.24.1
 [1.24.0]: https://github.com/giantswarm/dex-app/compare/v1.23.1...v1.24.0

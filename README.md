@@ -38,7 +38,7 @@ oidc:
     - id: customer
       connectorName: test
       connectorType: microsoft
-      connectorConfig: >-
+      connectorConfig: |-
         clientID: <CLIENT-ID-SET-IN-YOUR-IdP>
         clientSecret: <CLIENT-SECRET-SET-IN--YOUR-IdP>
         tenant: <TENANT-SET-SET-IN--YOUR-IdP>
@@ -61,7 +61,7 @@ Example connector configuration for Keycloak:
     - id: customer
       connectorName: test
       connectorType: oidc
-      connectorConfig: >-
+      connectorConfig: |-
         clientID: <CLIENT-ID-SET-IN-YOUR-IdP>
         clientSecret: <CLIENT-SECRET-SET-IN--YOUR-IdP>
         insecureEnableGroups: true
@@ -79,7 +79,7 @@ Example connector configuration for GitHub:
     - id: customer
       connectorName: test
       connectorType: github
-      connectorConfig: >-
+      connectorConfig: |-
         clientID: <CLIENT-ID-SET-IN-YOUR-IdP>
         clientSecret: <CLIENT-SECRET-SET-IN--YOUR-IdP>
         loadAllGroups: false

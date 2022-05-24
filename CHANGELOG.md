@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Changed YAML multiline from `>-` to `|-`
 
+### Added
+
+- Support gs admin callback URI and gs cli trusted peer in WC templating.
+
 ## [1.25.0] - 2022-05-02
 
 ### Removed

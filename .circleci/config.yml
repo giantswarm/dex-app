@@ -131,3 +131,16 @@ workflows:
                 - master
           requires:
             - push-to-control-plane-app-catalog
+
+      - architect/push-to-app-collection:
+          name: push-to-cloud-director-app-collection
+          app_name: "dex-app"
+          app_collection_repo: cloud-director-app-collection
+          requires:
+            - push-to-control-plane-app-catalog
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^v.*/
+

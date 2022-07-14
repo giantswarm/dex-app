@@ -144,3 +144,16 @@ workflows:
             tags:
               only: /^v.*/
 
+      - architect/push-to-app-collection:
+          context: architect
+          name: push-to-capa-app-collection
+          app_name: "dex-app"
+          app_collection_repo: "capa-app-collection"
+          requires:
+            - push-to-control-plane-app-catalog
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^v.*/
+

@@ -38,7 +38,7 @@ oidc:
       cliendID: ""
       redirectURI: ""
     gsCLIAuth:
-      clientID: ""
+      clientID: "zQiFLUnrTFQwrybYzeY53hWWfhOKWRAU"
       address: http://localhost:8085/oauth/callback
     happa:
       clientID: ""

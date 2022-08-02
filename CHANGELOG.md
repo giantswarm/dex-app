@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add default value for giantswarm CLIAuth client ID.
+
 ## [1.25.1] - 2022-05-24
 
 ### Changed

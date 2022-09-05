@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add giant swarm monitoring annotations for alerting in workload clusters.
+
 ### Changed
 
 - Update Dex to v2.33.0

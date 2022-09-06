@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.27.0] - 2022-09-06
+
 ### Added
 
 - Add giant swarm monitoring annotations for alerting in workload clusters.
@@ -325,7 +327,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add helm chart for dex.
 
 
-[Unreleased]: https://github.com/giantswarm/dex-app/compare/v1.25.2...HEAD
+[Unreleased]: https://github.com/giantswarm/dex-app/compare/v1.27.0...HEAD
+[1.27.0]: https://github.com/giantswarm/dex-app/compare/v1.25.2...v1.27.0
 [1.25.2]: https://github.com/giantswarm/dex-app/compare/v1.25.1...v1.25.2
 [1.25.1]: https://github.com/giantswarm/dex-app/compare/v1.25.0...v1.25.1
 [1.25.0]: https://github.com/giantswarm/dex-app/compare/v1.24.2...v1.25.0

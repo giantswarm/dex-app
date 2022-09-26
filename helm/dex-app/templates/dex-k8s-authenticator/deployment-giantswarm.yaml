@@ -30,6 +30,12 @@ spec:
         image: "{{ .Values.client.image.registry }}/{{ .Values.client.image.name }}:{{ .Values.client.image.tag }}"
         {{- end }}
         imagePullPolicy: {{ .Values.client.image.pullPolicy }}
+        env:
+        - name: KUBERNETES_CACERT
+          valueFrom:
+            configMapKeyRef:
+              name: "kube-root-ca.crt"
+              key: "ca.crt"
         args: [ "--config", "config.yaml" ]
         ports:
         - name: http

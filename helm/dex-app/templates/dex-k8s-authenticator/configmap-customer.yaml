@@ -33,7 +33,7 @@ data:
       {{- else }}
       k8s_master_uri: {{ $values.services.kubernetes.api.internalAddress }}:{{ $values.services.kubernetes.api.port }}
       {{- end }}
-      k8s_ca_pem: {{ toYaml $values.services.kubernetes.api.caPem | indent 8 }}
+      k8s_ca_pem: ${KUBERNETES_CACERT}
       redirect_uri: https://{{ $values.oidc.staticClients.dexK8SAuthenticator.clientAddress }}/callback
     {{- else if $values.isWorkloadCluster }}
     - name: {{ $values.clusterID }}
@@ -82,7 +82,7 @@ data:
       {{- else }}
       k8s_master_uri: {{ .Values.services.kubernetes.api.internalAddress }}:{{ .Values.services.kubernetes.api.port }}
       {{- end }}
-      k8s_ca_pem: {{ toYaml .Values.services.kubernetes.api.caPem | indent 8 }}
+      k8s_ca_pem: ${KUBERNETES_CACERT}
       redirect_uri: https://{{ .Values.oidc.staticClients.dexK8SAuthenticator.clientAddress }}/callback
     {{- else if .Values.isWorkloadCluster }}
     - name: {{ .Values.clusterID }}

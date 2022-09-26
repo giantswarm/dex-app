@@ -38,6 +38,12 @@ spec:
         image: "{{ $values.client.image.registry }}/{{ $values.client.image.name }}:{{ $values.client.image.tag }}"
         {{- end }}
         imagePullPolicy: {{ $values.client.image.pullPolicy }}
+        env:
+        - name: KUBERNETES_CACERT
+          valueFrom:
+            configMapKeyRef:
+              name: "kube-root-ca.crt"
+              key: "ca.crt"
         args: [ "--config", "config.yaml" ]
         ports:
         - name: http
@@ -125,6 +131,12 @@ spec:
         image: "{{ .Values.client.image.registry }}/{{ .Values.client.image.name }}:{{ .Values.client.image.tag }}"
         {{- end }}
         imagePullPolicy: {{ .Values.client.image.pullPolicy }}
+        env:
+        - name: KUBERNETES_CACERT
+          valueFrom:
+            configMapKeyRef:
+              name: "kube-root-ca.crt"
+              key: "ca.crt"
         args: [ "--config", "config.yaml" ]
         ports:
         - name: http

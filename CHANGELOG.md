@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## Added
+
+- Add circle ci job to push to `gcp-app-collection` on new release.
+
 ## [1.29.0] - 2022-09-26
 
 ### Changed

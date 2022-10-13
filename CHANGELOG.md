@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Update Dex to v2.35.3
+
 ## Added
 
 - Add circle ci job to push to `gcp-app-collection` on new release.

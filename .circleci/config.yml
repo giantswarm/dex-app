@@ -124,7 +124,6 @@ workflows:
                 - master
           requires:
             - push-to-control-plane-app-catalog
-          app-test-suite_version: "v0.2.6"
 
       - architect/push-to-app-collection:
           context: architect

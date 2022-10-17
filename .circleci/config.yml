@@ -125,7 +125,7 @@ workflows:
           requires:
             - push-to-control-plane-app-catalog
           app-test-suite_version: "v0.2.6"
-          app-test-suite_container_tag: "0.2.6"
+          app-test-suite_container_tag: "0.2.2"
 
       - architect/push-to-app-collection:
           context: architect

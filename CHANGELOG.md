@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.30.0] - 2022-10-13
+
+### Changed
+
+- Update Dex to v2.35.3
+
 ## Added
 
 - Add circle ci job to push to `gcp-app-collection` on new release.
@@ -343,7 +349,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add helm chart for dex.
 
 
-[Unreleased]: https://github.com/giantswarm/dex-app/compare/v1.29.0...HEAD
+[Unreleased]: https://github.com/giantswarm/dex-app/compare/v1.30.0...HEAD
+[1.30.0]: https://github.com/giantswarm/dex-app/compare/v1.29.0...v1.30.0
 [1.29.0]: https://github.com/giantswarm/dex-app/compare/v1.28.0...v1.29.0
 [1.28.0]: https://github.com/giantswarm/dex-app/compare/v1.27.0...v1.28.0
 [1.27.0]: https://github.com/giantswarm/dex-app/compare/v1.25.2...v1.27.0

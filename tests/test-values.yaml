@@ -29,3 +29,17 @@ oidc:
           - profile
           issuer: http://127.0.0.1:5556
           redirectURI: http://127.0.0.1:5555/callback/example-cluster
+  giantswarm:
+    connectors:
+      - connectorType: mockCallback
+        id: giantswarm
+        connectorName: Kubernetes Dev Cluster
+        connectorConfig: |-
+          clientID: example-client-id
+          clientSecret: ZXhhbXBsZS1hcHUtc2VjcmV0
+          scopes:
+          - email
+          - groups
+          - profile
+          issuer: http://127.0.0.1:5556
+          redirectURI: http://127.0.0.1:5555/callback/example-cluster

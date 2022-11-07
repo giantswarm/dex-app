@@ -165,6 +165,29 @@
                                 }
                             }
                         },
+                        "connectors": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "connectorConfig": {
+                                        "type": "string"
+                                    },
+                                    "connectorName": {
+                                        "type": "string"
+                                    },
+                                    "connectorType": {
+                                        "type": "string"
+                                    },
+                                    "id": {
+                                        "type": "string"
+                                    },
+                                    "write_all_group": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        },
                         "write_all_group": {
                             "type": "string"
                         }

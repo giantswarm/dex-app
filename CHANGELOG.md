@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## Added
+
+- Add support for array of connectors for `giantswarm`.
+
 ## [1.30.0] - 2022-10-13
 
 ### Changed

@@ -53,6 +53,7 @@ oidc:
       clientSecret: ""
       team: ""
     write_all_group: ""
+    connectors: []
   customer:
     enabled: false
     connectorType: ""

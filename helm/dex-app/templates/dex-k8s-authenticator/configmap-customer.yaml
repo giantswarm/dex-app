@@ -22,7 +22,7 @@ data:
     clusters:
     {{- if $values.isManagementCluster }}
     - client_id: dex-k8s-authenticator
-      {{- if (eq (kindOf .Values.managementCluster) "string") }}
+      {{- if (eq (kindOf $values.managementCluster) "string") }}
       name: {{ $values.managementCluster }}
       description: "Management Cluster Kubernetes API for installation '{{ $values.managementCluster }}', as a Giant Swarm customer"
       short_description: "{{ $values.managementCluster }} management cluster"

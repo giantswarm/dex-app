@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## Added
+
+- Added support for polymorphic values of `managementCluster` - it can be defined either as `string` or as `object`.
+
 ## [1.30.1] - 2022-11-07
 
 ## Added

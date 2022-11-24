@@ -16,10 +16,16 @@ data:
     {{- end }}
     clusters:
     {{- if .Values.isManagementCluster }}
-    - name: {{ .Values.managementCluster.name }}
+    - client_id: dex-k8s-authenticator
+      {{- if (eq (kindOf .Values.managementCluster) "string") }}
+      name: {{ .Values.managementCluster }}
+      short_description: "{{ .Values.managementCluster }} control-plane"
+      description: "{{ .Values.managementCluster }} control-plane cluster giantswarm authentication"
+      {{- else }}
+      name: {{ .Values.managementCluster.name }}
       short_description: "{{ .Values.managementCluster.name }} control-plane"
-      description: "{{ .Values.managementCluster.name }} control-plane cluster giantswarm authentication"
-      client_id: dex-k8s-authenticator
+      description: "{{ .Values.managementCluster.name }} control-plane cluster giantswarm authentication"    
+      {{- end }}
       client_secret: {{ .Values.oidc.staticClients.dexK8SAuthenticator.clientSecret }}
       connector_id: giantswarm
       issuer: https://{{ .Values.oidc.issuerAddress }}

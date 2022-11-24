@@ -21,10 +21,16 @@ data:
     {{- end }}
     clusters:
     {{- if $values.isManagementCluster }}
-    - name: {{ $values.managementCluster.name }}
+    - client_id: dex-k8s-authenticator
+      {{- if (eq (kindOf $values.managementCluster) "string") }}
+      name: {{ $values.managementCluster }}
+      description: "Management Cluster Kubernetes API for installation '{{ $values.managementCluster }}', as a Giant Swarm customer"
+      short_description: "{{ $values.managementCluster }} management cluster"
+      {{- else }}
+      name: {{ $values.managementCluster.name }}
       description: "Management Cluster Kubernetes API for installation '{{ $values.managementCluster.name }}', as a Giant Swarm customer"
-      short_description: "{{ $values.managementCluster.name }} management cluster"
-      client_id: dex-k8s-authenticator
+      short_description: "{{ $values.managementCluster.name }} management cluster"    
+      {{- end }}
       client_secret: {{ $values.oidc.staticClients.dexK8SAuthenticator.clientSecret }}
       connector_id: {{ .id }}
       issuer: https://{{ $values.oidc.issuerAddress }}
@@ -70,10 +76,16 @@ data:
     {{- end }}
     clusters:
     {{- if .Values.isManagementCluster }}
-    - name: {{ .Values.managementCluster.name }}
+    - client_id: dex-k8s-authenticator
+      {{- if (eq (kindOf .Values.managementCluster) "string") }}
+      name: {{ .Values.managementCluster }}
+      description: "Management Cluster Kubernetes API for installation '{{ .Values.managementCluster }}', as a Giant Swarm customer"
+      short_description: "{{ .Values.managementCluster }} management cluster"
+      {{- else }}
+      name: {{ .Values.managementCluster.name }}
       description: "Management Cluster Kubernetes API for installation '{{ .Values.managementCluster.name }}', as a Giant Swarm customer"
-      short_description: "{{ .Values.managementCluster.name }} management cluster"
-      client_id: dex-k8s-authenticator
+      short_description: "{{ .Values.managementCluster.name }} management cluster"    
+      {{- end }}
       client_secret: {{ .Values.oidc.staticClients.dexK8SAuthenticator.clientSecret }}
       connector_id: customer
       issuer: https://{{ .Values.oidc.issuerAddress }}

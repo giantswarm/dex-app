@@ -12,7 +12,11 @@ spec:
       metricRelabelings:
       - targetLabel: cluster_id
         {{- if .Values.isManagementCluster }}
+        {{- if (eq (kindOf .Values.managementCluster) "string") }}
+        replacement: {{ .Values.managementCluster }}
+        {{- else }}
         replacement: {{ .Values.managementCluster.name }}
+        {{- end }}
         {{- else if .Values.isWorkloadCluster }}
         replacement: {{ .Values.clusterID }}
         {{- end }}

@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add option to configure custom clusterIssuer for certificate generation.
+
 ## [1.30.2] - 2022-11-24
 
 ## Added

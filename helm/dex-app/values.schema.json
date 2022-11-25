@@ -61,6 +61,9 @@
                         "caPemB64": {
                             "type": "string"
                         },
+			"clusterIssuer": {
+                            "type": "string"
+                        },
                         "crtPemB64": {
                             "type": "string"
                         },

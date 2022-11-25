@@ -82,7 +82,7 @@ spec:
         configMap:
           name: {{ include "resource.dexk8sauth.name" . }}-giantswarm
       {{- if not .Values.ingress.tls.letsencrypt }}
-      {{- if ne .Values.ingress.tls.clusterIssuer "" }
+      {{- if ne .Values.ingress.tls.clusterIssuer "" }}
       - secret:
           defaultMode: 420
           items:

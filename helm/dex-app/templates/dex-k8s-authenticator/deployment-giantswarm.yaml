@@ -99,4 +99,5 @@ spec:
           secretName: {{ include "resource.dexk8sauth.name" . }}
         name: ca-cert
       {{- end }}
+      {{- end }}
 {{ end }}

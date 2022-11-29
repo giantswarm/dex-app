@@ -16,9 +16,13 @@ oidc:
       clientSecret: ZXhhbXBsZS1hcHAtc2VjcmV0
   customer:
     enabled: true
+    connectorType: testtype
+    connectorName: testname
+    connectorConfig: |-
+      test: test
     connectors:
       - connectorType: mockCallback
-        id: customer
+        id: customer-2
         connectorName: Kubernetes Dev Cluster
         connectorConfig: |-
           clientID: example-cluster-client-id
@@ -30,9 +34,13 @@ oidc:
           issuer: http://127.0.0.1:5556
           redirectURI: http://127.0.0.1:5555/callback/example-cluster
   giantswarm:
+    connectorConfig:
+      clientID: id
+      clientSecret: secret
+      team: gs
     connectors:
       - connectorType: mockCallback
-        id: giantswarm
+        id: giantswarm-2
         connectorName: Kubernetes Dev Cluster
         connectorConfig: |-
           clientID: example-client-id
@@ -43,3 +51,9 @@ oidc:
           - profile
           issuer: http://127.0.0.1:5556
           redirectURI: http://127.0.0.1:5555/callback/example-cluster
+      - connectorType: testtest
+        id: giantswarm-3
+        connectorName: something
+        connectorConfig: |-
+          test: test
+

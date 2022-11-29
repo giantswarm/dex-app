@@ -24,6 +24,7 @@ logoURI: https://s.giantswarm.io/brand/1/logo.svg
 ingress:
   tls:
     letsencrypt: true
+    clusterIssuer: ""
     caPemB64: ""
     crtPemB64: ""
     keyPemB64: ""

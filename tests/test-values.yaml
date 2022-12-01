@@ -16,7 +16,7 @@ oidc:
       clientSecret: ZXhhbXBsZS1hcHAtc2VjcmV0
   customer:
     enabled: true
-    connectorType: testtype
+    connectorType: mockCallback
     connectorName: testname
     connectorConfig: |-
       test: test
@@ -51,7 +51,7 @@ oidc:
           - profile
           issuer: http://127.0.0.1:5556
           redirectURI: http://127.0.0.1:5555/callback/example-cluster
-      - connectorType: testtest
+      - connectorType: mockCallback
         id: giantswarm-3
         connectorName: something
         connectorConfig: |-

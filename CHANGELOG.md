@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- If more connectors are specified in `Values.oidc.customer.connectors` in addition to an existing one in `Values.oidc.customer.connectorConfig`, include both in the dex secret.
+
 ### Fixed
 
 - Fix deployment template securityContext.

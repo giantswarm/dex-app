@@ -1,9 +1,10 @@
 # DO NOT EDIT. Generated with:
 #
-#    devctl@5.13.0
+#    devctl@5.13.1
 #
 name: 'Check if values schema file has been updated'
-on: pull_request
+on:
+  pull_request:
     branches:
       - master
       - main

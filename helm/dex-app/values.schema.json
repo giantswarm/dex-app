@@ -6,21 +6,7 @@
             "type": "object",
             "properties": {
                 "image": {
-                    "type": "object",
-                    "properties": {
-                        "name": {
-                            "type": "string"
-                        },
-                        "pullPolicy": {
-                            "type": "string"
-                        },
-                        "registry": {
-                            "type": "string"
-                        },
-                        "tag": {
-                            "type": "string"
-                        }
-                    }
+                    "$ref": "https://raw.githubusercontent.com/giantswarm/schema/main/image/v0.0.1.json"
                 }
             }
         },
@@ -28,21 +14,7 @@
             "type": "object",
             "properties": {
                 "image": {
-                    "type": "object",
-                    "properties": {
-                        "name": {
-                            "type": "string"
-                        },
-                        "pullPolicy": {
-                            "type": "string"
-                        },
-                        "registry": {
-                            "type": "string"
-                        },
-                        "tag": {
-                            "type": "string"
-                        }
-                    }
+                    "$ref": "https://raw.githubusercontent.com/giantswarm/schema/main/image/v0.0.1.json"
                 }
             }
         },

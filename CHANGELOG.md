@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.31.1] - 2022-12-01
+
 ### Changed
 
 - If more connectors are specified in `Values.oidc.customer.connectors` in addition to an existing one in `Values.oidc.customer.connectorConfig`, include both in the dex secret.
@@ -375,7 +377,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add helm chart for dex.
 
 
-[Unreleased]: https://github.com/giantswarm/dex-app/compare/v1.31.0...HEAD
+[Unreleased]: https://github.com/giantswarm/dex-app/compare/v1.31.1...HEAD
+[1.31.1]: https://github.com/giantswarm/dex-app/compare/v1.31.0...v1.31.1
 [1.31.0]: https://github.com/giantswarm/dex-app/compare/v1.30.2...v1.31.0
 [1.30.2]: https://github.com/giantswarm/dex-app/compare/v1.30.1...v1.30.2
 [1.30.1]: https://github.com/giantswarm/dex-app/compare/v1.30.0...v1.30.1

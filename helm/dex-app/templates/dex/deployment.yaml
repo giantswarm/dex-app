@@ -21,6 +21,7 @@ spec:
       labels:
         {{- include "dex.labels.common" . | nindent 8 }}
       annotations:
+        checksum/config: {{ include (print .Template.BasePath "/dex/secret.yaml") . | sha256sum | quote }}
     spec:
       affinity:
         podAntiAffinity:

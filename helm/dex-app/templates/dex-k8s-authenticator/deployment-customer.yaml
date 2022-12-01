@@ -26,7 +26,6 @@ spec:
         app.kubernetes.io/component: dex-k8s-authenticator-{{ .id }}
     spec:
       securityContext:
-        allowPrivilegeEscalation: false
         runAsNonRoot: true
         runAsUser: 1000
         runAsGroup: 1000
@@ -73,6 +72,8 @@ spec:
           requests:
             cpu: 50m
             memory: 64Mi
+        securityContext:
+          allowPrivilegeEscalation: false
     {{- with $values.nodeSelector }}
       nodeSelector:
 {{ toYaml . | indent 6 }}
@@ -119,7 +120,6 @@ spec:
         {{- include "dexk8sauth.customer.labels.selector" . | nindent 8 }}
     spec:
       securityContext:
-        allowPrivilegeEscalation: false
         runAsNonRoot: true
         runAsUser: 1000
         runAsGroup: 1000
@@ -166,6 +166,8 @@ spec:
           requests:
             cpu: 50m
             memory: 64Mi
+        securityContext:
+          allowPrivilegeEscalation: false
     {{- with .Values.nodeSelector }}
       nodeSelector:
 {{ toYaml . | indent 6 }}

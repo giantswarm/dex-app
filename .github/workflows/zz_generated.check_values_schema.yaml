@@ -2,7 +2,7 @@
 #
 #    devctl@5.13.1
 #
-name: 'Check if values and/or schema file has been updated'
+name: 'Values and schema'
 on:
   pull_request:
     branches:
@@ -14,7 +14,7 @@ on:
 
 jobs:
   check:
-    name: 'Check values.yaml and its schema in PR'
+    name: 'Validate values.yaml against values.schema.json'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -22,7 +22,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Install schema validator
+      - name: Install validator
         run: |
           wget -q -O ${HOME}/yajsv https://github.com/neilpa/yajsv/releases/download/v1.4.1/yajsv.linux.amd64
           chmod +x ${HOME}/yajsv

@@ -13,7 +13,7 @@ client:
 dex:
   image:
     registry: quay.io
-    name: 123
+    name: giantswarm/dex
     tag: v2.35.3-gs1
     pullPolicy: IfNotPresent
 

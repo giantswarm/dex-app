@@ -24,11 +24,11 @@ jobs:
 
       - name: Install schema validator
         run: |
-          wget -O /usr/bin/yajsv https://github.com/neilpa/yajsv/releases/download/v1.4.1/yajsv.linux.amd64
-          chmod +x /usr/bin/yajsv
+          wget -O ${HOME}/yajsv https://github.com/neilpa/yajsv/releases/download/v1.4.1/yajsv.linux.amd64
+          chmod +x ${HOME}/yajsv
 
       - name: 'Check if values.yaml is a valid instance of values.schema.json'
         run: |
           HELM_DIR=$(dirname $(git diff --name-only origin/${GITHUB_BASE_REF} origin/${GITHUB_HEAD_REF} \
            | grep 'helm/[-a-z].*\/values\.' | head -1))
-          /usr/bin/yajsv -s ${HELM_DIR}/values.schema.json ${HELM_DIR}/values.yaml
+          ${HOME}/yajsv -s ${HELM_DIR}/values.schema.json ${HELM_DIR}/values.yaml

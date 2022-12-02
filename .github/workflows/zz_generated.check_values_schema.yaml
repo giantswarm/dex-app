@@ -1,8 +1,8 @@
 # DO NOT EDIT. Generated with:
 #
-#    devctl@5.13.1
+#    devctl@5.14.0
 #
-name: 'Check if values schema file has been updated'
+name: 'Values and schema'
 on:
   pull_request:
     branches:
@@ -14,7 +14,7 @@ on:
 
 jobs:
   check:
-    name: 'Check values.yaml and its schema in PR'
+    name: 'validate values.yaml against values.schema.json'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -22,13 +22,13 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Install validator
+        run: |
+          wget -q -O ${HOME}/yajsv https://github.com/neilpa/yajsv/releases/download/v1.4.1/yajsv.linux.amd64
+          chmod +x ${HOME}/yajsv
+
       - name: 'Check if values.yaml is a valid instance of values.schema.json'
         run: |
           HELM_DIR=$(dirname $(git diff --name-only origin/${GITHUB_BASE_REF} origin/${GITHUB_HEAD_REF} \
            | grep 'helm/[-a-z].*\/values\.' | head -1))
-          VALUES_FILE=${HELM_DIR}/values.yaml
-          SCHEMA_FILE=${HELM_DIR}/values.schema.json
-          pip3 install json-spec==0.10.1
-          yq -o=json eval ${VALUES_FILE} > /tmp/values.json
-          json validate --schema-file=${SCHEMA_FILE} --document-file=/tmp/values.json
-          echo "PASSED: values.yaml and values.schema.json both appear to have been updated and the document is valid against the schema"
+          ${HOME}/yajsv -s ${HELM_DIR}/values.schema.json ${HELM_DIR}/values.yaml

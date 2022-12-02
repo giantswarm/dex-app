@@ -24,7 +24,7 @@ jobs:
 
       - name: Install schema validator
         run: |
-          wget -O ${HOME}/yajsv https://github.com/neilpa/yajsv/releases/download/v1.4.1/yajsv.linux.amd64
+          wget -q -O ${HOME}/yajsv https://github.com/neilpa/yajsv/releases/download/v1.4.1/yajsv.linux.amd64
           chmod +x ${HOME}/yajsv
 
       - name: 'Check if values.yaml is a valid instance of values.schema.json'

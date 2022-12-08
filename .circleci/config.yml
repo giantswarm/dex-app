@@ -27,6 +27,19 @@ workflows:
             tags:
               only: /^v.*/
 
+      - architect/push-to-docker:
+          context: architect
+          name: push-dex-app-to-aliyun
+          image: "registry-intl.cn-shanghai.aliyuncs.com/giantswarm/dex-app"
+          username_envar: "ALIYUN_USERNAME"
+          password_envar: "ALIYUN_PASSWORD"
+          # Needed to trigger job also on git tag.
+          filters:
+            branches:
+              only: main
+            tags:
+              only: /^v.*/
+
       - architect/push-to-app-catalog:
           name: push-to-control-plane-app-catalog
           app_catalog: control-plane-catalog

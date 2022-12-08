@@ -13,8 +13,8 @@ client:
 dex:
   image:
     registry: quay.io
-    name: giantswarm/dex
-    tag: v2.35.3-gs1
+    name: giantswarm/dex-app
+    tag: "[[ .Version ]]"
     pullPolicy: IfNotPresent
 
 extraVolumes: []

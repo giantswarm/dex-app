@@ -2,8 +2,9 @@
 
 <div class="theme-panel">
   <h2 class="theme-heading">Log in to {{ issuer }} </h2>
-  <div>
-    {{ range $c := .Connectors }}
+  <div id="connectors">
+    <noscript>
+      {{ range $c := .Connectors }}
       <div class="theme-form-row">
         <a href="{{ $c.URL }}" target="_self">
           <button class="dex-btn theme-btn-provider">
@@ -12,8 +13,49 @@
           </button>
         </a>
       </div>
-    {{ end }}
+      {{ end }}
+    </noscript>
   </div>
 </div>
+<script>
+  (() => {
+     const connectors = [{{ range $c := .Connectors }}
+       {
+         id: {{ $c.ID }},
+         name: {{ $c.Name}},
+         url: {{ $c.URL }},
+         type: {{ $c.Type }}
+       },{{ end }}
+     ];
+
+     const connectorFilter = (new URL(document.location)).searchParams.get("connector_filter");
+     const connectorEls = [];
+
+     for (const c of connectors) {
+       if (connectorFilter && !c.id.startsWith(connectorFilter)) {
+         continue;
+       }
+       const rowEl = document.createElement("div");
+       rowEl.classList.add("theme-form-row");
+       const linkEl = document.createElement("a");
+       linkEl.href = c.url;
+       linkEl.target = "_self";
+       const buttonEl = document.createElement("button");
+       buttonEl.classList.add("dex-btn", "theme-btn-provider");
+       const buttonIcon = document.createElement("span");
+       buttonIcon.classList.add("dex-btn-icon", `dex-btn-icon--${c.type}`);
+       const buttonText = document.createElement("span");
+       buttonText.classList.add("dex-btn-text");
+       buttonText.textContent = `Log in with ${c.name}`;
+       buttonEl.append(buttonIcon, buttonText);
+       linkEl.append(buttonEl);
+       rowEl.append(linkEl);
+       connectorEls.push(rowEl);
+     }
+
+     const connectorsContainer = document.querySelector("#connectors");
+     connectorsContainer.append(...connectorEls);
+   })();
+</script>
 
 {{ template "footer.html" . }}

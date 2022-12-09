@@ -1,22 +1,21 @@
 {
     "$schema": "https://json-schema.org/draft/2020-12/schema",
-    "type": "object",
     "properties": {
         "client": {
-            "type": "object",
             "properties": {
                 "image": {
                     "$ref": "https://schema.giantswarm.io/image/v0.0.1"
                 }
-            }
+            },
+            "type": "object"
         },
         "dex": {
-            "type": "object",
             "properties": {
                 "image": {
                     "$ref": "https://schema.giantswarm.io/image/v0.0.1"
                 }
-            }
+            },
+            "type": "object"
         },
         "extraVolumeMounts": {
             "type": "array"
@@ -25,15 +24,13 @@
             "type": "array"
         },
         "ingress": {
-            "type": "object",
             "properties": {
                 "tls": {
-                    "type": "object",
                     "properties": {
                         "caPemB64": {
                             "type": "string"
                         },
-			"clusterIssuer": {
+                        "clusterIssuer": {
                             "type": "string"
                         },
                         "crtPemB64": {
@@ -45,9 +42,11 @@
                         "letsencrypt": {
                             "type": "boolean"
                         }
-                    }
+                    },
+                    "type": "object"
                 }
-            }
+            },
+            "type": "object"
         },
         "isManagementCluster": {
             "type": "boolean"
@@ -59,18 +58,19 @@
             "type": "string"
         },
         "managementCluster": {
-            "type": ["object", "string"],
             "properties": {
                 "name": {
                     "type": "string"
                 }
-            }
+            },
+            "type": [
+                "object",
+                "string"
+            ]
         },
         "oidc": {
-            "type": "object",
             "properties": {
                 "customer": {
-                    "type": "object",
                     "properties": {
                         "connectorConfig": {
                             "type": "string"
@@ -82,9 +82,7 @@
                             "type": "string"
                         },
                         "connectors": {
-                            "type": "array",
                             "items": {
-                                "type": "object",
                                 "properties": {
                                     "connectorConfig": {
                                         "type": "string"
@@ -101,8 +99,10 @@
                                     "write_all_group": {
                                         "type": "string"
                                     }
-                                }
-                            }
+                                },
+                                "type": "object"
+                            },
+                            "type": "array"
                         },
                         "enabled": {
                             "type": "boolean"
@@ -110,10 +110,10 @@
                         "write_all_group": {
                             "type": "string"
                         }
-                    }
+                    },
+                    "type": "object"
                 },
                 "expiry": {
-                    "type": "object",
                     "properties": {
                         "idTokens": {
                             "type": "string"
@@ -121,13 +121,12 @@
                         "signingKeys": {
                             "type": "string"
                         }
-                    }
+                    },
+                    "type": "object"
                 },
                 "giantswarm": {
-                    "type": "object",
                     "properties": {
                         "connectorConfig": {
-                            "type": "object",
                             "properties": {
                                 "clientID": {
                                     "type": "string"
@@ -138,12 +137,11 @@
                                 "team": {
                                     "type": "string"
                                 }
-                            }
+                            },
+                            "type": "object"
                         },
                         "connectors": {
-                            "type": "array",
                             "items": {
-                                "type": "object",
                                 "properties": {
                                     "connectorConfig": {
                                         "type": "string"
@@ -160,22 +158,23 @@
                                     "write_all_group": {
                                         "type": "string"
                                     }
-                                }
-                            }
+                                },
+                                "type": "object"
+                            },
+                            "type": "array"
                         },
                         "write_all_group": {
                             "type": "string"
                         }
-                    }
+                    },
+                    "type": "object"
                 },
                 "issuerAddress": {
                     "type": "string"
                 },
                 "staticClients": {
-                    "type": "object",
                     "properties": {
                         "dexK8SAuthenticator": {
-                            "type": "object",
                             "properties": {
                                 "clientAddress": {
                                     "type": "string"
@@ -183,10 +182,10 @@
                                 "clientSecret": {
                                     "type": "string"
                                 }
-                            }
+                            },
+                            "type": "object"
                         },
                         "grafana": {
-                            "type": "object",
                             "properties": {
                                 "cliendID": {
                                     "type": "string"
@@ -194,10 +193,10 @@
                                 "redirectURI": {
                                     "type": "string"
                                 }
-                            }
+                            },
+                            "type": "object"
                         },
                         "gsCLIAuth": {
-                            "type": "object",
                             "properties": {
                                 "address": {
                                     "type": "string"
@@ -205,10 +204,10 @@
                                 "clientID": {
                                     "type": "string"
                                 }
-                            }
+                            },
+                            "type": "object"
                         },
                         "happa": {
-                            "type": "object",
                             "properties": {
                                 "clientID": {
                                     "type": "string"
@@ -216,44 +215,44 @@
                                 "redirectURI": {
                                     "type": "string"
                                 }
-                            }
+                            },
+                            "type": "object"
                         }
-                    }
+                    },
+                    "type": "object"
                 }
-            }
+            },
+            "type": "object"
         },
         "registry": {
-            "type": "object",
             "properties": {
                 "domain": {
                     "type": "string"
                 }
-            }
+            },
+            "type": "object"
         },
         "services": {
-            "type": "object",
             "properties": {
                 "grafana": {
-                    "type": "object",
                     "properties": {
                         "address": {
                             "type": "string"
                         }
-                    }
+                    },
+                    "type": "object"
                 },
                 "happa": {
-                    "type": "object",
                     "properties": {
                         "address": {
                             "type": "string"
                         }
-                    }
+                    },
+                    "type": "object"
                 },
                 "kubernetes": {
-                    "type": "object",
                     "properties": {
                         "api": {
-                            "type": "object",
                             "properties": {
                                 "address": {
                                     "type": "string"
@@ -270,11 +269,16 @@
                                 "public": {
                                     "type": "boolean"
                                 }
-                            }
+                            },
+                            "type": "object"
                         }
-                    }
+                    },
+                    "type": "object"
                 }
-            }
+            },
+            "type": "object"
         }
-    }
+    },
+    "type": "object"
 }
+

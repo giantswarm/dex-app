@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Use external [image](https://schema.giantswarm.io/image/v0.0.1) schema.
+
 ## [1.31.2] - 2022-12-01
 
 ### Added

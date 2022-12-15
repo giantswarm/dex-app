@@ -82,7 +82,7 @@
                             "type": "string"
                         },
                         "connectors": {
-                            "type": "array",
+                            "type": ["array", "null"],
                             "items": {
                                 "type": "object",
                                 "properties": {
@@ -141,7 +141,7 @@
                             }
                         },
                         "connectors": {
-                            "type": "array",
+                            "type": ["array", "null"],
                             "items": {
                                 "type": "object",
                                 "properties": {

@@ -45,9 +45,9 @@ spec:
               fieldRef:
                 fieldPath: metadata.namespace
         {{ if .Values.isManagementCluster }}
-        image: "{{ .Values.registry.domain }}/{{ .Values.dex.image.name }}:{{ .Values.dex.image.tag }}"
+        image: "{{ .Values.registry.domain }}/{{ .Values.dex.image.name }}:{{ .Chart.AppVersion }}"
         {{ else }}
-        image: "{{ .Values.dex.image.registry }}/{{ .Values.dex.image.name }}:{{ .Values.dex.image.tag }}"
+        image: "{{ .Values.dex.image.registry }}/{{ .Values.dex.image.name }}:{{ .Chart.AppVersion }}"
         {{ end }}
         imagePullPolicy: {{ .Values.dex.image.pullPolicy }}
         command:

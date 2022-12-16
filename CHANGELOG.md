@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add support for filtering connectors with `connector_filter` query parameter on connector selection (login) page.
+
 ### Changed
 
 - Use external [image](https://schema.giantswarm.io/image/v0.0.1) schema.

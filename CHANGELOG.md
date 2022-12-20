@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.32.0] - 2022-12-20
+
 ### Added
 
 - Add support for filtering connectors with `connector_filter` query parameter on connector selection (login) page.
@@ -392,7 +394,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add helm chart for dex.
 
 
-[Unreleased]: https://github.com/giantswarm/dex-app/compare/v1.31.2...HEAD
+[Unreleased]: https://github.com/giantswarm/dex-app/compare/v1.32.0...HEAD
+[1.32.0]: https://github.com/giantswarm/dex-app/compare/v1.31.2...v1.32.0
 [1.31.2]: https://github.com/giantswarm/dex-app/compare/v1.31.1...v1.31.2
 [1.31.1]: https://github.com/giantswarm/dex-app/compare/v1.31.0...v1.31.1
 [1.31.0]: https://github.com/giantswarm/dex-app/compare/v1.30.2...v1.31.0

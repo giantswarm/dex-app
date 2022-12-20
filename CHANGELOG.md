@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Use external [image](https://schema.giantswarm.io/image/v0.0.1) schema.
+- Allowed null values of OIDC connectors in the values schema
 
 ## [1.31.2] - 2022-12-01
 

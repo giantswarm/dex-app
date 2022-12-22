@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.32.1] - 2022-12-22
 
+### Changed
+
+- Use inline schema for 'image', avoid external schema.
+
 ## [1.32.0] - 2022-12-20
 
 ### Added

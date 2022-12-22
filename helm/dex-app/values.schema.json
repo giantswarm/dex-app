@@ -1,12 +1,58 @@
 {
     "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$defs": {
+        "image": {
+            "properties": {
+                "name": {
+                    "description": "Image name, optionally prefixed by a namespace and a separator, excluding tag.",
+                    "examples": [
+                        "redis",
+                        "giantswarm/happa"
+                    ],
+                    "title": "Name",
+                    "type": "string"
+                },
+                "pullPolicy": {
+                    "enum": [
+                        "Always",
+                        "IfNotPresent",
+                        "Never"
+                    ],
+                    "type": "string"
+                },
+                "registry": {
+                    "description": "Name of the server to access the image from.",
+                    "examples": [
+                        "quay.io",
+                        "hub.docker.com"
+                    ],
+                    "title": "Registry",
+                    "type": "string"
+                },
+                "tag": {
+                    "description": "Specifies the version of the image, without colon.",
+                    "examples": [
+                        "latest",
+                        "v4.1.2-alpine"
+                    ],
+                    "title": "Tag",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "name"
+            ],
+            "title": "Schema for container images",
+            "type": "object"
+        }
+    },
     "type": "object",
     "properties": {
         "client": {
             "type": "object",
             "properties": {
                 "image": {
-                    "$ref": "https://schema.giantswarm.io/image/v0.0.1"
+                    "$ref": "#/$defs/image"
                 }
             }
         },
@@ -14,7 +60,7 @@
             "type": "object",
             "properties": {
                 "image": {
-                    "$ref": "https://schema.giantswarm.io/image/v0.0.1"
+                    "$ref": "#/$defs/image"
                 }
             }
         },

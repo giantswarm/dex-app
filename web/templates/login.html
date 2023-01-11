@@ -46,7 +46,7 @@
        buttonIcon.classList.add("dex-btn-icon", `dex-btn-icon--${c.type}`);
        const buttonText = document.createElement("span");
        buttonText.classList.add("dex-btn-text");
-       buttonText.textContent = `Log in with ${c.name}`;
+       buttonText.textContent = `Log in with ${c.name} (${c.id})`;
        buttonEl.append(buttonIcon, buttonText);
        linkEl.append(buttonEl);
        rowEl.append(linkEl);

@@ -27,14 +27,12 @@
               type: {{ $c.Type }}
           },{{ end }}
       ];
-
       const connectorFilter = new URL(document.location).searchParams.get(
           "connector_filter"
       );
       const filteredConnectors = connectors.filter((c) =>
           c.id.startsWith(connectorFilter)
       );
-
       const connectorsContainer = document.querySelector("#connectors");
 
       if (connectorFilter && filteredConnectors.length === 0) {

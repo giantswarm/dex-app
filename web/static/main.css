@@ -6,8 +6,14 @@ body {
   margin: 0;
 }
 
+code {
+  font-size: 90%;
+  font-weight: 400;
+}
+
 .dex-container {
   color: #333;
+  font-size: 16px;
   margin: 45px auto;
   max-width: 500px;
   min-width: 320px;
@@ -21,6 +27,7 @@ body {
   cursor: pointer;
   font-size: 16px;
   padding: 0;
+  width: 100%
 }
 
 .dex-btn:focus {
@@ -106,10 +113,16 @@ body {
 }
 
 .dex-btn-text {
+  display: flex;
+  flex-direction: column;
   font-weight: 600;
-  line-height: 36px;
-  padding: 6px 12px;
+  line-height: 20px;
+  padding: 8px 12px 4px;
   text-align: center;
+}
+
+.dex-btn-text > code {
+  line-height: 30px;
 }
 
 .dex-subtle-text {

@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- Improve connector selection (login) and error page UI.
+
 ## [1.32.1] - 2022-12-22
 
 ### Changed

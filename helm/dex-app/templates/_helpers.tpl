@@ -81,3 +81,22 @@ Abstract the knowledge to know if it needs a Giant Swarm connector or not
   {{- printf "false" }}
 {{- end -}}
 {{- end -}}
+
+{{/*
+Aggregated values for NO_PROXY evn variable in the Dex deployment
+- service CIDR or fallback to default
+- pod CIDR or fallback to default
+- vpc CIDR if available
+- proxy.no_proxy if available
+*/}}
+{{- define "no-proxy-value" -}}
+  {{- if .Values.proxy }}
+    {{- $defaultNetwork := dict "serviceCIDR" "172.31.0.0/16" "podCIDR" "100.64.0.0/12" -}}
+    {{- $network := default $defaultNetwork .Values.network -}}
+    {{- $list := list (default $defaultNetwork.serviceCIDR $network.serviceCIDR) -}}
+    {{- $list = append $list (default $defaultNetwork.podCIDR $network.podCIDR) -}}
+    {{- $list = append $list (default "" $network.vpcCIDR) -}}
+    {{- $list = append $list (default "" .Values.proxy.no_proxy) -}}
+    {{- join "," (compact $list) -}}
+  {{- end -}}
+{{- end -}}

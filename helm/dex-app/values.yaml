@@ -86,3 +86,9 @@ managementCluster:
 
 # Giant Swarm properties for workload clusters
 isWorkloadCluster: false
+
+cluster:
+  proxy:
+    http_proxy: ""
+    https_proxy: ""
+    no_proxy: ""

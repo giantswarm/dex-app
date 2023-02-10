@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Add a possibility to configure a custom trusted root CA
+- Add support for manual configuration of private workload cluster proxy
 
 ## [1.32.2] - 2023-01-13
 

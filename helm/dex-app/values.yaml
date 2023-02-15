@@ -88,7 +88,7 @@ managementCluster:
 isWorkloadCluster: false
 
 proxy:
-  enabled: true
-  http_proxy: "https://example.com"
-  https_proxy: "https://example.com"
-  no_proxy: "172.16.0.0/16"
+  enabled: false
+  http_proxy: ""
+  https_proxy: ""
+  no_proxy: ""

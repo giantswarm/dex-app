@@ -112,6 +112,21 @@
                 }
             }
         },
+        "trustedRootCA": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "secretName": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "name",
+                "secretName"
+            ]
+        },
         "oidc": {
             "type": "object",
             "properties": {

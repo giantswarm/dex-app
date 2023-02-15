@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add a possibility to configure a custom trusted root CA
+
 ## [1.32.2] - 2023-01-13
 
 ### Changed

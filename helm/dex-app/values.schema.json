@@ -337,32 +337,31 @@
                 }
             }
         },
-        "cluster": {
+        "proxy": {
             "type": "object",
+            "title": "Schema for private workload cluster proxy setup",
             "properties": {
-                "proxy": {
-                    "type": "object",
-                    "title": "Schema for private workload cluster proxy setup",
-                    "properties": {
-                        "http_proxy": {
-                            "description": "base URL of the proxy for HTTP traffic (https://hostname:8080)",
-                            "type": "string"
-                        },
-                        "https_proxy": {
-                            "description": "base URL of the proxy for HTTPS traffic (https://hostname:8080)",
-                            "type": "string"
-                        },
-                        "no_proxy": {
-                            "description": "comma-separated list of IP ranges and hostnames, which should not go through the proxy",
-                            "type": "string"
-                        }
-                    },
-                    "required": [
-                        "https_proxy",
-                        "no_proxy"
-                    ]
+                "enabled": {
+                    "description": "indication whether the proxy is enabled",
+                    "type": "boolean"
+                },
+                "http_proxy": {
+                    "description": "base URL of the proxy for HTTP traffic (https://hostname:8080)",
+                    "type": "string"
+                },
+                "https_proxy": {
+                    "description": "base URL of the proxy for HTTPS traffic (https://hostname:8080)",
+                    "type": "string"
+                },
+                "no_proxy": {
+                    "description": "comma-separated list of IP ranges and hostnames, which should not go through the proxy",
+                    "type": "string"
                 }
-            }
+            },
+            "required": [
+                "https_proxy",
+                "no_proxy"
+            ]
         }
     }
 }

@@ -139,6 +139,32 @@ Notes:
 
 As a result, you should see Dex deployed in your workload cluster.
 
+### Ingress, TLS and custom certification authorities
+
+Dex app exposes a web interface, which is accessible over https. Therefore, it creates an ingress, which needs to be configured with a TLS certificate signed by a certification authority, which needs to be trusted by the browsers. 
+The app consists of several components, which also need to be able to communicate with each other internally over https. So the certification authority signing the certificates needs to be trusted by the individual app components as well.
+
+In case a custom certification authority is used, it needs to be exposed to the individual app components and set as trusted, otherwise the components will not be able to communicate with each other and the app may not work as expected.
+Based on the cluster setup, this can be achieved by providing an additional set of values to the app configuration:
+
+1. Add a base64-encoded certificate of the certification authority to the User Values configmap or secret. This option is useful when using custom, self-signed certificates in a cluster:
+
+```yaml
+ingress:
+  tls:
+    letsencrypt: false
+    caPemB64: "base64-encoded CA certificate"
+```
+
+2. Provide a reference to an existing Secret resource, which contyains the custom certification authority. This option is useful for cluster setup, where TLS certificates signed by a custom certification authority are provided by an external service:
+
+```yaml
+trustedRootCA:
+  name: "name-of-the property-in-the-secret"
+  secretName: "name-of-the-custom-ca-secret"
+```
+
+
 ## Update Process
 
 Giant Swarm is currently building the `dex` app from [a fork](https://github.com/giantswarm/dex) of the [original project](https://github.com/dexidp/dex).

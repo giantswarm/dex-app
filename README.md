@@ -156,7 +156,7 @@ ingress:
     caPemB64: "base64-encoded CA certificate"
 ```
 
-2. Provide a reference to an existing Secret resource, which contyains the custom certification authority. This option is useful for cluster setup, where TLS certificates signed by a custom certification authority are provided by an external service:
+2. Provide a reference to an existing Secret resource, which contains the custom certification authority. This option is useful for cluster setup, where TLS certificates signed by a custom certification authority are provided by an external service:
 
 ```yaml
 ingress:

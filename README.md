@@ -159,6 +159,10 @@ ingress:
 2. Provide a reference to an existing Secret resource, which contyains the custom certification authority. This option is useful for cluster setup, where TLS certificates signed by a custom certification authority are provided by an external service:
 
 ```yaml
+ingress:
+  tls:
+    letsencrypt: false
+
 trustedRootCA:
   name: "name-of-the property-in-the-secret"
   secretName: "name-of-the-custom-ca-secret"

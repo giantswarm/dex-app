@@ -28,10 +28,6 @@ ingress:
     crtPemB64: ""
     keyPemB64: ""
 
-trustedRootCA:
-  name: ""
-  secretName: ""
-
 oidc:
   issuerAddress: ""
   expiry:

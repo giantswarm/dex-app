@@ -73,13 +73,16 @@
         "ingress": {
             "type": "object",
             "properties": {
+                "externalDNS": {
+                    "type": "boolean"
+                },
                 "tls": {
                     "type": "object",
                     "properties": {
                         "caPemB64": {
                             "type": "string"
                         },
-			"clusterIssuer": {
+                        "clusterIssuer": {
                             "type": "string"
                         },
                         "crtPemB64": {
@@ -105,7 +108,10 @@
             "type": "string"
         },
         "managementCluster": {
-            "type": ["object", "string"],
+            "type": [
+                "object",
+                "string"
+            ],
             "properties": {
                 "name": {
                     "type": "string"
@@ -143,7 +149,10 @@
                             "type": "string"
                         },
                         "connectors": {
-                            "type": ["array", "null"],
+                            "type": [
+                                "array",
+                                "null"
+                            ],
                             "items": {
                                 "type": "object",
                                 "properties": {
@@ -202,7 +211,10 @@
                             }
                         },
                         "connectors": {
-                            "type": ["array", "null"],
+                            "type": [
+                                "array",
+                                "null"
+                            ],
                             "items": {
                                 "type": "object",
                                 "properties": {

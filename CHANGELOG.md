@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add additional annotations on all `ingress` objects to support DNS record creation via `external-dns`
+
 ## [1.32.3] - 2023-02-22
 
 ### Added

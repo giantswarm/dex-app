@@ -21,6 +21,7 @@ extraVolumeMounts: []
 logoURI: https://s.giantswarm.io/brand/1/logo.svg
 
 ingress:
+  externalDNS: false
   tls:
     letsencrypt: true
     clusterIssuer: ""

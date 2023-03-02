@@ -14,6 +14,14 @@ metadata:
     {{- else if ne .Values.ingress.tls.clusterIssuer "" }}
     cert-manager.io/cluster-issuer: {{ .Values.ingress.tls.clusterIssuer }}
     {{- end }}
+    {{- if .Values.ingress.externalDNS }}
+    {{- if .Values.isWorkloadCluster }}
+    external-dns.alpha.kubernetes.io/hostname: dex.{{ .Values.baseDomain }}
+    {{- else if .Values.isManagementCluster }}
+    external-dns.alpha.kubernetes.io/hostname: {{ .Values.oidc.issuerAddress }}
+    {{- end }}
+    giantswarm.io/external-dns: managed
+    {{- end }}
 spec:
   ingressClassName: nginx
   tls:

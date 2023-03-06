@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add circle ci job to push to `capz-app-collection` on new release.
+
 ## [1.33.0] - 2023-03-02
 
 ### Added

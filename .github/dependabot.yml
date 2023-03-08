@@ -1,9 +1,17 @@
 # DO NOT EDIT. Generated with:
 #
-#    devctl@5.14.0
+#    devctl@5.19.0
 #
 version: 2
 updates:
+  - package-ecosystem: docker
+    directory: "/"
+    schedule:
+      interval: weekly
+      time: "04:00"
+    open-pull-requests-limit: 10
+    reviewers:
+      - giantswarm/team-rainbow
   - package-ecosystem: github-actions
     directory: "/"
     schedule:

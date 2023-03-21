@@ -258,6 +258,20 @@
                                 }
                             }
                         },
+                        "gitopsui": {
+                            "type": "object",
+                            "properties": {
+                                "cliendID": {
+                                    "type": "string"
+                                },
+                                "clientSecret": {
+                                    "type": "string"
+                                },
+                                "redirectURI": {
+                                    "type": "string"
+                                }
+                            }
+                        },
                         "grafana": {
                             "type": "object",
                             "properties": {
@@ -306,6 +320,14 @@
         "services": {
             "type": "object",
             "properties": {
+                "gitopsui": {
+                    "type": "object",
+                    "properties": {
+                        "address": {
+                            "type": "string"
+                        }
+                    }
+                },
                 "grafana": {
                     "type": "object",
                     "properties": {

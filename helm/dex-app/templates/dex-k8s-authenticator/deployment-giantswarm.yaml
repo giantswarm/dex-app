@@ -83,22 +83,32 @@ spec:
         configMap:
           name: {{ include "resource.dexk8sauth.name" . }}-giantswarm
       {{- if not .Values.ingress.tls.letsencrypt }}
+      {{- if .Values.trustedRootCA }}
+      - name: ca-cert
+        secret:
+          defaultMode: 420
+          items:
+          - key: {{ .Values.trustedRootCA.name }}
+            path: ca.crt
+          secretName: {{ .Values.trustedRootCA.secretName }}
+      {{- else }}
       {{- if ne .Values.ingress.tls.clusterIssuer "" }}
-      - secret:
+      - name: ca-cert
+        secret:
           defaultMode: 420
           items:
           - key: ca.crt
             path: ca.crt
           secretName: {{ include "resource.dex.name" . }}-tls
-        name: ca-cert
       {{- else }}
-      - secret:
+      - name: ca-cert
+        secret:
           defaultMode: 420
           items:
           - key: ca.crt
             path: ca.crt
           secretName: {{ include "resource.dexk8sauth.name" . }}
-        name: ca-cert
+      {{- end }}
       {{- end }}
       {{- end }}
 {{ end }}

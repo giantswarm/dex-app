@@ -11,6 +11,48 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Remove shared app collection from circle CI
 
+## [1.34.0] - 2023-03-22
+
+### Added
+
+- Add circle ci job to push to `capz-app-collection` on new release.
+- Static client for GitOps Server.
+
+## [1.33.0] - 2023-03-02
+
+### Added
+
+- Add additional annotations on all `ingress` objects to support DNS record creation via `external-dns`
+
+## [1.32.3] - 2023-02-22
+
+### Added
+
+- Add a possibility to configure a custom trusted root CA
+- Add support for manual configuration of private workload cluster proxy
+
+## [1.32.2] - 2023-01-13
+
+### Changed
+- Improve connector selection (login) and error page UI.
+
+## [1.32.1] - 2022-12-22
+
+### Changed
+
+- Use inline schema for 'image', avoid external schema.
+
+## [1.32.0] - 2022-12-20
+
+### Added
+
+- Add support for filtering connectors with `connector_filter` query parameter on connector selection (login) page.
+
+### Changed
+
+- Use external [image](https://schema.giantswarm.io/image/v0.0.1) schema.
+- Allowed null values of OIDC connectors in the values schema
+
 ## [1.31.2] - 2022-12-01
 
 ### Added
@@ -387,7 +429,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add helm chart for dex.
 
 
-[Unreleased]: https://github.com/giantswarm/dex-app/compare/v1.31.2...HEAD
+[Unreleased]: https://github.com/giantswarm/dex-app/compare/v1.34.0...HEAD
+[1.34.0]: https://github.com/giantswarm/dex-app/compare/v1.33.0...v1.34.0
+[1.33.0]: https://github.com/giantswarm/dex-app/compare/v1.32.3...v1.33.0
+[1.32.3]: https://github.com/giantswarm/dex-app/compare/v1.32.2...v1.32.3
+[1.32.2]: https://github.com/giantswarm/dex-app/compare/v1.32.1...v1.32.2
+[1.32.1]: https://github.com/giantswarm/dex-app/compare/v1.32.0...v1.32.1
+[1.32.0]: https://github.com/giantswarm/dex-app/compare/v1.31.2...v1.32.0
 [1.31.2]: https://github.com/giantswarm/dex-app/compare/v1.31.1...v1.31.2
 [1.31.1]: https://github.com/giantswarm/dex-app/compare/v1.31.0...v1.31.1
 [1.31.0]: https://github.com/giantswarm/dex-app/compare/v1.30.2...v1.31.0

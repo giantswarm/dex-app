@@ -1,0 +1,80 @@
+{{ template "header.html" . }}
+
+<div class="theme-panel">
+  <h2 class="theme-heading">Log in to {{ issuer }} </h2>
+  <div id="connectors">
+    <noscript>
+      {{ range $c := .Connectors }}
+      <div class="theme-form-row">
+        <a href="{{ $c.URL }}" target="_self">
+          <button class="dex-btn theme-btn-provider">
+            <span class="dex-btn-icon dex-btn-icon--{{ $c.Type }}"></span>
+            <span class="dex-btn-text">Log in with {{ $c.Name }}</span>
+          </button>
+        </a>
+      </div>
+      {{ end }}
+    </noscript>
+  </div>
+</div>
+<script>
+  (() => {
+    const connectors = [{{ range $c := .Connectors }}
+      {
+          id: {{ $c.ID }},
+          name: {{ $c.Name}},
+          url: {{ $c.URL }},
+          type: {{ $c.Type }}
+      },{{ end }}
+    ];
+    const connectorFilter = new URL(document.location).searchParams.get(
+      'connector_filter'
+    );
+    const filteredConnectors = connectors.filter((c) =>
+      c.id.startsWith(connectorFilter)
+    );
+    const connectorsContainer = document.querySelector('#connectors');
+
+    if (connectorFilter && filteredConnectors.length === 0) {
+      const emptyConnectorMsgEl = document.createElement('p');
+      const emptyConnectorMsgConnectorFilter = document.createElement('code');
+      emptyConnectorMsgConnectorFilter.textContent = connectorFilter;
+      emptyConnectorMsgEl.append(
+        document.createTextNode('No connectors matching the filter '),
+        emptyConnectorMsgConnectorFilter,
+        document.createTextNode(' were found.')
+      );
+      connectorsContainer.append(emptyConnectorMsgEl);
+    }
+
+    const connectorEls = (
+      filteredConnectors.length === 0 ? connectors : filteredConnectors
+    ).map((c) => {
+      const rowEl = document.createElement('div');
+      rowEl.classList.add('theme-form-row');
+      const linkEl = document.createElement('a');
+      linkEl.href = c.url;
+      linkEl.target = '_self';
+      const buttonEl = document.createElement('button');
+      buttonEl.classList.add('dex-btn', 'theme-btn-provider');
+      const buttonIcon = document.createElement('span');
+      buttonIcon.classList.add('dex-btn-icon', `dex-btn-icon--${c.type}`);
+      const buttonContent = document.createElement('span');
+      buttonContent.classList.add('dex-btn-text');
+      const buttonContentText = document.createElement('span');
+      buttonContentText.textContent = `Log in with ${c.name}`;
+      const buttonContentConnectorID = document.createElement('code');
+      buttonContentConnectorID.textContent = c.id;
+      buttonContent.append(buttonContentText, buttonContentConnectorID);
+      buttonEl.append(buttonIcon, buttonContent);
+      linkEl.append(buttonEl);
+      rowEl.append(linkEl);
+
+      return rowEl;
+    });
+
+    connectorsContainer.append(...connectorEls);
+  })();
+</script>
+
+{{ template "footer.html" . }}

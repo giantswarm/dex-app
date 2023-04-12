@@ -13,8 +13,7 @@ client:
 dex:
   image:
     registry: quay.io
-    name: giantswarm/dex
-    tag: v2.35.3-gs1
+    name: giantswarm/dex-app
     pullPolicy: IfNotPresent
 
 extraVolumes: []
@@ -22,6 +21,7 @@ extraVolumeMounts: []
 logoURI: https://s.giantswarm.io/brand/1/logo.svg
 
 ingress:
+  externalDNS: false
   tls:
     letsencrypt: true
     clusterIssuer: ""
@@ -35,6 +35,10 @@ oidc:
     signingKeys: 6h
     idTokens: 30m
   staticClients:
+    gitopsui:
+      clientID: ""
+      clientSecret: ""
+      redirectURI: ""
     grafana:
       cliendID: ""
       redirectURI: ""
@@ -76,6 +80,8 @@ services:
     address: ""
   grafana:
     address: ""
+  gitopsui:
+    address: ""
 
 registry:
   domain: docker.io
@@ -87,3 +93,9 @@ managementCluster:
 
 # Giant Swarm properties for workload clusters
 isWorkloadCluster: false
+
+proxy:
+  enabled: false
+  http_proxy: ""
+  https_proxy: ""
+  no_proxy: ""

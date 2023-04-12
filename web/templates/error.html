@@ -1,0 +1,44 @@
+{{ template "header.html" . }}
+
+<div class="theme-panel" id="error">
+  <noscript>
+    <h2 class="theme-heading">{{ .ErrType }}</h2>
+    <p>{{ .ErrMsg }}</p>
+  </noscript>
+</div>
+<script>
+  const errorMsg = {{ .ErrMsg }};
+  const connectorID = new URL(document.location).searchParams.get(
+    'connector_id'
+  );
+  const errorContainerEl = document.querySelector('#error');
+
+  if (
+    connectorID &&
+    errorMsg === 'Connector ID does not match a valid Connector'
+  ) {
+    const errorMsgConnectorID = document.createElement('code');
+    errorMsgConnectorID.textContent = connectorID;
+    const errorMsgEl = document.createElement('h3');
+    errorMsgEl.classList.add('theme-heading');
+    errorMsgEl.append(
+      document.createTextNode('There is no connector matching the ID '),
+      errorMsgConnectorID
+    );
+    const errorMsgDetailsEl = document.createElement('p');
+    errorMsgDetailsEl.textContent =
+      'To see a list of all configured connectors, please try logging in without specifying a connector ID.';
+    errorContainerEl.append(errorMsgEl, errorMsgDetailsEl);
+  } else {
+    const errorTypeEl = document.createElement('h2');
+    errorTypeEl.classList.add('theme-heading');
+    errorTypeEl.textContent = {{ .ErrType }};
+
+    const errorMsgEl = document.createElement('p');
+    errorMsgEl.textContent = errorMsg;
+
+    errorContainerEl.append(errorTypeEl, errorMsgEl);
+  }
+</script>
+
+{{ template "footer.html" . }}

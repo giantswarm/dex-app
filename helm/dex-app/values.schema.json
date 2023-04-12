@@ -1,26 +1,58 @@
 {
-    "$schema": "http://json-schema.org/schema#",
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$defs": {
+        "image": {
+            "properties": {
+                "name": {
+                    "description": "Image name, optionally prefixed by a namespace and a separator, excluding tag.",
+                    "examples": [
+                        "redis",
+                        "giantswarm/happa"
+                    ],
+                    "title": "Name",
+                    "type": "string"
+                },
+                "pullPolicy": {
+                    "enum": [
+                        "Always",
+                        "IfNotPresent",
+                        "Never"
+                    ],
+                    "type": "string"
+                },
+                "registry": {
+                    "description": "Name of the server to access the image from.",
+                    "examples": [
+                        "quay.io",
+                        "hub.docker.com"
+                    ],
+                    "title": "Registry",
+                    "type": "string"
+                },
+                "tag": {
+                    "description": "Specifies the version of the image, without colon.",
+                    "examples": [
+                        "latest",
+                        "v4.1.2-alpine"
+                    ],
+                    "title": "Tag",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "name"
+            ],
+            "title": "Schema for container images",
+            "type": "object"
+        }
+    },
     "type": "object",
     "properties": {
         "client": {
             "type": "object",
             "properties": {
                 "image": {
-                    "type": "object",
-                    "properties": {
-                        "name": {
-                            "type": "string"
-                        },
-                        "pullPolicy": {
-                            "type": "string"
-                        },
-                        "registry": {
-                            "type": "string"
-                        },
-                        "tag": {
-                            "type": "string"
-                        }
-                    }
+                    "$ref": "#/$defs/image"
                 }
             }
         },
@@ -28,21 +60,7 @@
             "type": "object",
             "properties": {
                 "image": {
-                    "type": "object",
-                    "properties": {
-                        "name": {
-                            "type": "string"
-                        },
-                        "pullPolicy": {
-                            "type": "string"
-                        },
-                        "registry": {
-                            "type": "string"
-                        },
-                        "tag": {
-                            "type": "string"
-                        }
-                    }
+                    "$ref": "#/$defs/image"
                 }
             }
         },
@@ -55,13 +73,16 @@
         "ingress": {
             "type": "object",
             "properties": {
+                "externalDNS": {
+                    "type": "boolean"
+                },
                 "tls": {
                     "type": "object",
                     "properties": {
                         "caPemB64": {
                             "type": "string"
                         },
-			"clusterIssuer": {
+                        "clusterIssuer": {
                             "type": "string"
                         },
                         "crtPemB64": {
@@ -87,12 +108,30 @@
             "type": "string"
         },
         "managementCluster": {
-            "type": ["object", "string"],
+            "type": [
+                "object",
+                "string"
+            ],
             "properties": {
                 "name": {
                     "type": "string"
                 }
             }
+        },
+        "trustedRootCA": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "secretName": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "name",
+                "secretName"
+            ]
         },
         "oidc": {
             "type": "object",
@@ -110,7 +149,10 @@
                             "type": "string"
                         },
                         "connectors": {
-                            "type": "array",
+                            "type": [
+                                "array",
+                                "null"
+                            ],
                             "items": {
                                 "type": "object",
                                 "properties": {
@@ -169,7 +211,10 @@
                             }
                         },
                         "connectors": {
-                            "type": "array",
+                            "type": [
+                                "array",
+                                "null"
+                            ],
                             "items": {
                                 "type": "object",
                                 "properties": {
@@ -209,6 +254,20 @@
                                     "type": "string"
                                 },
                                 "clientSecret": {
+                                    "type": "string"
+                                }
+                            }
+                        },
+                        "gitopsui": {
+                            "type": "object",
+                            "properties": {
+                                "cliendID": {
+                                    "type": "string"
+                                },
+                                "clientSecret": {
+                                    "type": "string"
+                                },
+                                "redirectURI": {
                                     "type": "string"
                                 }
                             }
@@ -261,6 +320,14 @@
         "services": {
             "type": "object",
             "properties": {
+                "gitopsui": {
+                    "type": "object",
+                    "properties": {
+                        "address": {
+                            "type": "string"
+                        }
+                    }
+                },
                 "grafana": {
                     "type": "object",
                     "properties": {
@@ -303,6 +370,32 @@
                     }
                 }
             }
+        },
+        "proxy": {
+            "type": "object",
+            "title": "Schema for private workload cluster proxy setup",
+            "properties": {
+                "enabled": {
+                    "description": "indication whether the proxy is enabled",
+                    "type": "boolean"
+                },
+                "http_proxy": {
+                    "description": "base URL of the proxy for HTTP traffic (https://hostname:8080)",
+                    "type": "string"
+                },
+                "https_proxy": {
+                    "description": "base URL of the proxy for HTTPS traffic (https://hostname:8080)",
+                    "type": "string"
+                },
+                "no_proxy": {
+                    "description": "comma-separated list of IP ranges and hostnames, which should not go through the proxy",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "https_proxy",
+                "no_proxy"
+            ]
         }
     }
 }

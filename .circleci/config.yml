@@ -57,20 +57,6 @@ workflows:
             tags:
               only: /^v.*/
 
-      # deploy to all installations (only tags)
-      - architect/push-to-app-collection:
-          context: architect
-          name: push-to-shared-app-collection
-          app_name: dex-app
-          app_collection_repo: shared-app-collection
-          requires:
-            - push-to-control-plane-app-catalog
-          filters:
-            branches:
-              ignore: /.*/
-            tags:
-              only: /^v.*/
-
       # deploy to aws installations (only tags)
       - architect/push-to-app-collection:
           context: architect

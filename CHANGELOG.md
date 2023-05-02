@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Remove shared app collection from circle CI
+- Define pod disruption budget as percentage
 
 ## [1.34.0] - 2023-03-22
 

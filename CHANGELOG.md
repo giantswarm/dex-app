@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.34.1] - 2023-05-03
+
 ### Changed
 
 - Remove shared app collection from circle CI
@@ -430,7 +432,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add helm chart for dex.
 
 
-[Unreleased]: https://github.com/giantswarm/dex-app/compare/v1.34.0...HEAD
+[Unreleased]: https://github.com/giantswarm/dex-app/compare/v1.34.1...HEAD
+[1.34.1]: https://github.com/giantswarm/dex-app/compare/v1.34.0...v1.34.1
 [1.34.0]: https://github.com/giantswarm/dex-app/compare/v1.33.0...v1.34.0
 [1.33.0]: https://github.com/giantswarm/dex-app/compare/v1.32.3...v1.33.0
 [1.32.3]: https://github.com/giantswarm/dex-app/compare/v1.32.2...v1.32.3

@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.34.2] - 2023-05-05
+
 ### Changed
 
 - Changed log level to `info`
@@ -436,7 +438,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add helm chart for dex.
 
 
-[Unreleased]: https://github.com/giantswarm/dex-app/compare/v1.34.1...HEAD
+[Unreleased]: https://github.com/giantswarm/dex-app/compare/v1.34.2...HEAD
+[1.34.2]: https://github.com/giantswarm/dex-app/compare/v1.34.1...v1.34.2
 [1.34.1]: https://github.com/giantswarm/dex-app/compare/v1.34.0...v1.34.1
 [1.34.0]: https://github.com/giantswarm/dex-app/compare/v1.33.0...v1.34.0
 [1.33.0]: https://github.com/giantswarm/dex-app/compare/v1.32.3...v1.33.0

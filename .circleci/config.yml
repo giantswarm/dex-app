@@ -50,8 +50,8 @@ workflows:
           persist_chart_archive: true
           push_to_oci_registry: true
           requires:
-          - push-dex-app-to-quay
-          - push-dex-app-to-docker
+            - push-dex-app-to-quay
+            - push-dex-app-to-docker
           filters:
             # Trigger the job also on git tag.
             tags:
@@ -98,22 +98,8 @@ workflows:
               ignore: /.*/
             tags:
               only: /^v.*/
-
-      # deploy to openstack installations (only tags)
-      - architect/push-to-app-collection:
-          context: architect
-          name: push-to-openstack-app-collection
-          app_name: dex-app
-          app_collection_repo: openstack-app-collection
-          requires:
-            - push-to-control-plane-app-catalog
-          filters:
-            branches:
-              ignore: /.*/
-            tags:
-              only: /^v.*/
-
       # make it available to customers (only tags)
+
       - architect/push-to-app-catalog:
           name: package and push chart to giantswarm catalog
           app_catalog: giantswarm-catalog
@@ -123,8 +109,8 @@ workflows:
           executor: "app-build-suite"
           push_to_oci_registry: true
           requires:
-          - push-dex-app-to-quay
-          - push-dex-app-to-docker
+            - push-dex-app-to-quay
+            - push-dex-app-to-docker
           # Trigger job on git tag.
           filters:
             tags:
@@ -138,8 +124,8 @@ workflows:
           chart: dex-app
           executor: "app-build-suite"
           requires:
-          - push-dex-app-to-quay
-          - push-dex-app-to-docker
+            - push-dex-app-to-quay
+            - push-dex-app-to-docker
           # Trigger job on git tag.
           filters:
             tags:

@@ -17,7 +17,7 @@ spec:
         {{- else }}
         replacement: {{ .Values.managementCluster.name }}
         {{- end }}
-        {{- else if .Values.isWorkloadCluster }}
+        {{- else if eq (include "is-workload-cluster" .) "true" }}
         replacement: {{ .Values.clusterID }}
         {{- end }}
   selector:

@@ -7,8 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add utility function to determine whether the app is installed on a workload cluster
+
 ### Removed
 
+- Remove unused dex-k8s-authenticator-giantswarm resources
 - Stop pushing to `openstack-app-collection`.
 
 ## [1.34.2] - 2023-05-05

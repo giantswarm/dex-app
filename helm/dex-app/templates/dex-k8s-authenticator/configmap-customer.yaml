@@ -41,7 +41,7 @@ data:
       {{- end }}
       k8s_ca_pem: ${KUBERNETES_CACERT}
       redirect_uri: https://{{ $values.oidc.staticClients.dexK8SAuthenticator.clientAddress }}/callback
-    {{- else if $values.isWorkloadCluster }}
+    {{- else if eq (include "is-workload-cluster" $resource) "true" }}
     - name: {{ $values.clusterID }}
       description: "Cluster Kubernetes API {{ $values.clusterID }}"
       short_description: "{{ $values.clusterID }} cluster"
@@ -96,7 +96,7 @@ data:
       {{- end }}
       k8s_ca_pem: ${KUBERNETES_CACERT}
       redirect_uri: https://{{ .Values.oidc.staticClients.dexK8SAuthenticator.clientAddress }}/callback
-    {{- else if .Values.isWorkloadCluster }}
+    {{- else if eq (include "is-workload-cluster" .) "true" }}
     - name: {{ .Values.clusterID }}
       description: "Cluster Kubernetes API {{ .Values.clusterID }}"
       short_description: "{{ .Values.clusterID }} cluster"

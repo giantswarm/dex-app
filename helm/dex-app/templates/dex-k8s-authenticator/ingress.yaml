@@ -16,7 +16,7 @@ metadata:
     cert-manager.io/cluster-issuer: {{ .Values.ingress.tls.clusterIssuer }}
     {{- end }}
     {{- if .Values.ingress.externalDNS }}
-    {{- if .Values.isWorkloadCluster }}
+    {{- if eq (include "is-workload-cluster" .) "true" }}
     external-dns.alpha.kubernetes.io/hostname: login.{{ .Values.baseDomain }}
     {{- else if .Values.isManagementCluster }}
     external-dns.alpha.kubernetes.io/hostname: {{ .Values.oidc.staticClients.dexK8SAuthenticator.clientAddress }}
@@ -27,7 +27,7 @@ spec:
   ingressClassName: nginx
   tls:
   - hosts:
-    {{- if .Values.isWorkloadCluster }}
+    {{- if eq (include "is-workload-cluster" .) "true" }}
       - login.{{ .Values.baseDomain }}
     {{- else if .Values.isManagementCluster }}
       - {{ .Values.oidc.staticClients.dexK8SAuthenticator.clientAddress }}
@@ -87,7 +87,7 @@ spec:
   {{- end }}
 {{ end }}
 {{ end }}
-  {{- if .Values.isWorkloadCluster }}
+  {{- if eq (include "is-workload-cluster" .) "true" }}
     host: login.{{ .Values.baseDomain }}
   {{- else if .Values.isManagementCluster  }}
     host: {{ .Values.oidc.staticClients.dexK8SAuthenticator.clientAddress }}

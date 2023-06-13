@@ -81,3 +81,18 @@ Abstract the knowledge to know if it needs a Giant Swarm connector or not
   {{- printf "false" }}
 {{- end -}}
 {{- end -}}
+
+{{/*
+Abstract the knowledge to know if its installed on a workload cluster or not
+*/}}
+{{- define "is-workload-cluster" -}}
+{{- if .Values.isWorkloadCluster -}}
+  {{- printf "true" }}
+{{- else if .Values.isManagementCluster -}}
+  {{- printf "false" }}
+{{- else if and .Values.baseDomain .Values.clusterID -}}
+  {{- printf "true" }}
+{{- else -}}
+  {{- printf "false" }}
+{{- end -}}
+{{- end -}}

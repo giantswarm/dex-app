@@ -175,11 +175,11 @@ In case the traffic to Dex needs to go through a proxy (for example when the app
 The proxy setup can be provided to the app in a specific section of the user values configmap or secret with the app configuration:
 
 ```yaml
-proxy:
-  enabled: false
-  http_proxy: "https://proxy.host:4040" # hostname of the proxy for HTTP traffic
-  https_proxy: "https://proxy.host:4040" # hostname of the proxy for HTTPS traffic
-  no_proxy: "kubernetes-api-ip-range" # comma-separated list of hostnames and IP ranges, whose traffic should not go through the proxy. # Kubernetes API IP range needs to be defined here in order for Dex to work correctly
+cluster:
+  proxy:
+    http: "https://proxy.host:4040" # hostname of the proxy for HTTP traffic
+    https: "https://proxy.host:4040" # hostname of the proxy for HTTPS traffic
+    noProxy: "kubernetes-api-ip-range" # comma-separated list of hostnames and IP ranges, whose traffic should not go through the proxy. # Kubernetes API IP range needs to be defined here in order for Dex to work correctly
 ```
 
 ## Update Process

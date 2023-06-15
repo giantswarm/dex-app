@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Change format for proxy configuration to automatically use proxy settings from cluster-values secret.
+
 ## [1.34.3] - 2023-06-13
 
 ### Added

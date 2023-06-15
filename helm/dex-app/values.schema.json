@@ -371,31 +371,27 @@
                 }
             }
         },
-        "proxy": {
+        "cluster": {
             "type": "object",
-            "title": "Schema for private workload cluster proxy setup",
             "properties": {
-                "enabled": {
-                    "description": "indication whether the proxy is enabled",
-                    "type": "boolean"
-                },
-                "http_proxy": {
-                    "description": "base URL of the proxy for HTTP traffic (https://hostname:8080)",
-                    "type": "string"
-                },
-                "https_proxy": {
-                    "description": "base URL of the proxy for HTTPS traffic (https://hostname:8080)",
-                    "type": "string"
-                },
-                "no_proxy": {
-                    "description": "comma-separated list of IP ranges and hostnames, which should not go through the proxy",
-                    "type": "string"
+                "proxy": {
+                    "type": "object",
+                    "properties": {
+                        "enabled": {
+                            "type": "boolean"
+                        },
+                        "http": {
+                            "type": "string"
+                        },
+                        "https": {
+                            "type": "string"
+                        },
+                        "noProxy": {
+                            "type": "string"
+                        }
+                    }
                 }
-            },
-            "required": [
-                "https_proxy",
-                "no_proxy"
-            ]
+            }
         }
     }
 }

@@ -40,18 +40,18 @@ spec:
       containers:
       - name: dex
         env:
-        {{- if and .Values.proxy .Values.proxy.enabled }}
-        {{- if .Values.proxy.http_proxy }}
+        {{- if .Values.cluster.proxy }}
+        {{- if .Values.cluster.proxy.http }}
         - name: HTTP_PROXY
-          value: {{ .Values.proxy.http_proxy }}
+          value: {{ .Values.cluster.proxy.http }}
         {{- end }}
-        {{- if .Values.proxy.https_proxy }}
+        {{- if .Values.cluster.proxy.https }}
         - name: HTTPS_PROXY
-          value: {{ .Values.proxy.https_proxy }}
+          value: {{ .Values.cluster.proxy.https }}
         {{- end }}
-        {{- if .Values.proxy.no_proxy }}
+        {{- if .Values.cluster.proxy.noProxy }}
         - name: NO_PROXY
-          value: {{ .Values.proxy.no_proxy }}
+          value: {{ .Values.cluster.proxy.noProxy }}
         {{- end }}
         {{- end }}
         - name: KUBERNETES_POD_NAMESPACE

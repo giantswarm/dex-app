@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Update Dex to v2.37.0
+
 ## [1.35.0] - 2023-06-19
 
 ### Changed

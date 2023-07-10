@@ -1,4 +1,4 @@
-FROM quay.io/giantswarm/dex:v2.35.3-gs1
+FROM quay.io/giantswarm/dex:v2.37.0-gs1
 
 ENV DEX_FRONTEND_DIR=/srv/dex/web
 

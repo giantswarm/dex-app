@@ -21,6 +21,7 @@ extraVolumeMounts: []
 logoURI: https://s.giantswarm.io/brand/1/logo.svg
 
 ingress:
+  ingressClassName: "nginx"
   externalDNS: false
   tls:
     letsencrypt: true

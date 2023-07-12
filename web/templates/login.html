@@ -64,7 +64,7 @@
       const buttonContentText = document.createElement('span');
       buttonContentText.textContent = c.name;
       const buttonContentConnectorID = document.createElement('code');
-      buttonContentConnectorID.textContent = c.id;
+      buttonContentConnectorID.textContent = `ID: ${c.id}`;
       buttonContent.append(buttonContentText, buttonContentConnectorID);
       buttonEl.append(buttonIcon, buttonContent);
       linkEl.append(buttonEl);

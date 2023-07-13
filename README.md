@@ -208,7 +208,10 @@ extraStaticClients:
 
 - `id` and `idEnv` properties are mutually exclusive
 - `secret` and `secretEnv` properties are mutually exclusive
-- `name`, `id` or `idEnv` and `secret` or `secretEnv` are required properties
+- Required properties:
+  - `name` 
+  - `id` or `idEnv` 
+  - `secret` or `secretEnv`
 
 ## Update Process
 

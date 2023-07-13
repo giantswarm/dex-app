@@ -247,6 +247,72 @@
                 "issuerAddress": {
                     "type": "string"
                 },
+                "extraStaticClients": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "id": {
+                                "type": "string"
+                            },
+                            "idEnv": {
+                                "type": "string"
+                            },
+                            "secret": {
+                                "type": "string"
+                            },
+                            "secretEnv": {
+                                "type": "string"
+                            },
+                            "redirectURIs": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string"
+                                }
+                            },
+                            "trustedPeers": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string"
+                                }
+                            },
+                            "public": {
+                                "type": "boolean"
+                            },
+                            "name": {
+                                "type": "string"
+                            },
+                            "logoURL": {
+                                "type": "string"
+                            }
+                        },
+                        "allOf": [{
+                            "oneOf": [{
+                                "required": [
+                                    "id"
+                                ]
+                            }, {
+                                "required": [
+                                    "idEnv"
+                                ]
+                            }]
+                        }, {
+                            "oneOf": [{
+                                "required": [
+                                    "secret"
+                                ]
+                            }, {
+                                "required": [
+                                    "secretEnv"
+                                ]
+                            }]
+                        }, {
+                            "required": [
+                                "name"
+                            ]
+                        }]
+                    }
+                },
                 "staticClients": {
                     "type": "object",
                     "properties": {

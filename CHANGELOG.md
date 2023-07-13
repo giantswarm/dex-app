@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Make `ingressClassName` configurable
 
+### Added
+
+- Add support for custom static clients
+
 ## [1.36.0] - 2023-07-11
 
 ### Changed

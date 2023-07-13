@@ -182,6 +182,37 @@ cluster:
     noProxy: "kubernetes-api-ip-range" # comma-separated list of hostnames and IP ranges, whose traffic should not go through the proxy. # Kubernetes API IP range needs to be defined here in order for Dex to work correctly
 ```
 
+### Static clients
+
+In addition to a few pre-defined static clients Dex app supports the possibility to define custom static clients as well.
+They need to be defined as an array of object in a specific property of the configuration yaml file called `extraStaticClients`.
+The structure of each custom static client object is exactly the same as in upstream Dex:
+
+```yaml
+extraStaticClients:
+- id: "client-id"
+  secret: "client-secret"
+  trustedPeers:
+  - "https://example.com"
+  public: true
+  name: "client-name-1"
+  logoURL: "https://example.com/logo"
+- idEnv: "CLIENT_ID"
+  secretEnv: "CLIENT_SECRET"
+  redirectURIs:
+  - "https://example.com/redirect"
+  name: "client-name-2"
+```
+
+**Notes:**
+
+- `id` and `idEnv` properties are mutually exclusive
+- `secret` and `secretEnv` properties are mutually exclusive
+- Required properties:
+  - `name` 
+  - `id` or `idEnv` 
+  - `secret` or `secretEnv`
+
 ## Update Process
 
 Giant Swarm is currently building the `dex` app from [a fork](https://github.com/giantswarm/dex) of the [original project](https://github.com/dexidp/dex).

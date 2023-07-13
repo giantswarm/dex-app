@@ -76,6 +76,9 @@
                 "externalDNS": {
                     "type": "boolean"
                 },
+                "ingressClassName": {
+                    "type": "string"
+                },
                 "tls": {
                     "type": "object",
                     "properties": {

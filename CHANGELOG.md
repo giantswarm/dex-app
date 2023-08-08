@@ -9,6 +9,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Update layout of selector screen.
 
+## [1.37.0] - 2023-07-13
+
+### Changed
+
+- Make `ingressClassName` configurable
+
+### Added
+
+- Add support for custom static clients
+
 ## [1.36.0] - 2023-07-11
 
 ### Changed
@@ -463,7 +473,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add helm chart for dex.
 
 
-[Unreleased]: https://github.com/giantswarm/dex-app/compare/v1.36.0...HEAD
+[Unreleased]: https://github.com/giantswarm/dex-app/compare/v1.37.0...HEAD
+[1.37.0]: https://github.com/giantswarm/dex-app/compare/v1.36.0...v1.37.0
 [1.36.0]: https://github.com/giantswarm/dex-app/compare/v1.35.0...v1.36.0
 [1.35.0]: https://github.com/giantswarm/dex-app/compare/v1.34.3...v1.35.0
 [1.34.3]: https://github.com/giantswarm/dex-app/compare/v1.34.2...v1.34.3

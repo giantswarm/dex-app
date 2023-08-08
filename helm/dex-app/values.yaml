@@ -21,6 +21,7 @@ extraVolumeMounts: []
 logoURI: https://s.giantswarm.io/brand/1/logo.svg
 
 ingress:
+  ingressClassName: "nginx"
   externalDNS: false
   tls:
     letsencrypt: true
@@ -51,6 +52,7 @@ oidc:
     dexK8SAuthenticator:
       clientAddress: ""
       clientSecret: "default-client-dex-authenticator-secret"
+  extraStaticClients: []
   # Giant Swarm OIDC values to run DEX in the management clusters
   giantswarm:
     connectorConfig:

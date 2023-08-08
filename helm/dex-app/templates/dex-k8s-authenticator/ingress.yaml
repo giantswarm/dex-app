@@ -24,7 +24,7 @@ metadata:
     giantswarm.io/external-dns: managed
     {{- end }}
 spec:
-  ingressClassName: nginx
+  ingressClassName: {{ .Values.ingress.ingressClassName }}
   tls:
   - hosts:
     {{- if eq (include "is-workload-cluster" .) "true" }}

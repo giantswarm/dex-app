@@ -4,9 +4,12 @@ from pathlib import Path
 from typing import Dict, List
 
 import pykube
+from pykube.objects import Deployment
 import pytest
 from pytest_helm_charts.fixtures import Cluster
-from pytest_helm_charts.utils import wait_for_deployments_to_run
+from pytest_helm_charts.utils import (
+    wait_for_objects_condition,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -30,13 +33,13 @@ def test_api_working(kube_cluster: Cluster) -> None:
 
 @pytest.mark.smoke
 def test_cluster_info(
-    kube_cluster: Cluster, cluster_type: str, chart_extra_info: Dict[str, str]
+    kube_cluster: Cluster, cluster_type: str, test_extra_info: Dict[str, str]
 ) -> None:
     """Example shows how you can access additional information about the cluster the tests are running on"""
     logger.info(f"Running on cluster type {cluster_type}")
     key = "external_cluster_type"
-    if key in chart_extra_info:
-        logger.info(f"{key} is {chart_extra_info[key]}")
+    if key in test_extra_info:
+        logger.info(f"{key} is {test_extra_info[key]}")
     assert kube_cluster.kube_client is not None
     assert cluster_type != ""
 
@@ -45,11 +48,16 @@ def test_cluster_info(
 # if you want to assert this multiple times
 @pytest.fixture(scope="module")
 def app_deployment(kube_cluster: Cluster) -> List[pykube.Deployment]:
-    deployments = wait_for_deployments_to_run(
+    if kube_cluster.kube_client is None:
+        raise RuntimeError("kube_client is not defined")
+    deployments = wait_for_objects_condition(
         kube_cluster.kube_client,
+        Deployment,
         ["dex"],
         "default",
+        lambda d: int(d.obj["status"]["readyReplicas"]) > 0,
         timeout,
+        False,
     )
     return deployments
 

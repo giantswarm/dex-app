@@ -9,7 +9,7 @@
         <a href="{{ $c.URL }}" target="_self">
           <button class="dex-btn theme-btn-provider">
             <span class="dex-btn-icon dex-btn-icon--{{ $c.Type }}"></span>
-            <span class="dex-btn-text">Log in with {{ $c.Name }}</span>
+            <span class="dex-btn-text">{{ $c.Name }}</span>
           </button>
         </a>
       </div>
@@ -62,9 +62,9 @@
       const buttonContent = document.createElement('span');
       buttonContent.classList.add('dex-btn-text');
       const buttonContentText = document.createElement('span');
-      buttonContentText.textContent = `Log in with ${c.name}`;
+      buttonContentText.textContent = c.name;
       const buttonContentConnectorID = document.createElement('code');
-      buttonContentConnectorID.textContent = c.id;
+      buttonContentConnectorID.textContent = `ID: ${c.id}`;
       buttonContent.append(buttonContentText, buttonContentConnectorID);
       buttonEl.append(buttonIcon, buttonContent);
       linkEl.append(buttonEl);

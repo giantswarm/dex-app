@@ -30,9 +30,21 @@
     const connectorFilter = new URL(document.location).searchParams.get(
       'connector_filter'
     );
-    const filteredConnectors = connectors.filter((c) =>
+    const filteredConnectors = connectorFilter === null ? connectors : connectors.filter((c) =>
       c.id.startsWith(connectorFilter)
     );
+    filteredConnectors.sort((a, b) => {
+      const giantSwarmPrefix = 'giantswarm';
+      // if id starts with giantswarm, put it last
+      if (a.id.startsWith(giantSwarmPrefix) && !b.id.startsWith(giantSwarmPrefix)) {
+        return 1;
+      }
+      if (!a.id.startsWith(giantSwarmPrefix) && b.id.startsWith(giantSwarmPrefix)) {
+        return -1;
+      }
+      // otherwise sort by id
+      return a.id.localeCompare(b.id);
+    });
     const connectorsContainer = document.querySelector('#connectors');
 
     if (connectorFilter && filteredConnectors.length === 0) {

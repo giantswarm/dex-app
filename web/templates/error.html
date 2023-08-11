@@ -12,6 +12,7 @@
     'connector_id'
   );
   const errorContainerEl = document.querySelector('#error');
+  const connectorErrorPattern = /Failed to authenticate: ([^ :]+): user "([^ ]+)" not in required orgs or teams/;
 
   if (
     connectorID &&
@@ -32,12 +33,22 @@
   } else {
     const errorTypeEl = document.createElement('h2');
     errorTypeEl.classList.add('theme-heading');
-    errorTypeEl.textContent = {{ .ErrType }};
 
     const errorMsgEl = document.createElement('p');
     errorMsgEl.textContent = errorMsg;
 
-    errorContainerEl.append(errorTypeEl, errorMsgEl);
+    if (connectorErrorPattern.test(errorMsg)) {
+      const errorNoteEl = document.createElement('p');
+      errorNoteEl.classList.add('theme-note');
+      errorNoteEl.textContent = '* Please ensure that you log in with the correct connector. ' +
+              'If you log in via kubectl gs, please note that the "--cluster-admin" flag only works for Giantswarm staff authentication.';
+
+      errorMsgEl.textContent += "*";
+
+      errorContainerEl.append(errorTypeEl, errorMsgEl, errorNoteEl);
+    } else {
+      errorContainerEl.append(errorTypeEl, errorMsgEl);
+    }
   }
 </script>
 

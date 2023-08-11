@@ -35,6 +35,11 @@
   margin-top: 0;
 }
 
+.theme-note {
+  font-size: 12px;
+  color: #999;
+}
+
 .theme-panel {
   background-color: #fff;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);

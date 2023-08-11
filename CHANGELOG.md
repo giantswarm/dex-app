@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add a note with additional explanations to Dex error page in case the error is that the authenticated user is not present in the required orgs or teams.  
+
 ### Changed
 
 - Reorder connectors in login screen.

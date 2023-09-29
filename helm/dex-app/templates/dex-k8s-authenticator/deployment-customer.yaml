@@ -74,6 +74,10 @@ spec:
             memory: 64Mi
         securityContext:
           allowPrivilegeEscalation: false
+          runAsNonRoot: true
+          capabilities:
+            drop:
+              - ALL
     {{- with $values.nodeSelector }}
       nodeSelector:
 {{ toYaml . | indent 6 }}
@@ -178,6 +182,10 @@ spec:
             memory: 64Mi
         securityContext:
           allowPrivilegeEscalation: false
+          runAsNonRoot: true
+          capabilities:
+            drop:
+              - ALL
     {{- with .Values.nodeSelector }}
       nodeSelector:
 {{ toYaml . | indent 6 }}

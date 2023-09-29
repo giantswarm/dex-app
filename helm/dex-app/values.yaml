@@ -101,3 +101,7 @@ cluster:
     http: ""
     https: ""
     noProxy: ""
+
+global:
+  podSecurityStandards:
+    enforced: false

@@ -70,6 +70,19 @@
         "extraVolumes": {
             "type": "array"
         },
+        "global": {
+            "type": "object",
+            "properties": {
+                "podSecurityStandards": {
+                    "type": "object",
+                    "properties": {
+                        "enforced": {
+                            "type": "boolean"
+                        }
+                    }
+                }
+            }
+        },
         "ingress": {
             "type": "object",
             "properties": {

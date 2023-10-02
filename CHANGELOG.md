@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- Update deployment to be PSS compliant and PSP toggle.
+
 ## [1.39.0] - 2023-08-09
 
 ### Changed

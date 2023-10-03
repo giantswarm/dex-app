@@ -29,6 +29,8 @@ spec:
         runAsNonRoot: true
         runAsUser: 1000
         runAsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
       containers:
       - name: {{ $resource.Chart.Name }}
         {{- if $values.isManagementCluster }}
@@ -78,6 +80,8 @@ spec:
           capabilities:
             drop:
               - ALL
+          seccompProfile:
+            type: RuntimeDefault
     {{- with $values.nodeSelector }}
       nodeSelector:
 {{ toYaml . | indent 6 }}
@@ -137,6 +141,8 @@ spec:
         runAsNonRoot: true
         runAsUser: 1000
         runAsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
       containers:
       - name: {{ .Chart.Name }}
         {{- if .Values.isManagementCluster }}
@@ -186,6 +192,8 @@ spec:
           capabilities:
             drop:
               - ALL
+          seccompProfile:
+            type: RuntimeDefault
     {{- with .Values.nodeSelector }}
       nodeSelector:
 {{ toYaml . | indent 6 }}

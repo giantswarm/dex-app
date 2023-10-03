@@ -37,6 +37,8 @@ spec:
         runAsNonRoot: true
         runAsUser: 1000
         runAsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
       containers:
       - name: dex
         env:
@@ -81,6 +83,8 @@ spec:
           capabilities:
             drop:
               - ALL
+          seccompProfile:
+            type: RuntimeDefault    
         ports:
         - name: http
           containerPort: 5556

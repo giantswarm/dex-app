@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add static client for backstage portal.
+
 ## [1.41.0] - 2023-10-03
 
 ### Added

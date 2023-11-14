@@ -29,7 +29,7 @@ ingress:
     caPemB64: ""
     crtPemB64: ""
     keyPemB64: ""
-    externalSecret: 
+    externalSecret:
       enabled: false
 
 oidc:

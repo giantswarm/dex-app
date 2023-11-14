@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Added `oidc.staticClients.dexK8sAuthenticator.enableDeployment` option to disable the deployment of dex-k8s-authenticator.
+- Added `deployDexK8SAuthenticator` option to disable the deployment of dex-k8s-authenticator.
 - Added `ingress.tls.externalSecret.enabled` option to disable tls secret creation and allow usage of an external secret.
 
 ## [1.41.0] - 2023-10-03

@@ -1,4 +1,4 @@
-{{- if .Values.oidc.staticClients.dexK8SAuthenticator.enableDeployment }}
+{{- if .Values.deployDexK8SAuthenticator }}
 {{ if .Values.oidc.customer.enabled }}
 {{- if .Values.oidc.customer.connectors -}}
 {{ $values := .Values }}

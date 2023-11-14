@@ -56,6 +56,9 @@
                 }
             }
         },
+        "deployDexK8SAuthenticator": {
+            "type": "boolean"
+        },
         "dex": {
             "type": "object",
             "properties": {
@@ -345,9 +348,6 @@
                                 },
                                 "clientSecret": {
                                     "type": "string"
-                                },
-                                "enableDeployment": {
-                                    "type": "boolean"
                                 }
                             }
                         },

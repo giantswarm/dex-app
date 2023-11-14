@@ -1,4 +1,4 @@
-{{- if .Values.oidc.staticClients.dexK8SAuthenticator.enableDeployment }}
+{{- if .Values.deployDexK8SAuthenticator }}
 {{- if not .Values.global.podSecurityStandards.enforced }}
 apiVersion: policy/v1beta1
 kind: PodSecurityPolicy

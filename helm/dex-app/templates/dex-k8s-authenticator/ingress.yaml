@@ -1,4 +1,4 @@
-{{- if .Values.oidc.staticClients.dexK8SAuthenticator.enableDeployment }}
+{{- if .Values.deployDexK8SAuthenticator }}
 {{ if or (eq (include "has-giantswarm-connector" .) "true") .Values.oidc.customer.enabled }}
 {{- if .Capabilities.APIVersions.Has "networking.k8s.io/v1/Ingress" }}
 apiVersion: networking.k8s.io/v1

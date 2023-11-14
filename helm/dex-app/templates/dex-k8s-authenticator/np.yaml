@@ -1,3 +1,4 @@
+{{- if .Values.oidc.staticClients.dexK8SAuthenticator.enableDeployment }}
 kind: NetworkPolicy
 apiVersion: networking.k8s.io/v1
 metadata:
@@ -17,3 +18,4 @@ spec:
       protocol: TCP
   egress:
   - {}
+{{- end }}

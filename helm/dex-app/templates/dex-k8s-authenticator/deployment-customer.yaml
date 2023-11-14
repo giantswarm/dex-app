@@ -1,3 +1,4 @@
+{{- if .Values.oidc.staticClients.dexK8SAuthenticator.enableDeployment }}
 {{ if .Values.oidc.customer.enabled }}
 {{- if .Values.oidc.customer.connectors -}}
 {{ $values := .Values }}
@@ -231,3 +232,4 @@ spec:
       {{- end }}
 {{ end }}
 {{ end }}
+{{- end }}

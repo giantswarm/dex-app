@@ -29,6 +29,8 @@ ingress:
     caPemB64: ""
     crtPemB64: ""
     keyPemB64: ""
+    externalSecret: 
+      enabled: false
 
 oidc:
   issuerAddress: ""
@@ -52,6 +54,7 @@ oidc:
     dexK8SAuthenticator:
       clientAddress: ""
       clientSecret: "default-client-dex-authenticator-secret"
+      enableDeployment: true
   extraStaticClients: []
   # Giant Swarm OIDC values to run DEX in the management clusters
   giantswarm:

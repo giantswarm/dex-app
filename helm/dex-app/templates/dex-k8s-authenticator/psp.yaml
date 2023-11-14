@@ -1,3 +1,4 @@
+{{- if .Values.oidc.staticClients.dexK8SAuthenticator.enableDeployment }}
 {{- if not .Values.global.podSecurityStandards.enforced }}
 apiVersion: policy/v1beta1
 kind: PodSecurityPolicy
@@ -29,4 +30,5 @@ spec:
   hostNetwork: false
   hostIPC: false
   hostPID: false
+{{- end }}
 {{- end }}

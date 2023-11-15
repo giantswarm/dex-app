@@ -168,6 +168,31 @@ trustedRootCA:
   secretName: "name-of-the-custom-ca-secret"
 ```
 
+3. When disabling `letsencrypt`, a secret called `dex-tls` will be created and propagated with the b64-encoded values provided by the user.
+Alternatively, the user can manage the creation of this secret by themselves and enable its usage like so:
+
+```yaml
+ingress:
+  tls:
+    letsencrypt: false
+    externalSecret:
+      enabled: true
+```
+
+The following secret then needs to be applied to the namespace `dex` is running in:
+
+```yaml
+apiVersion: v1
+kind: Secret
+type: kubernetes.io/tls
+metadata:
+  name: dex-tls
+data:
+  ca.crt: ...
+  tls.crt: ...
+  tls.key: ...
+```
+
 ### Proxy configuration
 
 In case the traffic to Dex needs to go through a proxy (for example when the app is installed in a private cluster), the individual components of the app need to be set up to use the proxy.

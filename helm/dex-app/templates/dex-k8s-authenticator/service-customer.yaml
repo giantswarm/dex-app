@@ -1,3 +1,4 @@
+{{- if .Values.deployDexK8SAuthenticator }}
 {{ if .Values.oidc.customer.enabled }}
 {{- if .Values.oidc.customer.connectors -}}
 {{ $values := .Values }}
@@ -39,3 +40,4 @@ spec:
     {{- include "dexk8sauth.customer.labels.selector" . | nindent 4 }}
 {{ end }}
 {{ end }}
+{{- end }}

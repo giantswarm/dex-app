@@ -29,6 +29,8 @@ ingress:
     caPemB64: ""
     crtPemB64: ""
     keyPemB64: ""
+    externalSecret:
+      enabled: false
 
 oidc:
   issuerAddress: ""
@@ -95,6 +97,10 @@ managementCluster:
 
 # Giant Swarm properties for workload clusters
 isWorkloadCluster: false
+
+# Enable the deployment of the dex k8s authenticator together with dex
+# Please note that this app is deprecated and will be removed in the future
+deployDexK8SAuthenticator: true
 
 cluster:
   proxy:

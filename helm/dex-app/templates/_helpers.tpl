@@ -96,3 +96,44 @@ Abstract the knowledge to know if its installed on a workload cluster or not
   {{- printf "false" }}
 {{- end -}}
 {{- end -}}
+
+{{/*
+Gather and print trusted peers of a static client from various sources
+*/}}
+{{- define "trusted-peers" -}}
+  {{- $extraStaticClients := fromYamlArray "[]" -}}
+  {{- $staticTrustedPeers := fromYamlArray "[]" -}}
+  {{- if .staticTrustedPeers -}}
+    {{- $staticTrustedPeers = compact .staticTrustedPeers -}}
+  {{- end -}}
+  {{- if .extraStaticClients -}}
+    {{- $refId := .refId -}}
+    {{- range .extraStaticClients }}
+      {{- if has $refId .trustedPeerOf -}}
+        {{- $extraStaticClients = append $extraStaticClients .id -}}
+      {{- end -}}
+    {{- end -}}
+  {{- end -}}
+  {{- if or $staticTrustedPeers $extraStaticClients }}
+    {{- print "trustedPeers:" | nindent 6 -}}
+    {{- if $staticTrustedPeers -}}
+      {{- $staticTrustedPeers | toYaml | nindent 6 -}}
+    {{- end -}}
+    {{- if $extraStaticClients -}}
+      {{- $extraStaticClients | toYaml | nindent 6 -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+
+{{/*
+Clean up and print extra static clients
+*/}}
+{{- define "print-clean-extra-static-clients" -}}
+  {{- if . }}
+    {{- $extraStaticClients := list nil -}}
+    {{- range . -}}
+      {{- $extraStaticClients = append $extraStaticClients (omit . "trustedPeerOf") -}}
+    {{- end -}}
+    {{- compact $extraStaticClients | toYaml | nindent 4 -}}
+  {{- end -}}
+{{- end -}}

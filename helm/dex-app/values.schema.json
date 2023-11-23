@@ -354,6 +354,12 @@
                                 },
                                 "clientSecret": {
                                     "type": "string"
+                                },
+                                "trustedPeers": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "string"
+                                    }
                                 }
                             }
                         },
@@ -368,6 +374,12 @@
                                 },
                                 "redirectURI": {
                                     "type": "string"
+                                },
+                                "trustedPeers": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "string"
+                                    }
                                 }
                             }
                         },
@@ -379,6 +391,12 @@
                                 },
                                 "redirectURI": {
                                     "type": "string"
+                                },
+                                "trustedPeers": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "string"
+                                    }
                                 }
                             }
                         },
@@ -390,6 +408,12 @@
                                 },
                                 "clientID": {
                                     "type": "string"
+                                },
+                                "trustedPeers": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "string"
+                                    }
                                 }
                             }
                         },
@@ -401,6 +425,12 @@
                                 },
                                 "redirectURI": {
                                     "type": "string"
+                                },
+                                "trustedPeers": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "string"
+                                    }
                                 }
                             }
                         }

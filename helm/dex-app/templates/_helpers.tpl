@@ -101,26 +101,26 @@ Abstract the knowledge to know if its installed on a workload cluster or not
 Gather and print trusted peers of a static client from various sources
 */}}
 {{- define "trusted-peers" -}}
-  {{- $extraStaticClients := fromYamlArray "[]" -}}
-  {{- $staticTrustedPeers := fromYamlArray "[]" -}}
+  {{- $trustedPeers := fromYamlArray "[]" -}}
   {{- if .staticTrustedPeers -}}
-    {{- $staticTrustedPeers = compact .staticTrustedPeers -}}
+    {{- $trustedPeers = compact .staticTrustedPeers -}}
+  {{- end -}}
+  {{- if .trustedPeers -}}
+    {{- $trustedPeers = concat $trustedPeers (compact .trustedPeers) -}}
   {{- end -}}
   {{- if .extraStaticClients -}}
     {{- $refId := .refId -}}
     {{- range .extraStaticClients }}
       {{- if has $refId .trustedPeerOf -}}
-        {{- $extraStaticClients = append $extraStaticClients .id -}}
+        {{- $trustedPeers = append $trustedPeers .id -}}
       {{- end -}}
     {{- end -}}
   {{- end -}}
-  {{- if or $staticTrustedPeers $extraStaticClients }}
+  {{- $trustedPeers = uniq $trustedPeers -}}
+  {{- if $trustedPeers }}
     {{- print "trustedPeers:" | nindent 6 -}}
-    {{- if $staticTrustedPeers -}}
-      {{- $staticTrustedPeers | toYaml | nindent 6 -}}
-    {{- end -}}
-    {{- if $extraStaticClients -}}
-      {{- $extraStaticClients | toYaml | nindent 6 -}}
+    {{- if $trustedPeers -}}
+      {{- $trustedPeers | toYaml | nindent 6 -}}
     {{- end -}}
   {{- end -}}
 {{- end -}}

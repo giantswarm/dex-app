@@ -238,10 +238,9 @@ extraStaticClients:
   - `id` or `idEnv`
   - `secret` or `secretEnv`
 
-Extra static clients can also be configured as trusted peers of the pre-defined static clients. 
-It can be achieved by taking one of the following 2 approaches:
+Extra static clients can also be configured as trusted peers of the pre-defined static clients:
 
-**1. Add the extra static client id to the list of `trustedPeers` in the pre-defined static client:**
+**Add the extra static client id to the list of `trustedPeers` in the pre-defined static client:**
 
 ```yaml
 staticClients:
@@ -256,22 +255,7 @@ extraStaticClients:
   secret: "client-secret"
 ```
 
-**2. Add the pre-defined static client id to the `trustedPeerOf` list in the extra static client:**
-
-```yaml
-staticClients:
-  dexK8SAuthenticator:
-    clientAddress: "dex.installation.basedomain.io"
-    clientSecret: "default-client-dex-authenticator-secret" 
-extraStaticClients:
-- id: "client-id"
-  name: "client-name-1"
-  secret: "client-secret"
-  trustedPeerOf:
-  - "dex-k8s-authenticator" # this needs to be the client ID
-```
-
-Both approaches will produce the same configuration:
+It will produce the same configuration:
 
 ```yaml
 staticClients:

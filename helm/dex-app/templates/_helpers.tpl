@@ -108,14 +108,6 @@ Gather and print trusted peers of a static client from various sources
   {{- if .trustedPeers -}}
     {{- $trustedPeers = concat $trustedPeers (compact .trustedPeers) -}}
   {{- end -}}
-  {{- if .extraStaticClients -}}
-    {{- $refId := .refId -}}
-    {{- range .extraStaticClients }}
-      {{- if has $refId .trustedPeerOf -}}
-        {{- $trustedPeers = append $trustedPeers .id -}}
-      {{- end -}}
-    {{- end -}}
-  {{- end -}}
   {{- $trustedPeers = uniq $trustedPeers -}}
   {{- if $trustedPeers }}
     {{- print "trustedPeers:" | nindent 6 -}}

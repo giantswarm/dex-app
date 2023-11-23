@@ -308,12 +308,6 @@
                             },
                             "logoURL": {
                                 "type": "string"
-                            },
-                            "trustedPeerOf": {
-                                "type": "array",
-                                "items": {
-                                    "type": "string"
-                                }
                             }
                         },
                         "allOf": [{

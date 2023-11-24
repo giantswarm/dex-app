@@ -234,9 +234,42 @@ extraStaticClients:
 - `id` and `idEnv` properties are mutually exclusive
 - `secret` and `secretEnv` properties are mutually exclusive
 - Required properties:
-  - `name` 
-  - `id` or `idEnv` 
+  - `name`
+  - `id` or `idEnv`
   - `secret` or `secretEnv`
+
+Extra static clients can also be configured as trusted peers of the pre-defined static clients:
+
+**Add the extra static client id to the list of `trustedPeers` in the pre-defined static client:**
+
+```yaml
+staticClients:
+  dexK8SAuthenticator:
+    clientAddress: "dex.installation.basedomain.io"
+    clientSecret: "default-client-dex-authenticator-secret"
+    trustedPeers:
+    - "client-id" 
+extraStaticClients:
+- id: "client-id"
+  name: "client-name-1"
+  secret: "client-secret"
+```
+
+It will produce the same configuration:
+
+```yaml
+staticClients:
+- id: dex-k8s-authenticator
+  name: dex-k8s-authenticator
+  secret: default-client-dex-authenticator-secret
+  trustedPeers:
+  - client-id
+- id: client-id
+  name: client-name-1
+  secret: client-secret
+  public: true
+```
+Duplicities are prevented in case an ID of any additional trusted peer equals an automatically pre-populated trusted peer ID.
 
 ## Update Process
 

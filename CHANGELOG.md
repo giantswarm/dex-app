@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Adding new properties to configure trusted peers in pre-defined static clients 
+
 ## [1.42.0] - 2023-11-15
 
 ### Added

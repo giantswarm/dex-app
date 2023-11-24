@@ -96,3 +96,31 @@ Abstract the knowledge to know if its installed on a workload cluster or not
   {{- printf "false" }}
 {{- end -}}
 {{- end -}}
+
+{{/*
+Gather and print trusted peers of a static client from various sources
+*/}}
+{{- define "trusted-peers" -}}
+  {{- if . }}
+    {{- $trustedPeers := uniq ( compact . ) -}}
+    {{- if $trustedPeers }}
+      {{- print "trustedPeers:" | nindent 6 -}}
+      {{- if $trustedPeers -}}
+        {{- $trustedPeers | toYaml | nindent 6 -}}
+      {{- end -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+
+{{/*
+Clean up and print extra static clients
+*/}}
+{{- define "print-clean-extra-static-clients" -}}
+  {{- if . }}
+    {{- $extraStaticClients := list nil -}}
+    {{- range . -}}
+      {{- $extraStaticClients = append $extraStaticClients (omit . "trustedPeerOf") -}}
+    {{- end -}}
+    {{- compact $extraStaticClients | toYaml | nindent 4 -}}
+  {{- end -}}
+{{- end -}}

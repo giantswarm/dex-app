@@ -101,18 +101,13 @@ Abstract the knowledge to know if its installed on a workload cluster or not
 Gather and print trusted peers of a static client from various sources
 */}}
 {{- define "trusted-peers" -}}
-  {{- $trustedPeers := fromYamlArray "[]" -}}
-  {{- if .staticTrustedPeers -}}
-    {{- $trustedPeers = compact .staticTrustedPeers -}}
-  {{- end -}}
-  {{- if .trustedPeers -}}
-    {{- $trustedPeers = concat $trustedPeers (compact .trustedPeers) -}}
-  {{- end -}}
-  {{- $trustedPeers = uniq $trustedPeers -}}
-  {{- if $trustedPeers }}
-    {{- print "trustedPeers:" | nindent 6 -}}
-    {{- if $trustedPeers -}}
-      {{- $trustedPeers | toYaml | nindent 6 -}}
+  {{- if . }}
+    {{- $trustedPeers := uniq ( compact . ) -}}
+    {{- if $trustedPeers }}
+      {{- print "trustedPeers:" | nindent 6 -}}
+      {{- if $trustedPeers -}}
+        {{- $trustedPeers | toYaml | nindent 6 -}}
+      {{- end -}}
     {{- end -}}
   {{- end -}}
 {{- end -}}

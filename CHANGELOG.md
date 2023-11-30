@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.42.2] - 2023-11-30
+
 ### Changed
 
 - Don't use `oidc.customer.enabled` value since it is redundant.
@@ -510,7 +512,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add helm chart for dex.
 
 
-[Unreleased]: https://github.com/giantswarm/dex-app/compare/v1.42.1...HEAD
+[Unreleased]: https://github.com/giantswarm/dex-app/compare/v1.42.2...HEAD
+[1.42.2]: https://github.com/giantswarm/dex-app/compare/v1.42.1...v1.42.2
 [1.42.1]: https://github.com/giantswarm/dex-app/compare/v1.42.0...v1.42.1
 [1.42.0]: https://github.com/giantswarm/dex-app/compare/v1.41.0...v1.42.0
 [1.41.0]: https://github.com/giantswarm/dex-app/compare/v1.40.0...v1.41.0

@@ -33,7 +33,6 @@ oidc:
     signingKeys: 6h
     idTokens: 30m
   customer:
-    enabled: true
     connectors:
     - id: customer
       connectorName: test

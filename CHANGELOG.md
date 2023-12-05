@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Configure `gsoci.azurecr.io` as the default container image registry.
+
 ## [1.42.2] - 2023-11-30
 
 ### Changed
@@ -17,7 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Adding new properties to configure trusted peers in pre-defined static clients 
+- Adding new properties to configure trusted peers in pre-defined static clients
 
 ## [1.42.0] - 2023-11-15
 
@@ -162,23 +166,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Added
 
-- Added support for polymorphic values of `managementCluster` - it can be defined either as `string` or as `object`.
+- Add circle ci job to push to `gcp-app-collection` on new release.
 
 ## [1.30.1] - 2022-11-07
-
-## Added
-
-- Add support for array of connectors for `giantswarm`.
 
 ## [1.30.0] - 2022-10-13
 
 ### Changed
 
 - Update Dex to v2.35.3
-
-## Added
-
-- Add circle ci job to push to `gcp-app-collection` on new release.
 
 ## [1.29.0] - 2022-09-26
 
@@ -496,7 +492,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Use `dex` `v2.24.0-giantswarm` tag, which includes Microsoft OIDC connector `offline_scope` fix (https://github.com/dexidp/dex/pull/1441).
-
 
 ## [1.0.0] - 2020-05-05
 

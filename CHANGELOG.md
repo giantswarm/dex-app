@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.42.3] - 2023-12-06
+
 ### Changed
 
 - Configure `gsoci.azurecr.io` as the default container image registry.
@@ -507,7 +509,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add helm chart for dex.
 
 
-[Unreleased]: https://github.com/giantswarm/dex-app/compare/v1.42.2...HEAD
+[Unreleased]: https://github.com/giantswarm/dex-app/compare/v1.42.3...HEAD
+[1.42.3]: https://github.com/giantswarm/dex-app/compare/v1.42.2...v1.42.3
 [1.42.2]: https://github.com/giantswarm/dex-app/compare/v1.42.1...v1.42.2
 [1.42.1]: https://github.com/giantswarm/dex-app/compare/v1.42.0...v1.42.1
 [1.42.0]: https://github.com/giantswarm/dex-app/compare/v1.41.0...v1.42.0

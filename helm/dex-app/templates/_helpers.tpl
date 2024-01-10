@@ -32,7 +32,6 @@ Selector dex labels
 {{- define "dex.labels.selector" -}}
 app.kubernetes.io/name: {{ include "dex.name" . }}
 app.kubernetes.io/component: {{ include "dex.name" . }}
-app.kubernetes.io/instance: {{ .Release.Name | quote }}
 {{- end -}}
 
 {{/*

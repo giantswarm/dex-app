@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Removes `app.kubernetes.io/instance` from `podSelector` as it exists in common labels.
+
 ## [1.42.4] - 2023-12-20
 
 ## [1.42.3] - 2023-12-06

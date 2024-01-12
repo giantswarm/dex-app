@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.42.5] - 2024-01-12
+
 ### Changed
 
 - Removes `app.kubernetes.io/instance` from `podSelector` as it exists in common labels.
@@ -515,7 +517,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add helm chart for dex.
 
 
-[Unreleased]: https://github.com/giantswarm/dex-app/compare/v1.42.4...HEAD
+[Unreleased]: https://github.com/giantswarm/dex-app/compare/v1.42.5...HEAD
+[1.42.5]: https://github.com/giantswarm/dex-app/compare/v1.42.4...v1.42.5
 [1.42.4]: https://github.com/giantswarm/dex-app/compare/v1.42.3...v1.42.4
 [1.42.3]: https://github.com/giantswarm/dex-app/compare/v1.42.2...v1.42.3
 [1.42.2]: https://github.com/giantswarm/dex-app/compare/v1.42.1...v1.42.2

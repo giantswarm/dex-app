@@ -33,7 +33,7 @@ spec:
               labelSelector:
                 matchLabels:
                   {{- include "dex.labels.selector" . | nindent 18 }}
-                  {{- include "dex-app.labels.selector" . | nindent 6 }}
+                  {{- include "dex-app.labels.selector" . | nindent 18 }}
               topologyKey: kubernetes.io/hostname
             weight: 100
       serviceAccountName: {{ include "resource.dex.name" . }}

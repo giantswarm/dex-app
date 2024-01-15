@@ -32,15 +32,6 @@ Selector dex labels
 {{- define "dex.labels.selector" -}}
 app.kubernetes.io/name: {{ include "dex.name" . }}
 app.kubernetes.io/component: {{ include "dex.name" . }}
-app.kubernetes.io/instance: {{ .Release.Name | quote }}{{ include "dex.name" . }}
-{{- end -}}
-
-{{/*
-Selector dex labels
-*/}}
-{{- define "dex-app.labels.selector" -}}
-app.kubernetes.io/name: dex-app
-app.kubernetes.io/component: dex-k8s-authenticator-customer
 app.kubernetes.io/instance: {{ .Release.Name | quote }}
 {{- end -}}
 
@@ -61,7 +52,6 @@ app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
 giantswarm.io/service-type: "managed"
-app.kubernetes.io/instance: {{ .Release.Name | quote }}
 {{- end -}}
 
 {{/*

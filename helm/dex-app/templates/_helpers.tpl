@@ -32,6 +32,7 @@ Selector dex labels
 {{- define "dex.labels.selector" -}}
 app.kubernetes.io/name: {{ include "dex.name" . }}
 app.kubernetes.io/component: {{ include "dex.name" . }}
+app.kubernetes.io/instance: {{ .Release.Name | quote }}
 {{- end -}}
 
 {{/*
@@ -51,7 +52,6 @@ app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
 giantswarm.io/service-type: "managed"
-app.kubernetes.io/instance: {{ .Release.Name | quote }}
 {{- end -}}
 
 {{/*

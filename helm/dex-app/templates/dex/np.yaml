@@ -4,7 +4,7 @@ metadata:
   name: {{ include "resource.dex.networkPolicy.name" . }}
   labels:
     {{- include "dex.labels.common" . | nindent 4 }}
-    {{- include "dex-app.labels.selector" . | nindent 4 }}
+    {{- include "dex-app.labels.common" . | nindent 4 }}
 spec:
   podSelector:
     matchLabels:

@@ -25,7 +25,9 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 application.giantswarm.io/team: {{ index .Chart.Annotations "application.giantswarm.io/team" | quote }}
 giantswarm.io/service-type: "managed"
 {{- end -}}
-
+{{- define "dex-app.labels.common" -}}
+{{ include "dex-app.labels.selector" . }}
+{{- end -}}
 {{/*
 Selector dex labels
 */}}

@@ -3,7 +3,7 @@ kind: ClusterRole
 metadata:
   labels:
     {{- include "dex.labels.common" . | nindent 4 }}
-    {{- include "dex-app.labels.selector" . | nindent 4 }}
+    {{- include "dex-app.labels.common" . | nindent 4 }}
   name: {{ include "resource.dex.name" . }}
 rules:
 - apiGroups: ["dex.coreos.com"] # API group created by dex
@@ -27,7 +27,7 @@ metadata:
   name: {{ include "resource.dex.name"  . }}-metrics
   labels:
   {{- include "dex.labels.common" . | nindent 4 }}
-  {{- include "dex-app.labels.selector" . | nindent 4 }}
+  {{- include "dex-app.labels.common" . | nindent 4 }}
 rules:
 - nonResourceURLs:
   - "/metrics"

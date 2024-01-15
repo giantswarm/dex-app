@@ -13,6 +13,13 @@ dex
 {{- end -}}
 
 {{/*
+Helpers for dex-app.
+*/}}
+{{- define "dex-app.name" -}}
+dex
+{{- end -}}
+
+{{/*
 Common dex labels
 */}}
 {{- define "dex.labels.common" -}}
@@ -25,8 +32,18 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 application.giantswarm.io/team: {{ index .Chart.Annotations "application.giantswarm.io/team" | quote }}
 giantswarm.io/service-type: "managed"
 {{- end -}}
+
+{{/*
+Common dex-app labels
+*/}}
 {{- define "dex-app.labels.common" -}}
 {{ include "dex-app.labels.selector" . }}
+{{- if .Chart.AppVersion }}
+app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
+{{- end }}
+app.kubernetes.io/managed-by: {{ .Release.Service }}
+application.giantswarm.io/team: {{ index .Chart.Annotations "application.giantswarm.io/team" | quote }}
+giantswarm.io/service-type: "managed"
 {{- end -}}
 {{/*
 Selector dex labels
@@ -38,11 +55,11 @@ app.kubernetes.io/instance: {{ .Release.Name | quote }}
 {{- end -}}
 
 {{/*
-Selector dex labels
+Selector dex-app labels
 */}}
 {{- define "dex-app.labels.selector" -}}
-app.kubernetes.io/name: dex-app
-app.kubernetes.io/component: dex-app
+app.kubernetes.io/name: {{ include "dex-app.name" . }}
+app.kubernetes.io/component: {{ include "dex-app.name" . }}
 {{- end -}}
 
 {{/*

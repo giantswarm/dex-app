@@ -3,13 +3,11 @@ apiVersion: networking.k8s.io/v1
 metadata:
   name: {{ include "resource.dex.networkPolicy.name" . }}
   labels:
-    {{- include "dex.labels.common" . | nindent 4 }}
     {{- include "dex-app.labels.common" . | nindent 4 }}
 spec:
   podSelector:
     matchLabels:
-      {{- include "dex.labels.selector" . | nindent 6 }}
-      {{- include "dex.labels.selector" . | nindent 6 }}
+      {{- include "dex-app.labels.selector" . | nindent 6 }}
   policyTypes:
   - Ingress
   - Egress

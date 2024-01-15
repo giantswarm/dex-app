@@ -2,7 +2,6 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   labels:
-    {{- include "dex.labels.common" . | nindent 4 }}
     {{- include "dex-app.labels.common" . | nindent 4 }}
   name: {{ include "resource.dex.name" . }}
 rules:
@@ -26,7 +25,6 @@ kind: ClusterRole
 metadata:
   name: {{ include "resource.dex.name"  . }}-metrics
   labels:
-  {{- include "dex.labels.common" . | nindent 4 }}
   {{- include "dex-app.labels.common" . | nindent 4 }}
 rules:
 - nonResourceURLs:

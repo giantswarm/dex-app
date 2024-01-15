@@ -3,7 +3,6 @@ kind: Deployment
 metadata:
   name: {{ include "resource.dex.name" . }}
   labels:
-    {{- include "dex.labels.common" . | nindent 4 }}
     {{- include "dex-app.labels.common" . | nindent 4 }}
   annotations:
     app.giantswarm.io/secret-checksum: {{ include (print .Template.BasePath "/dex/secret.yaml") . | sha256sum | quote }}
@@ -16,12 +15,10 @@ spec:
     type: RollingUpdate
   selector:
     matchLabels:
-      {{- include "dex.labels.selector" . | nindent 6 }}
       {{- include "dex-app.labels.selector" . | nindent 6 }}
   template:
     metadata:
       labels:
-        {{- include "dex.labels.common" . | nindent 8 }}
         {{- include "dex-app.labels.common" . | nindent 8 }}
       annotations:
         checksum/config: {{ include (print .Template.BasePath "/dex/secret.yaml") . | sha256sum | quote }}
@@ -32,7 +29,6 @@ spec:
           - podAffinityTerm:
               labelSelector:
                 matchLabels:
-                  {{- include "dex.labels.selector" . | nindent 18 }}
                   {{- include "dex-app.labels.selector" . | nindent 18 }}
               topologyKey: kubernetes.io/hostname
             weight: 100

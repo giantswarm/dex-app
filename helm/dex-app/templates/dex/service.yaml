@@ -3,7 +3,6 @@ kind: Service
 metadata:
   name: {{ include "resource.dex.name" . }}
   labels:
-    {{- include "dex.labels.common" . | nindent 4 }}
     {{- include "dex-app.labels.common" . | nindent 4 }}
     giantswarm.io/monitoring: "true"
   annotations:
@@ -20,5 +19,4 @@ spec:
     port: 5558
     targetPort: metrics
   selector:
-    {{- include "dex.labels.selector" . | nindent 4 }}
     {{- include "dex-app.labels.selector" . | nindent 4 }}

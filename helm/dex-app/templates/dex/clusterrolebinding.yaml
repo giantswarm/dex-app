@@ -3,6 +3,7 @@ kind: ClusterRoleBinding
 metadata:
   labels:
     {{- include "dex.labels.common" . | nindent 4 }}
+    {{- include "dex-app.labels.selector" . | nindent 4 }}
   name: {{ include "resource.dex.name" . }}
 roleRef:
   apiGroup: rbac.authorization.k8s.io

@@ -5,6 +5,7 @@ metadata:
   name: {{ include "resource.dex.name"  . }}
   labels:
   {{- include "dex.labels.common" . | nindent 4 }}
+  {{- include "dex-app.labels.selector" . | nindent 4 }}
 spec:
   endpoints:
     - path: /metrics
@@ -23,4 +24,5 @@ spec:
   selector:
     matchLabels:
   {{- include "dex.labels.selector" . | nindent 6 }}
+  {{- include "dex-app.labels.selector" . | nindent 4 }}
 {{- end }}

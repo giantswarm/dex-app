@@ -4,6 +4,7 @@ kind: PodSecurityPolicy
 metadata:
   labels:
     {{- include "dex.labels.common" . | nindent 4 }}
+    {{- include "dex-app.labels.selector" . | nindent 4 }}
   name: {{ include "resource.dex.psp.name" . }}
 spec:
   privileged: false

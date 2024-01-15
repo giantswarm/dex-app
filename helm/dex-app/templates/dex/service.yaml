@@ -4,6 +4,7 @@ metadata:
   name: {{ include "resource.dex.name" . }}
   labels:
     {{- include "dex.labels.common" . | nindent 4 }}
+    {{- include "dex-app.labels.selector" . | nindent 4 }}
     giantswarm.io/monitoring: "true"
   annotations:
     giantswarm.io/monitoring-path: "/metrics"
@@ -20,3 +21,4 @@ spec:
     targetPort: metrics
   selector:
     {{- include "dex.labels.selector" . | nindent 4 }}
+    {{- include "dex-app.labels.selector" . | nindent 4 }}

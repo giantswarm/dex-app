@@ -8,4 +8,5 @@ spec:
   selector:
     matchLabels:
       {{- include "dex.labels.common" . | nindent 6 }}
+      {{- include "dex-app.labels.selector" . | nindent 4 }}
 {{- end }}

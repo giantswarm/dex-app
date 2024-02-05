@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.42.8] - 2024-02-05
+
 ### Changed
 
 - Disables `dex-k8s-authenticator` to be installed by default by setting `deployDexK8SAuthenticator` to `false`.
@@ -525,7 +527,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add helm chart for dex.
 
 
-[Unreleased]: https://github.com/giantswarm/dex-app/compare/v1.42.7...HEAD
+[Unreleased]: https://github.com/giantswarm/dex-app/compare/v1.42.8...HEAD
+[1.42.8]: https://github.com/giantswarm/dex-app/compare/v1.42.7...v1.42.8
 [1.42.7]: https://github.com/giantswarm/dex-app/compare/v1.42.6...v1.42.7
 [1.42.6]: https://github.com/giantswarm/dex-app/compare/v1.42.5...v1.42.6
 [1.42.5]: https://github.com/giantswarm/dex-app/compare/v1.42.4...v1.42.5

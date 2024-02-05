@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Disables `dex-k8s-authenticator` to be installed by default by setting `deployDexK8SAuthenticator` to `false`.
+
 ## [1.42.7] - 2024-01-15
 
 ## [1.42.6] - 2024-01-15

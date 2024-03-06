@@ -4,10 +4,6 @@ metadata:
   name: {{ include "resource.dex.name" . }}
   labels:
     {{- include "dex.labels.common" . | nindent 4 }}
-    giantswarm.io/monitoring: "true"
-  annotations:
-    giantswarm.io/monitoring-path: "/metrics"
-    giantswarm.io/monitoring-port: "5558"
 spec:
   type: ClusterIP
   sessionAffinity: None

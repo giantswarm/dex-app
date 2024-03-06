@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Removed
+
+- Remove deprecated giant swarm monitoring annotations and labels
+
 ## [1.42.8] - 2024-02-05
 
 ### Changed

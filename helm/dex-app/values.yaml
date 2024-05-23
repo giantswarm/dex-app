@@ -61,14 +61,12 @@ oidc:
       clientID: ""
       clientSecret: ""
       team: ""
-    write_all_group: ""
     connectors: []
   customer:
     enabled: false
     connectorType: ""
     connectorName: ""
     connectorConfig: ""
-    write_all_group: ""
     connectors: []
 
 # Note that the public address in Giant Swarm management cluster configurations already includes the port

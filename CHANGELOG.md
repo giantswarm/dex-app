@@ -7,11 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Removed
+
+- Remove `write_all_group` from values and schema.
+
 ## [1.42.9] - 2024-03-06
 
 ### Removed
 
-- Remove deprecated giant swarm monitoring annotations and labels
+- Remove deprecated giant swarm monitoring annotations and labels.
 
 ## [1.42.8] - 2024-02-05
 

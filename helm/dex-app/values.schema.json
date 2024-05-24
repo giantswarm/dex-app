@@ -194,18 +194,12 @@
                                     },
                                     "id": {
                                         "type": "string"
-                                    },
-                                    "write_all_group": {
-                                        "type": "string"
                                     }
                                 }
                             }
                         },
                         "enabled": {
                             "type": "boolean"
-                        },
-                        "write_all_group": {
-                            "type": "string"
                         }
                     }
                 },
@@ -256,15 +250,9 @@
                                     },
                                     "id": {
                                         "type": "string"
-                                    },
-                                    "write_all_group": {
-                                        "type": "string"
                                     }
                                 }
                             }
-                        },
-                        "write_all_group": {
-                            "type": "string"
                         }
                     }
                 },

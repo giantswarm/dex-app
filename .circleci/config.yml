@@ -100,7 +100,6 @@ workflows:
               only: /^v.*/
 
       - architect/run-tests-with-ats:
-          runs-on: ubuntu-22.04
           name: execute chart tests
           filters:
             # Do not trigger the job on merge to master.
@@ -111,6 +110,10 @@ workflows:
             - push-to-control-plane-app-catalog
           app-test-suite_version: "v0.4.1"
           app-test-suite_container_tag: "0.4.1"
+          executor:
+            name: architect/app-build-suite
+            resource_class: large
+            image: ubuntu-2004:latest
 
       - architect/push-to-app-collection:
           context: architect

@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.42.10] - 2024-05-28
+
 ### Removed
 
 - Remove `write_all_group` from values and schema.
@@ -537,7 +539,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add helm chart for dex.
 
 
-[Unreleased]: https://github.com/giantswarm/dex-app/compare/v1.42.9...HEAD
+[Unreleased]: https://github.com/giantswarm/dex-app/compare/v1.42.10...HEAD
+[1.42.10]: https://github.com/giantswarm/dex-app/compare/v1.42.9...v1.42.10
 [1.42.9]: https://github.com/giantswarm/dex-app/compare/v1.42.8...v1.42.9
 [1.42.8]: https://github.com/giantswarm/dex-app/compare/v1.42.7...v1.42.8
 [1.42.7]: https://github.com/giantswarm/dex-app/compare/v1.42.6...v1.42.7

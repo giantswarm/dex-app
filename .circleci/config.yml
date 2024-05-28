@@ -110,10 +110,6 @@ workflows:
             - push-to-control-plane-app-catalog
           app-test-suite_version: "v0.4.1"
           app-test-suite_container_tag: "0.4.1"
-          executor:
-            name: architect/app-build-suite
-            resource_class: large
-            image: ubuntu-2004:latest
 
       - architect/push-to-app-collection:
           context: architect

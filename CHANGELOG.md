@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Default `ingress.tls.clusterIssuer` values to `letsencrypt-giantswarm`
+- Update `cert-manager.io/cluster-issuer` annotation to use default.
+
 ## [1.42.10] - 2024-05-28
 
 ### Removed

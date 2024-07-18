@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.42.11] - 2024-07-18
+
 ### Changed
 
 - Default `ingress.tls.clusterIssuer` values to `letsencrypt-giantswarm`
@@ -544,7 +546,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add helm chart for dex.
 
 
-[Unreleased]: https://github.com/giantswarm/dex-app/compare/v1.42.10...HEAD
+[Unreleased]: https://github.com/giantswarm/dex-app/compare/v1.42.11...HEAD
+[1.42.11]: https://github.com/giantswarm/dex-app/compare/v1.42.10...v1.42.11
 [1.42.10]: https://github.com/giantswarm/dex-app/compare/v1.42.9...v1.42.10
 [1.42.9]: https://github.com/giantswarm/dex-app/compare/v1.42.8...v1.42.9
 [1.42.8]: https://github.com/giantswarm/dex-app/compare/v1.42.7...v1.42.8

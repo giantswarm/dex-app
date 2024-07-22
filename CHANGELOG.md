@@ -7,11 +7,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.42.11] - 2024-07-18
+
+### Changed
+
+- Default `ingress.tls.clusterIssuer` values to `letsencrypt-giantswarm`
+- Update `cert-manager.io/cluster-issuer` annotation to use default.
+
+## [1.42.10] - 2024-05-28
+
+### Removed
+
+- Remove `write_all_group` from values and schema.
+
 ## [1.42.9] - 2024-03-06
 
 ### Removed
 
-- Remove deprecated giant swarm monitoring annotations and labels
+- Remove deprecated giant swarm monitoring annotations and labels.
 
 ## [1.42.8] - 2024-02-05
 
@@ -533,7 +546,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add helm chart for dex.
 
 
-[Unreleased]: https://github.com/giantswarm/dex-app/compare/v1.42.9...HEAD
+[Unreleased]: https://github.com/giantswarm/dex-app/compare/v1.42.11...HEAD
+[1.42.11]: https://github.com/giantswarm/dex-app/compare/v1.42.10...v1.42.11
+[1.42.10]: https://github.com/giantswarm/dex-app/compare/v1.42.9...v1.42.10
 [1.42.9]: https://github.com/giantswarm/dex-app/compare/v1.42.8...v1.42.9
 [1.42.8]: https://github.com/giantswarm/dex-app/compare/v1.42.7...v1.42.8
 [1.42.7]: https://github.com/giantswarm/dex-app/compare/v1.42.6...v1.42.7

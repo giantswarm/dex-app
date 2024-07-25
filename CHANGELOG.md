@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.42.12] - 2024-07-25
+
 ### Fixed
 
 - Bump dex to [v2.37.1-gs1](https://github.com/giantswarm/dex/releases/tag/v2.37.1-gs1) to fix critical CVEs.
@@ -550,7 +552,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add helm chart for dex.
 
 
-[Unreleased]: https://github.com/giantswarm/dex-app/compare/v1.42.11...HEAD
+[Unreleased]: https://github.com/giantswarm/dex-app/compare/v1.42.12...HEAD
+[1.42.12]: https://github.com/giantswarm/dex-app/compare/v1.42.11...v1.42.12
 [1.42.11]: https://github.com/giantswarm/dex-app/compare/v1.42.10...v1.42.11
 [1.42.10]: https://github.com/giantswarm/dex-app/compare/v1.42.9...v1.42.10
 [1.42.9]: https://github.com/giantswarm/dex-app/compare/v1.42.8...v1.42.9

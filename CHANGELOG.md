@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- Bump dex to [v2.37.0-gs1](https://github.com/giantswarm/dex/releases/tag/v2.37.1-gs1) to fix critical CVEs.
+- Bump dex to [v2.37.1-gs1](https://github.com/giantswarm/dex/releases/tag/v2.37.1-gs1) to fix critical CVEs.
 
 ## [1.42.11] - 2024-07-18
 

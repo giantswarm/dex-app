@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Changed ownership to Team Shield
+
 ## [1.42.12] - 2024-07-25
 
 ### Fixed

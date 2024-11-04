@@ -12,11 +12,11 @@ workflows:
             # Trigger the job also on git tag.
           tags:
             only: /^v.*/
-
           branches:
             ignore:
             - main
             - master
+
     - architect/push-to-app-catalog:
         name: push-to-control-plane-app-catalog
         app_catalog: control-plane-catalog
@@ -32,12 +32,60 @@ workflows:
             # Trigger the job also on git tag.
           tags:
             only: /^v.*/
-
-      # deploy to aws installations (only tags)
           branches:
             ignore:
             - main
             - master
+
+      # make it available to customers (only tags)
+    - architect/push-to-app-catalog:
+        name: package and push chart to giantswarm catalog
+        app_catalog: giantswarm-catalog
+        app_catalog_test: giantswarm-test-catalog
+        chart: dex-app
+        context: architect
+        executor: app-build-suite
+        push_to_oci_registry: true
+        requires:
+        - push-to-registries
+        filters:
+          tags:
+            only: /^v.*/
+          branches:
+            ignore:
+            - main
+            - master
+
+    - architect/push-to-app-catalog:
+        name: package and push chart
+        context: architect
+        app_catalog: giantswarm-playground-catalog
+        app_catalog_test: giantswarm-playground-test-catalog
+        chart: dex-app
+        executor: app-build-suite
+        requires:
+        - push-to-registries
+        filters:
+          tags:
+            only: /^v.*/
+          branches:
+            ignore:
+            - main
+            - master
+
+    - architect/run-tests-with-ats:
+        name: execute chart tests
+        filters:
+            # Do not trigger the job on merge to master.
+          branches:
+            ignore:
+            - master
+        requires:
+        - push-to-control-plane-app-catalog
+        app-test-suite_version: v0.4.1
+        app-test-suite_container_tag: 0.4.1
+
+      # deploy to aws installations (only tags)
     - architect/push-to-app-collection:
         context: architect
         name: push-to-aws-app-collection
@@ -78,54 +126,6 @@ workflows:
             ignore: /.*/
           tags:
             only: /^v.*/
-      # make it available to customers (only tags)
-
-    - architect/push-to-app-catalog:
-        name: package and push chart to giantswarm catalog
-        app_catalog: giantswarm-catalog
-        app_catalog_test: giantswarm-test-catalog
-        chart: dex-app
-        context: architect
-        executor: app-build-suite
-        push_to_oci_registry: true
-        requires:
-        - push-to-registries
-        filters:
-          tags:
-            only: /^v.*/
-
-          branches:
-            ignore:
-            - main
-            - master
-    - architect/push-to-app-catalog:
-        name: package and push chart
-        context: architect
-        app_catalog: giantswarm-playground-catalog
-        app_catalog_test: giantswarm-playground-test-catalog
-        chart: dex-app
-        executor: app-build-suite
-        requires:
-        - push-to-registries
-        filters:
-          tags:
-            only: /^v.*/
-
-          branches:
-            ignore:
-            - main
-            - master
-    - architect/run-tests-with-ats:
-        name: execute chart tests
-        filters:
-            # Do not trigger the job on merge to master.
-          branches:
-            ignore:
-            - master
-        requires:
-        - push-to-control-plane-app-catalog
-        app-test-suite_version: v0.4.1
-        app-test-suite_container_tag: 0.4.1
 
     - architect/push-to-app-collection:
         context: architect
@@ -153,7 +153,6 @@ workflows:
           tags:
             only: /^v.*/
 
-
     - architect/push-to-app-collection:
         context: architect
         name: push-to-gcp-app-collection
@@ -179,4 +178,3 @@ workflows:
             ignore: /.*/
           tags:
             only: /^v.*/
-

@@ -1,166 +1,180 @@
 version: 2.1
 orbs:
-  architect: giantswarm/architect@4.35.5
+  architect: giantswarm/architect@5.11.1
 
 workflows:
   build:
     jobs:
-      - architect/push-to-registries:
-          context: architect
-          name: push-to-registries
-          filters:
+    - architect/push-to-registries:
+        context: architect
+        name: push-to-registries
+        filters:
             # Trigger the job also on git tag.
-            tags:
-              only: /^v.*/
+          tags:
+            only: /^v.*/
+          branches:
+            ignore:
+            - main
+            - master
 
-      - architect/push-to-app-catalog:
-          name: push-to-control-plane-app-catalog
-          app_catalog: control-plane-catalog
-          app_catalog_test: control-plane-test-catalog
-          context: architect
-          chart: dex-app
-          executor: "app-build-suite"
-          persist_chart_archive: true
-          push_to_oci_registry: true
-          requires:
-            - push-to-registries
-          filters:
+    - architect/push-to-app-catalog:
+        name: push-to-control-plane-app-catalog
+        app_catalog: control-plane-catalog
+        app_catalog_test: control-plane-test-catalog
+        context: architect
+        chart: dex-app
+        executor: app-build-suite
+        persist_chart_archive: true
+        push_to_oci_registry: true
+        requires:
+        - push-to-registries
+        filters:
             # Trigger the job also on git tag.
-            tags:
-              only: /^v.*/
+          tags:
+            only: /^v.*/
+          branches:
+            ignore:
+            - main
+            - master
+
+      # make it available to customers (only tags)
+    - architect/push-to-app-catalog:
+        name: package and push chart to giantswarm catalog
+        app_catalog: giantswarm-catalog
+        app_catalog_test: giantswarm-test-catalog
+        chart: dex-app
+        context: architect
+        executor: app-build-suite
+        push_to_oci_registry: true
+        requires:
+        - push-to-registries
+        filters:
+          tags:
+            only: /^v.*/
+          branches:
+            ignore:
+            - main
+            - master
+
+    - architect/push-to-app-catalog:
+        name: package and push chart
+        context: architect
+        app_catalog: giantswarm-playground-catalog
+        app_catalog_test: giantswarm-playground-test-catalog
+        chart: dex-app
+        executor: app-build-suite
+        requires:
+        - push-to-registries
+        filters:
+          tags:
+            only: /^v.*/
+          branches:
+            ignore:
+            - main
+            - master
+
+    - architect/run-tests-with-ats:
+        name: execute chart tests
+        filters:
+            # Do not trigger the job on merge to master.
+          branches:
+            ignore:
+            - master
+        requires:
+        - push-to-control-plane-app-catalog
+        app-test-suite_version: v0.4.1
+        app-test-suite_container_tag: 0.4.1
 
       # deploy to aws installations (only tags)
-      - architect/push-to-app-collection:
-          context: architect
-          name: push-to-aws-app-collection
-          app_name: dex-app
-          app_collection_repo: aws-app-collection
-          requires:
-            - push-to-control-plane-app-catalog
-          filters:
-            branches:
-              ignore: /.*/
-            tags:
-              only: /^v.*/
+    - architect/push-to-app-collection:
+        context: architect
+        name: push-to-aws-app-collection
+        app_name: dex-app
+        app_collection_repo: aws-app-collection
+        requires:
+        - push-to-control-plane-app-catalog
+        filters:
+          branches:
+            ignore: /.*/
+          tags:
+            only: /^v.*/
 
       # deploy to azure installations (only tags)
-      - architect/push-to-app-collection:
-          context: architect
-          name: push-to-azure-app-collection
-          app_name: dex-app
-          app_collection_repo: azure-app-collection
-          requires:
-            - push-to-control-plane-app-catalog
-          filters:
-            branches:
-              ignore: /.*/
-            tags:
-              only: /^v.*/
+    - architect/push-to-app-collection:
+        context: architect
+        name: push-to-azure-app-collection
+        app_name: dex-app
+        app_collection_repo: azure-app-collection
+        requires:
+        - push-to-control-plane-app-catalog
+        filters:
+          branches:
+            ignore: /.*/
+          tags:
+            only: /^v.*/
 
       # deploy to vsphere installations (only tags)
-      - architect/push-to-app-collection:
-          context: architect
-          name: push-to-vsphere-app-collection
-          app_name: dex-app
-          app_collection_repo: vsphere-app-collection
-          requires:
-            - push-to-control-plane-app-catalog
-          filters:
-            branches:
-              ignore: /.*/
-            tags:
-              only: /^v.*/
-      # make it available to customers (only tags)
+    - architect/push-to-app-collection:
+        context: architect
+        name: push-to-vsphere-app-collection
+        app_name: dex-app
+        app_collection_repo: vsphere-app-collection
+        requires:
+        - push-to-control-plane-app-catalog
+        filters:
+          branches:
+            ignore: /.*/
+          tags:
+            only: /^v.*/
 
-      - architect/push-to-app-catalog:
-          name: package and push chart to giantswarm catalog
-          app_catalog: giantswarm-catalog
-          app_catalog_test: giantswarm-test-catalog
-          chart: dex-app
-          context: architect
-          executor: "app-build-suite"
-          push_to_oci_registry: true
-          requires:
-            - push-to-registries
-          filters:
-            tags:
-              only: /^v.*/
+    - architect/push-to-app-collection:
+        context: architect
+        name: push-to-cloud-director-app-collection
+        app_name: dex-app
+        app_collection_repo: cloud-director-app-collection
+        requires:
+        - push-to-control-plane-app-catalog
+        filters:
+          branches:
+            ignore: /.*/
+          tags:
+            only: /^v.*/
 
-      - architect/push-to-app-catalog:
-          name: package and push chart
-          context: architect
-          app_catalog: giantswarm-playground-catalog
-          app_catalog_test: giantswarm-playground-test-catalog
-          chart: dex-app
-          executor: "app-build-suite"
-          requires:
-            - push-to-registries
-          filters:
-            tags:
-              only: /^v.*/
+    - architect/push-to-app-collection:
+        context: architect
+        name: push-to-capa-app-collection
+        app_name: dex-app
+        app_collection_repo: capa-app-collection
+        requires:
+        - push-to-control-plane-app-catalog
+        filters:
+          branches:
+            ignore: /.*/
+          tags:
+            only: /^v.*/
 
-      - architect/run-tests-with-ats:
-          name: execute chart tests
-          filters:
-            # Do not trigger the job on merge to master.
-            branches:
-              ignore:
-                - master
-          requires:
-            - push-to-control-plane-app-catalog
-          app-test-suite_version: "v0.4.1"
-          app-test-suite_container_tag: "0.4.1"
+    - architect/push-to-app-collection:
+        context: architect
+        name: push-to-gcp-app-collection
+        app_name: dex-app
+        app_collection_repo: gcp-app-collection
+        requires:
+        - push-to-control-plane-app-catalog
+        filters:
+          branches:
+            ignore: /.*/
+          tags:
+            only: /^v.*/
 
-      - architect/push-to-app-collection:
-          context: architect
-          name: push-to-cloud-director-app-collection
-          app_name: "dex-app"
-          app_collection_repo: cloud-director-app-collection
-          requires:
-            - push-to-control-plane-app-catalog
-          filters:
-            branches:
-              ignore: /.*/
-            tags:
-              only: /^v.*/
-
-      - architect/push-to-app-collection:
-          context: architect
-          name: push-to-capa-app-collection
-          app_name: "dex-app"
-          app_collection_repo: "capa-app-collection"
-          requires:
-            - push-to-control-plane-app-catalog
-          filters:
-            branches:
-              ignore: /.*/
-            tags:
-              only: /^v.*/
-
-
-      - architect/push-to-app-collection:
-          context: architect
-          name: push-to-gcp-app-collection
-          app_name: "dex-app"
-          app_collection_repo: "gcp-app-collection"
-          requires:
-            - push-to-control-plane-app-catalog
-          filters:
-            branches:
-              ignore: /.*/
-            tags:
-              only: /^v.*/
-
-      - architect/push-to-app-collection:
-          context: architect
-          name: push-to-capz-app-collection
-          app_name: "dex-app"
-          app_collection_repo: "capz-app-collection"
-          requires:
-            - push-to-control-plane-app-catalog
-          filters:
-            branches:
-              ignore: /.*/
-            tags:
-              only: /^v.*/
-
+    - architect/push-to-app-collection:
+        context: architect
+        name: push-to-capz-app-collection
+        app_name: dex-app
+        app_collection_repo: capz-app-collection
+        requires:
+        - push-to-control-plane-app-catalog
+        filters:
+          branches:
+            ignore: /.*/
+          tags:
+            only: /^v.*/

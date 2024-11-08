@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Changed ownership to Team Shield
+- Prepare for Backstage service
 
 ## [1.42.12] - 2024-07-25
 

@@ -431,6 +431,14 @@
         "services": {
             "type": "object",
             "properties": {
+                "backstage": {
+                    "type": "object",
+                    "properties": {
+                        "address": {
+                            "type": "string"
+                        }
+                    }
+                },
                 "gitopsui": {
                     "type": "object",
                     "properties": {

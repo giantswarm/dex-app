@@ -85,7 +85,7 @@ services:
   gitopsui:
     address: ""
   backstage:
-    address: ""
+    addresses: []
 
 registry:
   domain: gsoci.azurecr.io

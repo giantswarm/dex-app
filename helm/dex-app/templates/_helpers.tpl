@@ -131,8 +131,13 @@ Checks if any services in addition to Kubernetes are defined in values
 {{- $ok := false -}}
 {{- range $k, $v := .Values.services -}}
 {{- if ne $k "kubernetes" }}
+{{- if ne $k "backstage" }}
 {{- $ok = or $ok (ne $v.address "") -}}
+{{- else -}}
+{{- $ok = or $ok (ne (len $v.addresses) 0) -}}
 {{- end -}}
 {{- end -}}
+{{- end -}}
+{{ $ok = or $ok }}
 {{- printf "%v" $ok -}}
 {{- end -}}

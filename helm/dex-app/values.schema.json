@@ -434,7 +434,7 @@
                 "backstage": {
                     "type": "object",
                     "properties": {
-                        "addresses": {
+                        "address": {
                             "type": "array"
                         }
                     }

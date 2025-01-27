@@ -33,6 +33,7 @@ ingress:
       enabled: false
 
 oidc:
+  enablePasswordDB: false
   issuerAddress: ""
   expiry:
     signingKeys: 6h

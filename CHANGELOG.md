@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Make `enablePasswordDB` field configurable in the values.
+
 ## [1.42.13] - 2024-11-13
 
 ### Changed

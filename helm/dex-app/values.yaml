@@ -33,6 +33,7 @@ ingress:
       enabled: false
 
 oidc:
+  passwordConnector: ""
   enablePasswordDB: false
   issuerAddress: ""
   expiry:
@@ -56,6 +57,11 @@ oidc:
       clientAddress: ""
       clientSecret: "default-client-dex-authenticator-secret"
   extraStaticClients: []
+  staticPasswords:
+    username: ""
+    hash: ""
+    email: ""
+    userID: ""
   # Giant Swarm OIDC values to run DEX in the management clusters
   giantswarm:
     connectorConfig:

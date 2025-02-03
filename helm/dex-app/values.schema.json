@@ -309,16 +309,6 @@
                                 ]
                             }]
                         }, {
-                            "oneOf": [{
-                                "required": [
-                                    "secret"
-                                ]
-                            }, {
-                                "required": [
-                                    "secretEnv"
-                                ]
-                            }]
-                        }, {
                             "required": [
                                 "name"
                             ]

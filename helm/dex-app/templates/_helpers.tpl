@@ -1,3 +1,5 @@
+{{/* vim: set filetype=mustache: */}}
+
 {{/*
 Create chart name and version as used by the chart label.
 */}}
@@ -71,13 +73,39 @@ app.kubernetes.io/component: dex-k8s-authenticator-giantswarm
 {{- end -}}
 
 {{/*
+Get static client configuration with support for both new and legacy formats
+*/}}
+{{- define "get-client-config" -}}
+{{- $clientName := . -}}
+{{- $root := $.root -}}
+{{- $config := dict -}}
+{{- range $root.Values.oidc.extraStaticClients -}}
+{{- if eq .name $clientName -}}
+{{- $config = . -}}
+{{- end -}}
+{{- end -}}
+{{- if not $config -}}
+{{- if eq $clientName "happa" -}}
+{{- $config = $root.Values.oidc.staticClients.happa -}}
+{{- else if eq $clientName "dex-k8s-authenticator" -}}
+{{- $config = $root.Values.oidc.staticClients.dexK8SAuthenticator -}}
+{{- else if eq $clientName "gitopsui" -}}
+{{- $config = $root.Values.oidc.staticClients.gitopsui -}}
+{{- else if eq $clientName "grafana" -}}
+{{- $config = $root.Values.oidc.staticClients.grafana -}}
+{{- end -}}
+{{- end -}}
+{{ $config | toJson }}
+{{- end -}}
+
+{{/*
 Abstract the knowledge to know if it needs a Giant Swarm connector or not
 */}}
 {{- define "has-giantswarm-connector" -}}
 {{- if .Values.oidc.giantswarm.connectorConfig.clientID -}}
-  {{- printf "true" }}
+{{- printf "true" }}
 {{- else -}}
-  {{- printf "false" }}
+{{- printf "false" }}
 {{- end -}}
 {{- end -}}
 
@@ -86,13 +114,13 @@ Abstract the knowledge to know if its installed on a workload cluster or not
 */}}
 {{- define "is-workload-cluster" -}}
 {{- if .Values.isWorkloadCluster -}}
-  {{- printf "true" }}
+{{- printf "true" }}
 {{- else if .Values.isManagementCluster -}}
-  {{- printf "false" }}
+{{- printf "false" }}
 {{- else if and .Values.baseDomain .Values.clusterID -}}
-  {{- printf "true" }}
+{{- printf "true" }}
 {{- else -}}
-  {{- printf "false" }}
+{{- printf "false" }}
 {{- end -}}
 {{- end -}}
 
@@ -100,32 +128,32 @@ Abstract the knowledge to know if its installed on a workload cluster or not
 Gather and print trusted peers of a static client from various sources
 */}}
 {{- define "trusted-peers" -}}
-  {{- if . }}
-    {{- $trustedPeers := uniq ( compact . ) -}}
-    {{- if $trustedPeers }}
-      {{- print "trustedPeers:" | nindent 6 -}}
-      {{- if $trustedPeers -}}
-        {{- $trustedPeers | toYaml | nindent 6 -}}
-      {{- end -}}
-    {{- end -}}
-  {{- end -}}
+{{- if . }}
+{{- $trustedPeers := uniq ( compact . ) -}}
+{{- if $trustedPeers }}
+{{- print "trustedPeers:" | nindent 6 -}}
+{{- if $trustedPeers -}}
+{{- $trustedPeers | toYaml | nindent 6 -}}
+{{- end -}}
+{{- end -}}
+{{- end -}}
 {{- end -}}
 
 {{/*
 Clean up and print extra static clients
 */}}
 {{- define "print-clean-extra-static-clients" -}}
-  {{- if . }}
-    {{- $extraStaticClients := list nil -}}
-    {{- range . -}}
-    {{- $client := omit . "trustedPeerOf" -}}
-      {{- if not $client.clientSecret -}}
-        {{- $client = set $client "public" true -}}
-      {{- end -}}
-      {{- $extraStaticClients = append $extraStaticClients $client -}}
-    {{- end -}}
-    {{- compact $extraStaticClients | toYaml | nindent 4 -}}
-  {{- end -}}
+{{- if . }}
+{{- $extraStaticClients := list nil -}}
+{{- range . -}}
+{{- $client := omit . "trustedPeerOf" -}}
+{{- if and (not $client.secret) (not $client.secretEnv) -}}
+{{- $client = set $client "public" true -}}
+{{- end -}}
+{{- $extraStaticClients = append $extraStaticClients $client -}}
+{{- end -}}
+{{- compact $extraStaticClients | toYaml | nindent 4 -}}
+{{- end -}}
 {{- end -}}
 
 {{/*
@@ -139,4 +167,23 @@ Checks if any services in addition to Kubernetes are defined in values
 {{- end -}}
 {{- end -}}
 {{- printf "%v" $ok -}}
+{{- end -}}
+
+{{/*
+Get client address from either extraStaticClients or legacy config
+*/}}
+{{- define "get-client-address" -}}
+{{- $clientName := . -}}
+{{- $address := "" -}}
+{{- range $.Values.oidc.extraStaticClients -}}
+{{- if eq .name $clientName -}}
+{{- $address = .clientAddress -}}
+{{- end -}}
+{{- end -}}
+{{- if not $address -}}
+{{- if eq $clientName "dex-k8s-authenticator" -}}
+{{- $address = $.Values.oidc.staticClients.dexK8SAuthenticator.clientAddress -}}
+{{- end -}}
+{{- end -}}
+{{- $address -}}
 {{- end -}}

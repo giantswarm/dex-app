@@ -31,17 +31,29 @@ ingress:
     keyPemB64: ""
     externalSecret:
       enabled: false
-  staticClients:
-    happa:
-      clientID: "happa-client"
-      # clientSecret is omitted so this client will be marked as public
-      redirectURI: "https://happa.example.com/callback"
-      trustedPeers: []
+
 oidc:
   issuerAddress: ""
   expiry:
     signingKeys: 6h
     idTokens: 30m
+
+  # New format for static clients using extraStaticClients
+  extraStaticClients:
+    - name: "happa"
+      id: "happa-client"
+      public: true
+      redirectURIs:
+        - "https://happa.example.com/callback"
+      trustedPeers: []
+
+    - name: "dex-k8s-authenticator"
+      id: "dex-k8s-authenticator"
+      secret: "default-client-dex-authenticator-secret"
+      redirectURIs:
+        - "https://login.example.com/callback"
+
+  # Legacy static clients (to be deprecated)
   staticClients:
     gitopsui:
       clientID: ""
@@ -61,8 +73,8 @@ oidc:
     dexK8SAuthenticator:
       clientAddress: ""
       clientSecret: "default-client-dex-authenticator-secret"
-  extraStaticClients: []
-  # Giant Swarm OIDC values to run DEX in the management clusters
+
+  # Giant Swarm OIDC configuration
   giantswarm:
     connectorConfig:
       clientID: ""

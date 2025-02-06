@@ -10,6 +10,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Make `enablePasswordDB` field configurable in the values.
+- 
+### Added
+
+- Added renovate configutarion
+
+### Removed
+
+- Removed dependabot configuration
 
 ## [1.42.13] - 2024-11-13
 

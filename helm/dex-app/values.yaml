@@ -31,7 +31,12 @@ ingress:
     keyPemB64: ""
     externalSecret:
       enabled: false
-
+  staticClients:
+    happa:
+      clientID: "happa-client"
+      # clientSecret is omitted so this client will be marked as public
+      redirectURI: "https://happa.example.com/callback"
+      trustedPeers: []
 oidc:
   issuerAddress: ""
   expiry:
@@ -50,7 +55,9 @@ oidc:
       address: http://localhost:8085/oauth/callback
     happa:
       clientID: ""
+      # clientSecret: ""
       redirectURI: ""
+      trustedPeers: []
     dexK8SAuthenticator:
       clientAddress: ""
       clientSecret: "default-client-dex-authenticator-secret"

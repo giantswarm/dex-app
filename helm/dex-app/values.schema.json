@@ -405,6 +405,9 @@
                                 "clientID": {
                                     "type": "string"
                                 },
+                                "clientSecret": {
+                                    "type": "string"
+                                },
                                 "redirectURI": {
                                     "type": "string"
                                 },

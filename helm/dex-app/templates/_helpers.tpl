@@ -118,7 +118,11 @@ Clean up and print extra static clients
   {{- if . }}
     {{- $extraStaticClients := list nil -}}
     {{- range . -}}
-      {{- $extraStaticClients = append $extraStaticClients (omit . "trustedPeerOf") -}}
+    {{- $client := omit . "trustedPeerOf" -}}
+      {{- if not $client.clientSecret -}}
+        {{- $client = set $client "public" true -}}
+      {{- end -}}
+      {{- $extraStaticClients = append $extraStaticClients $client -}}
     {{- end -}}
     {{- compact $extraStaticClients | toYaml | nindent 4 -}}
   {{- end -}}

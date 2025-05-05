@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Added renovate configuration
 - Make Ingress annotations configurable via values (`.Values.ingress.annotations`)
+- Increased request header size limit in NGINX ingress controller annotations
 
 ### Removed
 

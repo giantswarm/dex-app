@@ -90,10 +90,13 @@
             "type": "object",
             "properties": {
                 "externalDNS": {
-                    "type": "boolean"
+                  "type": "boolean"
                 },
                 "ingressClassName": {
                     "type": "string"
+                },
+                "largeHeaderBuffers": {
+                    "type": "boolean"
                 },
                 "tls": {
                     "type": "object",

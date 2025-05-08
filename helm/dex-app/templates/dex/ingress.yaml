@@ -10,6 +10,9 @@ metadata:
     {{- include "dex.labels.common" . | nindent 4 }}
   annotations:
     cert-manager.io/cluster-issuer: {{ .Values.ingress.tls.clusterIssuer }}
+    {{- if .Values.ingress.largeHeaderBuffers }}
+    nginx.ingress.kubernetes.io/server-snippet: large_client_header_buffers 4 32k;
+    {{- end }}
     {{- if .Values.ingress.externalDNS }}
     {{- if eq (include "is-workload-cluster" .) "true" }}
     external-dns.alpha.kubernetes.io/hostname: dex.{{ .Values.baseDomain }}
@@ -17,6 +20,9 @@ metadata:
     external-dns.alpha.kubernetes.io/hostname: {{ .Values.oidc.issuerAddress }}
     {{- end }}
     giantswarm.io/external-dns: managed
+    {{- end }}
+    {{- with .Values.ingress.annotations }}
+    {{- toYaml . | nindent 4 }}
     {{- end }}
 spec:
   ingressClassName: {{ .Values.ingress.ingressClassName }}

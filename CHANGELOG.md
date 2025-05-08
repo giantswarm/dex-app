@@ -7,9 +7,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## Added
+
+- Added `largeHeaderBuffers` to ingress for large request header size.
+
+## [1.42.14] - 2025-05-06
+
+### Added
+
+- Added renovate configuration
+- Make Ingress annotations configurable via values (`.Values.ingress.annotations`)
+- Increased request header size limit in NGINX ingress controller annotations
+
+### Removed
+
+- Removed dependabot configuration
+
+## [1.42.13] - 2024-11-13
+
 ### Changed
 
 - Changed ownership to Team Shield
+- Prepare for Backstage service
 
 ## [1.42.12] - 2024-07-25
 
@@ -556,7 +575,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add helm chart for dex.
 
 
-[Unreleased]: https://github.com/giantswarm/dex-app/compare/v1.42.12...HEAD
+[Unreleased]: https://github.com/giantswarm/dex-app/compare/v1.42.14...HEAD
+[1.42.14]: https://github.com/giantswarm/dex-app/compare/v1.42.13...v1.42.14
+[1.42.13]: https://github.com/giantswarm/dex-app/compare/v1.42.12...v1.42.13
 [1.42.12]: https://github.com/giantswarm/dex-app/compare/v1.42.11...v1.42.12
 [1.42.11]: https://github.com/giantswarm/dex-app/compare/v1.42.10...v1.42.11
 [1.42.10]: https://github.com/giantswarm/dex-app/compare/v1.42.9...v1.42.10

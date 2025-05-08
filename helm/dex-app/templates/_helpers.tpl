@@ -123,3 +123,16 @@ Clean up and print extra static clients
     {{- compact $extraStaticClients | toYaml | nindent 4 -}}
   {{- end -}}
 {{- end -}}
+
+{{/*
+Checks if any services in addition to Kubernetes are defined in values
+*/}}
+{{- define "is-any-service-listed" -}}
+{{- $ok := false -}}
+{{- range $k, $v := .Values.services -}}
+{{- if ne $k "kubernetes" }}
+{{- $ok = or $ok (ne (len $v.address) 0) -}}
+{{- end -}}
+{{- end -}}
+{{- printf "%v" $ok -}}
+{{- end -}}

@@ -1,3 +1,5 @@
+{{- if .Values.deployDexK8SAuthenticator }}
+{{ if or (eq (include "has-giantswarm-connector" .) "true") .Values.oidc.customer.enabled }}
 {{- if .Capabilities.APIVersions.Has "networking.k8s.io/v1/Ingress" }}
 apiVersion: networking.k8s.io/v1
 {{- else }}
@@ -5,9 +7,9 @@ apiVersion: networking.k8s.io/v1beta1
 {{- end }}
 kind: Ingress
 metadata:
-  name: {{ include "resource.dex.name" . }}
+  name: {{ include "resource.dexk8sauth.name" . }}
   labels:
-    {{- include "dex.labels.common" . | nindent 4 }}
+    {{- include "dexk8sauth.labels.common" . | nindent 4 }}
   annotations:
     cert-manager.io/cluster-issuer: {{ .Values.ingress.tls.clusterIssuer }}
     {{- if .Values.ingress.largeHeaderBuffers }}
@@ -15,9 +17,21 @@ metadata:
     {{- end }}
     {{- if .Values.ingress.externalDNS }}
     {{- if eq (include "is-workload-cluster" .) "true" }}
-    external-dns.alpha.kubernetes.io/hostname: dex.{{ .Values.baseDomain }}
+    external-dns.alpha.kubernetes.io/hostname: login.{{ .Values.baseDomain }}
     {{- else if .Values.isManagementCluster }}
-    external-dns.alpha.kubernetes.io/hostname: {{ .Values.oidc.issuerAddress }}
+    {{- /* Check for client address in extraStaticClients first */}}
+    {{- $clientAddress := "" }}
+    {{- range .Values.oidc.extraStaticClients }}
+    {{- if eq .name "dex-k8s-authenticator" }}
+    {{- $clientAddress = .clientAddress }}
+    {{- end }}
+    {{- end }}
+    {{- if not $clientAddress }}
+    {{- /* Fall back to legacy static clients */}}
+    external-dns.alpha.kubernetes.io/hostname: {{ .Values.oidc.staticClients.dexK8SAuthenticator.clientAddress }}
+    {{- else }}
+    external-dns.alpha.kubernetes.io/hostname: {{ $clientAddress }}
+    {{- end }}
     {{- end }}
     giantswarm.io/external-dns: managed
     {{- end }}
@@ -27,34 +41,76 @@ metadata:
 spec:
   ingressClassName: {{ .Values.ingress.ingressClassName }}
   tls:
-    - hosts:
-      {{- if eq (include "is-workload-cluster" .) "true" }}
-        - dex.{{ .Values.baseDomain }}
-      {{- else if .Values.isManagementCluster }}
-        - {{ .Values.oidc.issuerAddress }}
+  - hosts:
+    {{- if eq (include "is-workload-cluster" .) "true" }}
+      - login.{{ .Values.baseDomain }}
+    {{- else if .Values.isManagementCluster }}
+      {{- /* Check for client address in extraStaticClients first */}}
+      {{- $clientAddress := "" }}
+      {{- range .Values.oidc.extraStaticClients }}
+      {{- if eq .name "dex-k8s-authenticator" }}
+      {{- $clientAddress = .clientAddress }}
       {{- end }}
-      {{- if .Values.ingress.tls.letsencrypt }}
-      secretName: {{ include "resource.dex.name" . }}-tls-le
+      {{- end }}
+      {{- if not $clientAddress }}
+      - {{ .Values.oidc.staticClients.dexK8SAuthenticator.clientAddress }}
       {{- else }}
-      secretName: {{ include "resource.dex.name" . }}-tls
+      - {{ $clientAddress }}
       {{- end }}
+    {{- end }}
+    {{- if .Values.ingress.tls.letsencrypt }}
+    secretName: {{ include "resource.dexk8sauth.name" . }}-le
+    {{- else }}
+    secretName: {{ include "resource.dexk8sauth.name" . }}
+    {{- end }}
   rules:
-    - http:
-        paths:
-          - path: /
-            pathType: Prefix
-            backend:
-{{- if .Capabilities.APIVersions.Has "networking.k8s.io/v1/Ingress" }}
-              service:
-                name: {{ include "resource.dex.name" . }}
-                port:
-                  number: 32000
-{{- else }}
-              serviceName: {{ include "resource.dex.name" . }}
-              servicePort: 32000
+  - http:
+      paths:
+      {{- range .Values.oidc.extraStaticClients }}
+      {{- if eq .name "dex-k8s-authenticator" }}
+      - path: /
+        pathType: Prefix
+        backend:
+        {{- if $.Capabilities.APIVersions.Has "networking.k8s.io/v1/Ingress" }}
+          service:
+            name: {{ include "resource.dexk8sauth.name" $ }}-{{ .id }}
+            port:
+              name: http
+        {{- else }}
+          serviceName: {{ include "resource.dexk8sauth.name" $ }}-{{ .id }}
+          servicePort: http
+        {{- end }}
+      {{- end }}
+      {{- end }}
+      {{/* Fallback to legacy static client configuration */}}
+      {{- if not (has "dex-k8s-authenticator" (pluck "name" .Values.oidc.extraStaticClients)) }}
+      - path: /
+        pathType: Prefix
+        backend:
+        {{- if .Capabilities.APIVersions.Has "networking.k8s.io/v1/Ingress" }}
+          service:
+            name: {{ include "resource.dexk8sauth.name" . }}-customer
+            port:
+              name: http
+        {{- else }}
+          serviceName: {{ include "resource.dexk8sauth.name" . }}-customer
+          servicePort: http
+        {{- end }}
+      {{- end }}
+    {{- if eq (include "is-workload-cluster" .) "true" }}
+    host: login.{{ .Values.baseDomain }}
+    {{- else if .Values.isManagementCluster }}
+    {{- $clientAddress := "" }}
+    {{- range .Values.oidc.extraStaticClients }}
+    {{- if eq .name "dex-k8s-authenticator" }}
+    {{- $clientAddress = .clientAddress }}
+    {{- end }}
+    {{- end }}
+    {{- if not $clientAddress }}
+    host: {{ .Values.oidc.staticClients.dexK8SAuthenticator.clientAddress }}
+    {{- else }}
+    host: {{ $clientAddress }}
+    {{- end }}
+    {{- end }}
+{{ end }}
 {{- end }}
-  {{- if eq (include "is-workload-cluster" .) "true" }}
-      host: dex.{{ .Values.baseDomain }}
-  {{- else if .Values.isManagementCluster }}
-      host: {{ .Values.oidc.issuerAddress }}
-  {{- end }}

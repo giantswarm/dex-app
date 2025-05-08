@@ -44,6 +44,43 @@
             ],
             "title": "Schema for container images",
             "type": "object"
+        },
+        "staticClient": {
+            "type": "object",
+            "properties": {
+                "clientID": {
+                    "type": "string"
+                },
+                "clientSecret": {
+                    "type": "string"
+                },
+                "redirectURI": {
+                    "type": "string"
+                },
+                "trustedPeers": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "connector": {
+            "type": "object",
+            "properties": {
+                "connectorConfig": {
+                    "type": "string"
+                },
+                "connectorName": {
+                    "type": "string"
+                },
+                "connectorType": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                }
+            }
         }
     },
     "type": "object",
@@ -169,101 +206,19 @@
         "oidc": {
             "type": "object",
             "properties": {
-                "customer": {
-                    "type": "object",
-                    "properties": {
-                        "connectorConfig": {
-                            "type": "string"
-                        },
-                        "connectorName": {
-                            "type": "string"
-                        },
-                        "connectorType": {
-                            "type": "string"
-                        },
-                        "connectors": {
-                            "type": [
-                                "array",
-                                "null"
-                            ],
-                            "items": {
-                                "type": "object",
-                                "properties": {
-                                    "connectorConfig": {
-                                        "type": "string"
-                                    },
-                                    "connectorName": {
-                                        "type": "string"
-                                    },
-                                    "connectorType": {
-                                        "type": "string"
-                                    },
-                                    "id": {
-                                        "type": "string"
-                                    }
-                                }
-                            }
-                        },
-                        "enabled": {
-                            "type": "boolean"
-                        }
-                    }
+                "issuerAddress": {
+                    "type": "string"
                 },
                 "expiry": {
                     "type": "object",
                     "properties": {
-                        "idTokens": {
-                            "type": "string"
-                        },
                         "signingKeys": {
                             "type": "string"
-                        }
-                    }
-                },
-                "giantswarm": {
-                    "type": "object",
-                    "properties": {
-                        "connectorConfig": {
-                            "type": "object",
-                            "properties": {
-                                "clientID": {
-                                    "type": "string"
-                                },
-                                "clientSecret": {
-                                    "type": "string"
-                                },
-                                "team": {
-                                    "type": "string"
-                                }
-                            }
                         },
-                        "connectors": {
-                            "type": [
-                                "array",
-                                "null"
-                            ],
-                            "items": {
-                                "type": "object",
-                                "properties": {
-                                    "connectorConfig": {
-                                        "type": "string"
-                                    },
-                                    "connectorName": {
-                                        "type": "string"
-                                    },
-                                    "connectorType": {
-                                        "type": "string"
-                                    },
-                                    "id": {
-                                        "type": "string"
-                                    }
-                                }
-                            }
+                        "idTokens": {
+                            "type": "string"
                         }
                     }
-                },
-                "issuerAddress": {
-                    "type": "string"
                 },
                 "extraStaticClients": {
                     "type": "array",
@@ -302,6 +257,9 @@
                             },
                             "logoURL": {
                                 "type": "string"
+                            },
+                            "clientAddress": {
+                                "type": "string"
                             }
                         },
                         "allOf": [{
@@ -323,6 +281,10 @@
                                 "required": [
                                     "secretEnv"
                                 ]
+                            }, {
+                                "required": [
+                                    "public"
+                                ]
                             }]
                         }, {
                             "required": [
@@ -334,6 +296,32 @@
                 "staticClients": {
                     "type": "object",
                     "properties": {
+                        "gitopsui": {
+                            "$ref": "#/$defs/staticClient"
+                        },
+                        "grafana": {
+                            "$ref": "#/$defs/staticClient"
+                        },
+                        "gsCLIAuth": {
+                            "type": "object",
+                            "properties": {
+                                "clientID": {
+                                    "type": "string"
+                                },
+                                "address": {
+                                    "type": "string"
+                                },
+                                "trustedPeers": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        },
+                        "happa": {
+                            "$ref": "#/$defs/staticClient"
+                        },
                         "dexK8SAuthenticator": {
                             "type": "object",
                             "properties": {
@@ -350,76 +338,53 @@
                                     }
                                 }
                             }
-                        },
-                        "gitopsui": {
+                        }
+                    }
+                },
+                "giantswarm": {
+                    "type": "object",
+                    "properties": {
+                        "connectorConfig": {
                             "type": "object",
                             "properties": {
-                                "cliendID": {
+                                "clientID": {
                                     "type": "string"
                                 },
                                 "clientSecret": {
                                     "type": "string"
                                 },
-                                "redirectURI": {
+                                "team": {
                                     "type": "string"
-                                },
-                                "trustedPeers": {
-                                    "type": "array",
-                                    "items": {
-                                        "type": "string"
-                                    }
                                 }
                             }
                         },
-                        "grafana": {
-                            "type": "object",
-                            "properties": {
-                                "cliendID": {
-                                    "type": "string"
-                                },
-                                "redirectURI": {
-                                    "type": "string"
-                                },
-                                "trustedPeers": {
-                                    "type": "array",
-                                    "items": {
-                                        "type": "string"
-                                    }
-                                }
+                        "connectors": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/$defs/connector"
                             }
+                        }
+                    }
+                },
+                "customer": {
+                    "type": "object",
+                    "properties": {
+                        "enabled": {
+                            "type": "boolean"
                         },
-                        "gsCLIAuth": {
-                            "type": "object",
-                            "properties": {
-                                "address": {
-                                    "type": "string"
-                                },
-                                "clientID": {
-                                    "type": "string"
-                                },
-                                "trustedPeers": {
-                                    "type": "array",
-                                    "items": {
-                                        "type": "string"
-                                    }
-                                }
-                            }
+                        "connectorType": {
+                            "type": "string"
                         },
-                        "happa": {
-                            "type": "object",
-                            "properties": {
-                                "clientID": {
-                                    "type": "string"
-                                },
-                                "redirectURI": {
-                                    "type": "string"
-                                },
-                                "trustedPeers": {
-                                    "type": "array",
-                                    "items": {
-                                        "type": "string"
-                                    }
-                                }
+                        "connectorName": {
+                            "type": "string"
+                        },
+                        "connectorConfig": {
+                            "type": "string"
+                        },
+                        "connectors": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/$defs/connector"
                             }
                         }
                     }

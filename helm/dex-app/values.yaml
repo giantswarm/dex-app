@@ -357,8 +357,6 @@ client:
     tag: 1.4.0
     pullPolicy: IfNotPresent
 
-
-
 extraVolumes: []
 extraVolumeMounts: []
 logoURI: https://s.giantswarm.io/brand/1/logo.svg

@@ -1,0 +1,423 @@
+---
+# Source: dex-app/templates/dex/np.yaml
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: dex-network-policy
+  labels:
+    app.kubernetes.io/name: dex
+    app.kubernetes.io/component: dex
+    app.kubernetes.io/instance: "dex-app"
+    helm.sh/chart: dex-app-1.42.15
+    app.kubernetes.io/managed-by: Helm
+    application.giantswarm.io/team: "shield"
+    giantswarm.io/service-type: "managed"
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: dex
+      app.kubernetes.io/component: dex
+      app.kubernetes.io/instance: "dex-app"
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress:
+  - ports:
+    - port: 5556
+      protocol: TCP
+    - port: 5558
+      protocol: TCP
+  egress:
+  - {}
+---
+# Source: dex-app/templates/dex/psp.yaml
+apiVersion: policy/v1beta1
+kind: PodSecurityPolicy
+metadata:
+  labels:
+    app.kubernetes.io/name: dex
+    app.kubernetes.io/component: dex
+    app.kubernetes.io/instance: "dex-app"
+    helm.sh/chart: dex-app-1.42.15
+    app.kubernetes.io/managed-by: Helm
+    application.giantswarm.io/team: "shield"
+    giantswarm.io/service-type: "managed"
+  name: dex-psp
+spec:
+  privileged: false
+  fsGroup:
+    rule: MustRunAs
+    ranges:
+      - min: 1
+        max: 65535
+  runAsUser:
+    rule: MustRunAsNonRoot
+  runAsGroup:
+    rule: MustRunAs
+    ranges:
+      - min: 1
+        max: 65535
+  seLinux:
+    rule: RunAsAny
+  supplementalGroups:
+    rule: RunAsAny
+  volumes:
+    - 'secret'
+  allowPrivilegeEscalation: false
+  hostNetwork: false
+  hostIPC: false
+  hostPID: false
+---
+# Source: dex-app/templates/dex/serviceaccount.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  labels:
+    app.kubernetes.io/name: dex
+    app.kubernetes.io/component: dex
+    app.kubernetes.io/instance: "dex-app"
+    helm.sh/chart: dex-app-1.42.15
+    app.kubernetes.io/managed-by: Helm
+    application.giantswarm.io/team: "shield"
+    giantswarm.io/service-type: "managed"
+  name: dex
+---
+# Source: dex-app/templates/dex/secret.yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  labels:
+    app.kubernetes.io/name: dex
+    app.kubernetes.io/component: dex
+    app.kubernetes.io/instance: "dex-app"
+    helm.sh/chart: dex-app-1.42.15
+    app.kubernetes.io/managed-by: Helm
+    application.giantswarm.io/team: "shield"
+    giantswarm.io/service-type: "managed"
+  name: dex
+stringData:
+  config.yaml: |-
+    web:
+      http: 0.0.0.0:5556
+    telemetry:
+      http: 0.0.0.0:5558
+    storage:
+      type: kubernetes
+      config:
+        inCluster: true
+    logger:
+      level: info
+    oauth2:
+      responseTypes: ["code", "token", "id_token"]
+      alwaysShowLoginScreen: false
+      skipApprovalScreen: true
+    enablePasswordDB: false
+    oidcGroupsPrefix: true
+    frontend:
+      logoURL: https://s.giantswarm.io/brand/1/logo.svg
+    issuer: https://127.0.0.1:5556
+    expiry:
+      signingKeys: "6h"
+      idTokens: "30m"
+    staticClients:
+    - id: zQiFLUnrTFQwrybYzeY53hWWfhOKWRAU
+      public: true
+      name: gscliauth
+    connectors:
+    - type: github
+      id: giantswarm
+      name: GitHub for Giant Swarm staff
+      config:
+        clientID: id
+        clientSecret: secret
+        loadAllGroups: false
+        redirectURI: https://127.0.0.1:5556/callback
+        orgs:
+        - name: giantswarm
+          teams:
+          - gs
+    - type: mockCallback
+      id: giantswarm-2
+      name: Kubernetes Dev Cluster
+      config:
+        clientID: example-client-id
+        clientSecret: ZXhhbXBsZS1hcHUtc2VjcmV0
+        scopes:
+        - email
+        - groups
+        - profile
+        issuer: http://127.0.0.1:5556
+        redirectURI: http://127.0.0.1:5555/callback/example-cluster
+    - type: mockCallback
+      id: giantswarm-3
+      name: something
+      config:
+        test: test
+    - type: mockCallback
+      id: customer-2
+      name: Kubernetes Dev Cluster
+      config:
+        clientID: example-cluster-client-id
+        clientSecret: ZXhhbXBsZS1hcHAtc2VjcmV0
+        scopes:
+        - email
+        - groups
+        - profile
+        issuer: http://127.0.0.1:5556
+        redirectURI: http://127.0.0.1:5555/callback/example-cluster
+    - type: mockCallback
+      id: customer
+      name: testname
+      config:
+        test: test
+---
+# Source: dex-app/templates/dex/clusterrole.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app.kubernetes.io/name: dex
+    app.kubernetes.io/component: dex
+    app.kubernetes.io/instance: "dex-app"
+    helm.sh/chart: dex-app-1.42.15
+    app.kubernetes.io/managed-by: Helm
+    application.giantswarm.io/team: "shield"
+    giantswarm.io/service-type: "managed"
+  name: dex
+rules:
+- apiGroups: ["dex.coreos.com"] # API group created by dex
+  resources: ["*"]
+  verbs: ["*"]
+- apiGroups: ["apiextensions.k8s.io"]
+  resources: ["customresourcedefinitions"]
+  verbs: ["create"] # To manage its own resources, dex must be able to create customresourcedefinitions
+- apiGroups:
+  - policy
+  resources:
+  - podsecuritypolicies
+  resourceNames:
+  - dex-psp
+  verbs:
+  - use
+---
+# Source: dex-app/templates/dex/clusterrole.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: dex-metrics
+  labels:
+    app.kubernetes.io/name: dex
+    app.kubernetes.io/component: dex
+    app.kubernetes.io/instance: "dex-app"
+    helm.sh/chart: dex-app-1.42.15
+    app.kubernetes.io/managed-by: Helm
+    application.giantswarm.io/team: "shield"
+    giantswarm.io/service-type: "managed"
+rules:
+- nonResourceURLs:
+  - "/metrics"
+  verbs:
+  - get
+---
+# Source: dex-app/templates/dex/clusterrolebinding.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  labels:
+    app.kubernetes.io/name: dex
+    app.kubernetes.io/component: dex
+    app.kubernetes.io/instance: "dex-app"
+    helm.sh/chart: dex-app-1.42.15
+    app.kubernetes.io/managed-by: Helm
+    application.giantswarm.io/team: "shield"
+    giantswarm.io/service-type: "managed"
+  name: dex
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: dex
+subjects:
+  - kind: ServiceAccount
+    name: dex
+    namespace: default
+---
+# Source: dex-app/templates/dex/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: dex
+  labels:
+    app.kubernetes.io/name: dex
+    app.kubernetes.io/component: dex
+    app.kubernetes.io/instance: "dex-app"
+    helm.sh/chart: dex-app-1.42.15
+    app.kubernetes.io/managed-by: Helm
+    application.giantswarm.io/team: "shield"
+    giantswarm.io/service-type: "managed"
+spec:
+  type: ClusterIP
+  sessionAffinity: None
+  ports:
+  - name: http
+    targetPort: http
+    port: 32000
+  - name: metrics
+    port: 5558
+    targetPort: metrics
+  selector:
+    app.kubernetes.io/name: dex
+    app.kubernetes.io/component: dex
+    app.kubernetes.io/instance: "dex-app"
+---
+# Source: dex-app/templates/dex/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dex
+  labels:
+    app.kubernetes.io/name: dex
+    app.kubernetes.io/component: dex
+    app.kubernetes.io/instance: "dex-app"
+    helm.sh/chart: dex-app-1.42.15
+    app.kubernetes.io/managed-by: Helm
+    application.giantswarm.io/team: "shield"
+    giantswarm.io/service-type: "managed"
+  annotations:
+    app.giantswarm.io/secret-checksum: "657bae1567db62566015476f4c02428aac34086cd0be16f1a4b288a8102cd9ed"
+spec:
+  replicas: 2
+  strategy:
+    rollingUpdate:
+      maxSurge: 0
+      maxUnavailable: 1
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: dex
+      app.kubernetes.io/component: dex
+      app.kubernetes.io/instance: "dex-app"
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: dex
+        app.kubernetes.io/component: dex
+        app.kubernetes.io/instance: "dex-app"
+        helm.sh/chart: dex-app-1.42.15
+        app.kubernetes.io/managed-by: Helm
+        application.giantswarm.io/team: "shield"
+        giantswarm.io/service-type: "managed"
+      annotations:
+        checksum/config: "657bae1567db62566015476f4c02428aac34086cd0be16f1a4b288a8102cd9ed"
+    spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - podAffinityTerm:
+              labelSelector:
+                matchLabels:
+                  app.kubernetes.io/name: dex
+                  app.kubernetes.io/component: dex
+                  app.kubernetes.io/instance: "dex-app"
+              topologyKey: kubernetes.io/hostname
+            weight: 100
+      serviceAccountName: dex
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+      - name: dex
+        env:
+        - name: KUBERNETES_POD_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        
+        image: "quay.io/giantswarm/dex-app:"
+        
+        imagePullPolicy: IfNotPresent
+        command:
+        - /usr/local/bin/dex
+        - serve
+        - /etc/dex/cfg/config.yaml
+        resources:
+          limits:
+            cpu: 100m
+            memory: 50Mi
+          requests:
+            cpu: 100m
+            memory: 50Mi
+        securityContext:
+          allowPrivilegeEscalation: false
+          runAsNonRoot: true
+          capabilities:
+            drop:
+              - ALL
+          seccompProfile:
+            type: RuntimeDefault    
+        ports:
+        - name: http
+          containerPort: 5556
+          protocol: TCP
+        - name: metrics
+          containerPort: 5558
+          protocol: TCP
+
+        livenessProbe:
+          httpGet:
+            path: "/healthz"
+            port: http
+          initialDelaySeconds: 1
+          periodSeconds: 10
+          timeoutSeconds: 1
+          failureThreshold: 1
+        readinessProbe:
+          httpGet:
+            path: "/healthz"
+            port: http
+          initialDelaySeconds: 1
+          periodSeconds: 10
+          timeoutSeconds: 1
+          failureThreshold: 1
+        volumeMounts:
+        - mountPath: /etc/dex/cfg
+          name: config
+      volumes:
+      - secret:
+          defaultMode: 420
+          items:
+          - key: config.yaml
+            path: config.yaml
+          secretName: dex
+        name: config
+---
+# Source: dex-app/templates/dex/ingress.yaml
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: dex
+  labels:
+    app.kubernetes.io/name: dex
+    app.kubernetes.io/component: dex
+    app.kubernetes.io/instance: "dex-app"
+    helm.sh/chart: dex-app-1.42.15
+    app.kubernetes.io/managed-by: Helm
+    application.giantswarm.io/team: "shield"
+    giantswarm.io/service-type: "managed"
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-giantswarm
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts:
+      secretName: dex-tls-le
+  rules:
+    - http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              serviceName: dex
+              servicePort: 32000

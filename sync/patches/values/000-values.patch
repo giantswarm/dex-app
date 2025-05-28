@@ -1,0 +1,168 @@
+diff --git a/vendor/dex/values.yaml b/helm/dex-app/values.yaml
+index 1234567..abcdefg 100644
+--- a/vendor/dex/values.yaml
++++ b/helm/dex-app/values.yaml
+@@ -1,50 +1,120 @@
+-# Default values for dex.
+-# This is a YAML-formatted file.
+-# Declare variables to be passed into your templates.
++# Default values for dex
++# name: value
+ 
+-replicaCount: 1
++client:
++  image:
++    registry: quay.io
++    name: giantswarm/dex-k8s-authenticator
++    tag: 1.4.0
++    pullPolicy: IfNotPresent
+ 
+-image:
+-  repository: ghcr.io/dexidp/dex
+-  tag: ""
+-  pullPolicy: IfNotPresent
++dex:
++  image:
++    registry: quay.io
++    name: giantswarm/dex-app
++    pullPolicy: IfNotPresent
+ 
+-config: {}
++extraVolumes: []
++extraVolumeMounts: []
++logoURI: https://s.giantswarm.io/brand/1/logo.svg
+ 
+-service:
+-  type: ClusterIP
+-  ports:
+-    http:
+-      port: 5556
+-      nodePort:
+-    https:
+-      port: 5554
+-      nodePort:
+-    grpc:
+-      port: 5557
+-      nodePort:
+-    metrics:
+-      port: 5558
+-      nodePort:
++ingress:
++  ingressClassName: "nginx"
++  externalDNS: false
++  largeHeaderBuffers: false
++  tls:
++    letsencrypt: true
++    clusterIssuer: "letsencrypt-giantswarm"
++    caPemB64: ""
++    crtPemB64: ""
++    keyPemB64: ""
++    externalSecret:
++      enabled: false
++  annotations: {}
+ 
+-ingress:
+-  enabled: false
+-  className: ""
+-  annotations: {}
+-  hosts:
+-    - host: chart-example.local
+-      paths:
+-        - path: /
+-          pathType: ImplementationSpecific
+-  tls: []
++oidc:
++  issuerAddress: ""
++  expiry:
++    signingKeys: 6h
++    idTokens: 30m
++  staticClients:
++    gitopsui:
++      clientID: ""
++      clientSecret: ""
++      redirectURI: ""
++    grafana:
++      cliendID: ""
++      redirectURI: ""
++    gsCLIAuth:
++      clientID: "zQiFLUnrTFQwrybYzeY53hWWfhOKWRAU"
++      address: http://localhost:8085/oauth/callback
++    happa:
++      clientID: ""
++      redirectURI: ""
++    dexK8SAuthenticator:
++      clientAddress: ""
++      clientSecret: "default-client-dex-authenticator-secret"
++  extraStaticClients: []
++  # Giant Swarm OIDC values to run DEX in the management clusters
++  giantswarm:
++    connectorConfig:
++      clientID: ""
++      clientSecret: ""
++      team: ""
++    connectors: []
++  customer:
++    enabled: false
++    connectorType: ""
++    connectorName: ""
++    connectorConfig: ""
++    connectors: []
+ 
+-resources: {}
++# Note that the public address in Giant Swarm management cluster configurations already includes the port
++services:
++  kubernetes:
++    api:
++      public: true
++      address: ""
++      internalAddress: ""
++      caPem: ""
++      port: 443
++  happa:
++    address: ""
++  grafana:
++    address: ""
++  gitopsui:
++    address: ""
++  backstage:
++    address: []
+ 
+-nodeSelector: {}
++registry:
++  domain: gsoci.azurecr.io
+ 
+-tolerations: []
++# Giant Swarm properties for management clusters
++isManagementCluster: false
++managementCluster:
++  name: ""
+ 
+-affinity: {}
++# Giant Swarm properties for workload clusters
++isWorkloadCluster: false
+ 
+-podSecurityContext: {}
++# Enable the deployment of the dex k8s authenticator together with dex
++# Please note that this app is deprecated and will be removed in the future
++deployDexK8SAuthenticator: false
+ 
+-securityContext: {}
++cluster:
++  proxy:
++    http: ""
++    https: ""
++    noProxy: ""
++
++global:
++  podSecurityStandards:
++    enforced: false
++
++# Keep upstream values for compatibility
++replicaCount: 2
++service:
++  type: ClusterIP
++  ports:
++    http:
++      port: 32000
++    metrics:
++      port: 5558

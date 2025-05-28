@@ -1,0 +1,92 @@
+diff --git a/vendor/dex/templates/ingress.yaml b/helm/dex-app/templates/ingress.yaml
+index 1234567..abcdefg 100644
+--- a/vendor/dex/templates/ingress.yaml
++++ b/helm/dex-app/templates/ingress.yaml
+@@ -1,41 +1,53 @@
+-{{- if .Values.ingress.enabled -}}
+-{{- $fullName := include "dex.fullname" . -}}
+-{{- $svcPort := .Values.service.ports.http.port -}}
+-{{- if and .Values.ingress.className (not (semverCompare ">=1.18-0" .Capabilities.KubeVersion.GitVersion)) }}
+-  {{- if not (hasKey .Values.ingress.annotations "kubernetes.io/ingress.class") }}
+-  {{- $_ := set .Values.ingress.annotations "kubernetes.io/ingress.class" .Values.ingress.className}}
+-  {{- end }}
+-{{- end }}
+-{{- if semverCompare ">=1.19-0" .Capabilities.KubeVersion.GitVersion -}}
++{{- if .Capabilities.APIVersions.Has "networking.k8s.io/v1/Ingress" }}
+ apiVersion: networking.k8s.io/v1
+-{{- else if semverCompare ">=1.14-0" .Capabilities.KubeVersion.GitVersion -}}
+-apiVersion: networking.k8s.io/v1beta1
+ {{- else -}}
+-apiVersion: extensions/v1beta1
++apiVersion: networking.k8s.io/v1beta1
+ {{- end }}
+ kind: Ingress
+ metadata:
+-  name: {{ $fullName }}
++  name: {{ include "resource.dex.name" . }}
+   labels:
+-    {{- include "dex.labels" . | nindent 4 }}
+-  {{- with .Values.ingress.annotations }}
++    {{- include "dex.labels.common" . | nindent 4 }}
+   annotations:
++    cert-manager.io/cluster-issuer: {{ .Values.ingress.tls.clusterIssuer }}
++    {{- if .Values.ingress.largeHeaderBuffers }}
++    nginx.ingress.kubernetes.io/server-snippet: large_client_header_buffers 4 32k;
++    {{- end }}
++    {{- if .Values.ingress.externalDNS }}
++    {{- if eq (include "is-workload-cluster" .) "true" }}
++    external-dns.alpha.kubernetes.io/hostname: dex.{{ .Values.baseDomain }}
++    {{- else if .Values.isManagementCluster }}
++    external-dns.alpha.kubernetes.io/hostname: {{ .Values.oidc.issuerAddress }}
++    {{- end }}
++    giantswarm.io/external-dns: managed
++    {{- end }}
++    {{- with .Values.ingress.annotations }}
+     {{- toYaml . | nindent 4 }}
+-  {{- end }}
++    {{- end }}
+ spec:
+-  {{- if and .Values.ingress.className (semverCompare ">=1.18-0" .Capabilities.KubeVersion.GitVersion) }}
+-  ingressClassName: {{ .Values.ingress.className }}
+-  {{- end }}
+-  {{- if .Values.ingress.tls }}
++  ingressClassName: {{ .Values.ingress.ingressClassName }}
+   tls:
+-    {{- range .Values.ingress.tls }}
+     - hosts:
+-        {{- range .hosts }}
+-        - {{ . | quote }}
+-        {{- end }}
+-      secretName: {{ .secretName }}
+-    {{- end }}
+-  {{- end }}
++      {{- if eq (include "is-workload-cluster" .) "true" }}
++        - dex.{{ .Values.baseDomain }}
++      {{- else if .Values.isManagementCluster }}
++        - {{ .Values.oidc.issuerAddress }}
++      {{- end }}
++      {{- if .Values.ingress.tls.letsencrypt }}
++      secretName: {{ include "resource.dex.name" . }}-tls-le
++      {{- else }}
++      secretName: {{ include "resource.dex.name" . }}-tls
++      {{- end }}
+   rules:
++    - http:
++        paths:
++          - path: /
++            pathType: Prefix
++            backend:
++{{- if .Capabilities.APIVersions.Has "networking.k8s.io/v1/Ingress" }}
++              service:
++                name: {{ include "resource.dex.name" . }}
++                port:
++                  number: 32000
++{{- else }}
++              serviceName: {{ include "resource.dex.name" . }}
++              servicePort: 32000
++{{- end }}
++  {{- if eq (include "is-workload-cluster" .) "true" }}
++      host: dex.{{ .Values.baseDomain }}
++  {{- else if .Values.isManagementCluster }}
++      host: {{ .Values.oidc.issuerAddress }}
++  {{- end }}

@@ -1,0 +1,86 @@
+index 1234567..abcdefg 100644
+--- a/vendor/dex/Chart.yaml
++++ b/helm/dex-app/Chart.yaml
+@@ -1,13 +1,27 @@
+ apiVersion: v2
+-description: OpenID Connect (OIDC) identity and OAuth 2.0 provider with pluggable connectors
+-name: dex
+-version: 0.18.0
++name: dex-app
++version: "1.42.15"
+ appVersion: v2.39.1
++description: OpenID Connect (OIDC) identity and OAuth 2.0 provider with pluggable connectors
++keywords:
++  - authentication
++  - oidc
++icon: https://s.giantswarm.io/app-icons/dex/2/icon_light.svg
+ home: https://github.com/dexidp/dex
+-icon: https://dexidp.io/img/logos/dex-horizontal-color.png
+ sources:
+-- https://github.com/dexidp/dex
+-- https://github.com/dexidp/helm-charts
++  - https://github.com/dexidp/dex/
++  - https://github.com/mintel/dex-k8s-authenticator
+ maintainers:
+-- name: dexidp
+-  email: dex-dev@googlegroups.com
++  - name: kfox1111
++    email: Kevin.Fox@pnnl.gov
++  - name: sstarcher
++    email: shane.starcher@gmail.com
++  - name: rendhalver
++    email: pete.brown@powerhrg.com
++  - name: vi7
++    email: vi7alya@gmail.com
++  - name: Aaron Roydhouse
++    email: aaron@roydhouse.com
++  - name: Nick Badger
++    email: nbadger@mintel.com
++annotations:
++  application.giantswarm.io/team: shield
++  application.giantswarm.io/readme: https://raw.githubusercontent.com/giantswarm/dex-app/v[[ .Version ]]/README.md
++  application.giantswarm.io/values-schema: https://raw.githubusercontent.com/giantswarm/dex-app/v[[ .Version ]]/helm/dex-app/values.schema.json
++  config.giantswarm.io/version: 1.x.xdiff --git a/vendor/dex/Chart.yaml b/helm/dex-app/Chart.yaml
+index 1234567..abcdefg 100644
+--- a/vendor/dex/Chart.yaml
++++ b/helm/dex-app/Chart.yaml
+@@ -1,13 +1,27 @@
+ apiVersion: v2
+-description: OpenID Connect (OIDC) identity and OAuth 2.0 provider with pluggable connectors
+-name: dex
+-version: 0.18.0
++name: dex-app
++version: "1.42.15"
+ appVersion: v2.39.1
++description: OpenID Connect (OIDC) identity and OAuth 2.0 provider with pluggable connectors
++keywords:
++  - authentication
++  - oidc
++icon: https://s.giantswarm.io/app-icons/dex/2/icon_light.svg
+ home: https://github.com/dexidp/dex
+-icon: https://dexidp.io/img/logos/dex-horizontal-color.png
+ sources:
+-- https://github.com/dexidp/dex
+-- https://github.com/dexidp/helm-charts
++  - https://github.com/dexidp/dex/
++  - https://github.com/mintel/dex-k8s-authenticator
+ maintainers:
+-- name: dexidp
+-  email: dex-dev@googlegroups.com
++  - name: kfox1111
++    email: Kevin.Fox@pnnl.gov
++  - name: sstarcher
++    email: shane.starcher@gmail.com
++  - name: rendhalver
++    email: pete.brown@powerhrg.com
++  - name: vi7
++    email: vi7alya@gmail.com
++  - name: Aaron Roydhouse
++    email: aaron@roydhouse.com
++  - name: Nick Badger
++    email: nbadger@mintel.com
++annotations:
++  application.giantswarm.io/team: shield
++  application.giantswarm.io/readme: https://raw.githubusercontent.com/giantswarm/dex-app/v[[ .Version ]]/README.md
++  application.giantswarm.io/values-schema: https://raw.githubusercontent.com/giantswarm/dex-app/v[[ .Version ]]/helm/dex-app/values.schema.json
++  config.giantswarm.io/version: 1.x.x

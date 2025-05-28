@@ -1,0 +1,80 @@
+diff --git a/vendor/dex/templates/deployment.yaml b/helm/dex-app/templates/deployment.yaml
+index 1234567..abcdefg 100644
+--- a/vendor/dex/templates/deployment.yaml
++++ b/helm/dex-app/templates/deployment.yaml
+@@ -1,10 +1,12 @@
+ apiVersion: apps/v1
+ kind: Deployment
+ metadata:
+-  name: {{ include "dex.fullname" . }}
++  name: {{ include "resource.dex.name" . }}
+   labels:
+-    {{- include "dex.labels" . | nindent 4 }}
+-  {{- with .Values.deploymentAnnotations }}
++    {{- include "dex.labels.common" . | nindent 4 }}
++  annotations:
++    app.giantswarm.io/secret-checksum: {{ include (print .Template.BasePath "/secret.yaml") . | sha256sum | quote }}
++  {{- with .Values.deployment.annotations }}
+   annotations:
+     {{- toYaml . | nindent 4 }}
+   {{- end }}
+@@ -17,7 +19,7 @@ spec:
+   {{- end }}
+   selector:
+     matchLabels:
+-      {{- include "dex.selectorLabels" . | nindent 6 }}
++      {{- include "dex.labels.selector" . | nindent 6 }}
+   template:
+     metadata:
+       annotations:
+@@ -25,11 +27,20 @@ spec:
+         {{- toYaml . | nindent 8 }}
+         {{- end }}
+       labels:
+-        {{- include "dex.selectorLabels" . | nindent 8 }}
++        {{- include "dex.labels.common" . | nindent 8 }}
+         {{- with .Values.podLabels }}
+         {{- toYaml . | nindent 8 }}
+         {{- end }}
+     spec:
++      affinity:
++        podAntiAffinity:
++          preferredDuringSchedulingIgnoredDuringExecution:
++          - podAffinityTerm:
++              labelSelector:
++                matchLabels:
++                  {{- include "dex.labels.selector" . | nindent 18 }}
++              topologyKey: kubernetes.io/hostname
++            weight: 100
+       {{- with .Values.imagePullSecrets }}
+       imagePullSecrets:
+         {{- toYaml . | nindent 8 }}
+@@ -50,6 +61,10 @@ spec:
+           type: RuntimeDefault
+       {{- end }}
+       containers:
++      - name: dex
++        env:
++        {{- include "dex.proxy.env" . | nindent 8 }}
++        {{- with .Values.env }}
+         {{- toYaml . | nindent 8 }}
+         {{- end }}
++        {{- end }}
++        {{ if .Values.isManagementCluster }}
++        image: "{{ .Values.registry.domain }}/{{ .Values.dex.image.name }}:{{ .Chart.AppVersion }}"
++        {{ else }}
++        image: "{{ .Values.dex.image.registry }}/{{ .Values.dex.image.name }}:{{ .Chart.AppVersion }}"
++        {{ end }}
++        imagePullPolicy: {{ .Values.dex.image.pullPolicy }}
+         {{- with .Values.command }}
+         command:
+           {{- toYaml . | nindent 10 }}
+@@ -101,7 +120,7 @@ spec:
+         - mountPath: /etc/dex/cfg
+           name: config
+         {{- with .Values.extraVolumeMounts }}
+-        {{- toYaml . | nindent 8 }}
++        {{- toYaml . | nindent 10 }}
+         {{- end }}
+       volumes:
+       - name: config

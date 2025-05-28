@@ -62,7 +62,7 @@ spec:
           {{ else }}
           image: "{{ .Values.dex.image.registry }}/{{ .Values.dex.image.name }}:{{ .Chart.AppVersion }}"
           {{ end }}
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          imagePullPolicy: {{ .Values.dex.image.pullPolicy }}
           args:
             - dex
             - serve

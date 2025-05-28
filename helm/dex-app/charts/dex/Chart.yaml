@@ -1,4 +1,8 @@
 annotations:
+  application.giantswarm.io/team: shield
+  application.giantswarm.io/readme: https://raw.githubusercontent.com/giantswarm/dex-app/v[[ .Version ]]/README.md
+  application.giantswarm.io/values-schema: https://raw.githubusercontent.com/giantswarm/dex-app/v[[ .Version ]]/helm/dex-app/values.schema.json
+  config.giantswarm.io/version: 1.x.x
   artifacthub.io/changes: |
     - kind: added
       description: "Use tpl for dynamic image values and add digest support"

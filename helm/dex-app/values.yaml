@@ -8,19 +8,18 @@ replicaCount: 1
 # -- Labels to apply to all resources and selectors.
 commonLabels: {}
 # team_name: dev
+client:
+  image:
+    registry: gsoci.azurecr.io
+    name: giantswarm/dex-k8s-authenticator
+    tag: 1.4.0
+    pullPolicy: IfNotPresent
 
-image:
-  # -- Name of the image repository to pull the container image from.
-  repository: quay.io/giantswarm/dex-app
-
-  # -- [Image pull policy](https://kubernetes.io/docs/concepts/containers/images/#updating-images) for updating already existing images on a node.
-  pullPolicy: IfNotPresent
-
-  # -- Image tag override for the default value (chart appVersion).
-  tag: ""
-
-  # -- When digest is set to a non-empty value, images will be pulled by digest (regardless of tag value).
-  digest: ""
+dex:
+  image:
+    registry: gsoci.azurecr.io
+    name: giantswarm/dex-app
+    pullPolicy: IfNotPresent
 
 # -- Reference to one or more secrets to be used when [pulling images](https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/#create-a-pod-that-uses-your-secret) (from private registries).
 imagePullSecrets: []
@@ -360,13 +359,6 @@ networkPolicy:
   #    ports:
   #      - port: 636
   #        protocol: TCP
-
-client:
-  image:
-    registry: quay.io
-    name: giantswarm/dex-k8s-authenticator
-    tag: 1.4.0
-    pullPolicy: IfNotPresent
 
 extraVolumes: []
 extraVolumeMounts: []

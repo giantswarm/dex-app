@@ -57,11 +57,11 @@ spec:
         - name: {{ .Chart.Name }}
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
-          {{- if .Values.image.digest }}
-          image: "{{ tpl .Values.image.repository . }}@{{ tpl .Values.image.digest . }}"
-          {{- else }}
-          image: "{{ tpl .Values.image.repository . }}:{{ tpl .Values.image.tag . | default (printf "v%s" .Chart.AppVersion) }}"
-          {{- end }}
+          {{ if .Values.isManagementCluster }}
+          image: "{{ .Values.registry.domain }}/{{ .Values.dex.image.name }}:{{ .Chart.AppVersion }}"
+          {{ else }}
+          image: "{{ .Values.dex.image.registry }}/{{ .Values.dex.image.name }}:{{ .Chart.AppVersion }}"
+          {{ end }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           args:
             - dex

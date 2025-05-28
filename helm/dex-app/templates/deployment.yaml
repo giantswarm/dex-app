@@ -122,6 +122,8 @@ spec:
             - name: config
               mountPath: /etc/dex
               readOnly: true
+            - name: tmp-volume
+              mountPath: /tmp
           {{- with .Values.volumeMounts }}
             {{- toYaml . | nindent 12 }}
           {{- end }}
@@ -129,6 +131,8 @@ spec:
         - name: config
           secret:
             secretName: {{ include "dex.configSecretName" . }}
+        - name: tmp-volume
+          emptyDir: {}
       {{- with .Values.volumes }}
         {{- toYaml . | nindent 8 }}
       {{- end }}

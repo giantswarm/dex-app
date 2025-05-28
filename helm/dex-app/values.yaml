@@ -15,24 +15,42 @@ dex:
     registry: quay.io
     name: giantswarm/dex-app
     pullPolicy: IfNotPresent
+  affinity:
+    podAntiAffinity:
+      preferredDuringSchedulingIgnoredDuringExecution:
+      - podAffinityTerm:
+          labelSelector:
+            matchLabels:
+              app.kubernetes.io/name: dex
+              app.kubernetes.io/component: dex
+              app.kubernetes.io/instance: "dex-app"
+          topologyKey: kubernetes.io/hostname
+        weight: 100
+  securityContext:
+    runAsNonRoot: true
+    runAsUser: 1000
+    runAsGroup: 1000
+    seccompProfile:
+      type: RuntimeDefault
+  ingress:
+    enabled: true
+    className: "nginx"
+    annotations:
+      cert-manager.io/cluster-issuer: letsencrypt-giantswarm
+    hosts:
+      - host: dex.local
+        paths:
+          - path: /
+            pathType: ImplementationSpecific
+    tls:
+      - secretName: dex-tls-le
+        hosts:
+          - dex.local
+
 
 extraVolumes: []
 extraVolumeMounts: []
 logoURI: https://s.giantswarm.io/brand/1/logo.svg
-
-ingress:
-  ingressClassName: "nginx"
-  externalDNS: false
-  largeHeaderBuffers: false
-  tls:
-    letsencrypt: true
-    clusterIssuer: "letsencrypt-giantswarm"
-    caPemB64: ""
-    crtPemB64: ""
-    keyPemB64: ""
-    externalSecret:
-      enabled: false
-  annotations: {}
 
 oidc:
   issuerAddress: ""

@@ -99,22 +99,38 @@
               "type": "boolean"
             },
             "tls": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "secretName": {
-                    "type": "string"
-                  },
-                  "hosts": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
+              "oneOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "caPemB64": { "type": "string" },
+                    "clusterIssuer": { "type": "string" },
+                    "crtPemB64": { "type": "string" },
+                    "keyPemB64": { "type": "string" },
+                    "letsencrypt": { "type": "boolean" },
+                    "externalSecret": {
+                      "type": "object",
+                      "properties": {
+                        "enabled": { "type": "boolean" }
+                      }
                     }
                   }
                 },
-                "required": ["secretName", "hosts"]
-              }
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "secretName": { "type": "string" },
+                      "hosts": {
+                        "type": "array",
+                        "items": { "type": "string" }
+                      }
+                    },
+                    "required": ["secretName", "hosts"]
+                  }
+                }
+              ]
             },
             "annotations": {
               "type": "object"

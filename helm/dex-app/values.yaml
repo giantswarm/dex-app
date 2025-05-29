@@ -215,20 +215,12 @@ ingress:
     # kubernetes.io/ingress.class: nginx
     # kubernetes.io/tls-acme: "true"
 
-  # -- Ingress host configuration.
-  # @default -- See [values.yaml](values.yaml).
-  hosts:
-    - host:  "dex.{{ .Values.baseDomain }}"
-      paths:
-        - path: /
-          pathType: ImplementationSpecific
-
   # -- Ingress TLS configuration.
-  # @default -- See [values.yaml](values.yaml).
+  # Note: Host and secretName are now determined dynamically by the template
+  # based on cluster type (workload vs management) and baseDomain/oidc.issuerAddress
   tls:
-    - secretName: dex-tls-le
-      hosts:
-        - "dex.{{ .Values.baseDomain }}"
+    # -- Enable Let's Encrypt certificate generation
+    letsencrypt: true
 
 serviceMonitor:
   # -- Enable Prometheus ServiceMonitor.

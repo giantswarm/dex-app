@@ -28,8 +28,10 @@ spec:
         - ports:
             - port: telemetry
   
-  {{- with .Values.networkPolicy.egressRules }}
   egress:
+    - toEntities:
+        - kube-apiserver
+    {{- with .Values.networkPolicy.egressRules }}
     {{- toYaml . | nindent 4 }}
-  {{- end }}
+    {{- end }}
 {{- end }}

@@ -26,6 +26,13 @@ spec:
         {{- end }}
         - ports:
             - port: telemetry
+    
+    - fromEndpoints:
+        - matchLabels:  
+            "k8s:io.kubernetes.pod.namespace": kube-system
+    
+    - fromEntities:
+        - world
   
   egress:
     - toEntities:

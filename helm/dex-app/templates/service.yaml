@@ -20,7 +20,7 @@ spec:
   {{- end }}
   {{- end }}
   ports:
-    - name: http
+    - name: httpt
       port: {{ .Values.service.ports.http.port }}
       {{- if and (or (eq .Values.service.type "NodePort") (eq .Values.service.type "LoadBalancer")) .Values.service.ports.http.nodePort }}
       nodePort: {{ .Values.service.ports.http.nodePort }}

@@ -218,7 +218,7 @@ ingress:
   # -- Ingress host configuration.
   # @default -- See [values.yaml](values.yaml).
   hosts:
-    - host: dex.local
+    - host:  "dex.{{ .Values.baseDomain }}"
       paths:
         - path: /
           pathType: ImplementationSpecific
@@ -228,7 +228,7 @@ ingress:
   tls:
     - secretName: dex-tls-le
       hosts:
-        - dex.local
+        - "dex.{{ .Values.baseDomain }}"
 
 serviceMonitor:
   # -- Enable Prometheus ServiceMonitor.

@@ -48,12 +48,12 @@ spec:
   tls:
     - hosts:
         - {{ $host | quote }}
-      secretName: {{ $fullName }}-tls-le
+      secretName: {{ include "dex.name" . }}-tls-le
   {{- else if kindIs "map" .Values.ingress.tls }}
   tls:
     - hosts:
         - {{ $host | quote }}
-      secretName: {{ $fullName }}-tls
+      secretName: {{ include "dex.name" . }}-tls
   {{- end }}
   rules:
     - host: {{ $host | quote }}
@@ -66,11 +66,11 @@ spec:
             backend:
               {{- if semverCompare ">=1.19-0" .Capabilities.KubeVersion.GitVersion }}
               service:
-                name: {{ $fullName }}
+                name: {{ include "dex.name" . }}
                 port:
                   number: {{ $svcPort }}
               {{- else }}
-              serviceName: {{ $fullName }}
+              serviceName: {{ include "dex.name" . }}
               servicePort: {{ $svcPort }}
               {{- end }}
 {{- end }}

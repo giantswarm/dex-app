@@ -77,6 +77,7 @@ Selector labels
 */}}
 {{- define "dex.selectorLabels" -}}
 app.kubernetes.io/name: {{ include "dex.name" . }}
+app.kubernetes.io/component: {{ include "dex.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 

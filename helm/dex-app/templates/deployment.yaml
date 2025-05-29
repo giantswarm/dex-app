@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "dex.fullname" . }}
+  name: {{ include "dex.name" . }}
   namespace: {{ include "dex.namespace" . }}
   labels:
     {{- include "dex.labels" . | nindent 4 }}

@@ -87,84 +87,55 @@
             }
         },
         "ingress": {
-            "type": "object",
-            "properties": {
-                "externalDNS": {
-                  "type": "boolean"
+          "type": "object",
+          "properties": {
+            "externalDNS": {
+              "type": "boolean"
+            },
+            "ingressClassName": {
+              "type": "string"
+            },
+            "largeHeaderBuffers": {
+              "type": "boolean"
+            },
+            "tls": {
+              "oneOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "caPemB64": { "type": "string" },
+                    "clusterIssuer": { "type": "string" },
+                    "crtPemB64": { "type": "string" },
+                    "keyPemB64": { "type": "string" },
+                    "letsencrypt": { "type": "boolean" },
+                    "externalSecret": {
+                      "type": "object",
+                      "properties": {
+                        "enabled": { "type": "boolean" }
+                      }
+                    }
+                  }
                 },
-                "ingressClassName": {
-                    "type": "string"
-                },
-                "largeHeaderBuffers": {
-                    "type": "boolean"
-                },
-                "tls": {
+                {
+                  "type": "array",
+                  "items": {
                     "type": "object",
                     "properties": {
-                        "caPemB64": {
-                            "type": "string"
-                        },
-                        "clusterIssuer": {
-                            "type": "string"
-                        },
-                        "crtPemB64": {
-                            "type": "string"
-                        },
-                        "keyPemB64": {
-                            "type": "string"
-                        },
-                        "letsencrypt": {
-                            "type": "boolean"
-                        },
-                        "externalSecret": {
-                            "type": "object",
-                            "properties": {
-                                "enabled": {
-                                    "type": "boolean"
-                                }
-                            }
-                        }
-                    }
-                },
-                "annotations": {
-                    "type": "object"
+                      "secretName": { "type": "string" },
+                      "hosts": {
+                        "type": "array",
+                        "items": { "type": "string" }
+                      }
+                    },
+                    "required": ["secretName", "hosts"]
+                  }
                 }
-            }
-        },
-        "isManagementCluster": {
-            "type": "boolean"
-        },
-        "isWorkloadCluster": {
-            "type": "boolean"
-        },
-        "logoURI": {
-            "type": "string"
-        },
-        "managementCluster": {
-            "type": [
-                "object",
-                "string"
-            ],
-            "properties": {
-                "name": {
-                    "type": "string"
-                }
-            }
-        },
-        "trustedRootCA": {
-            "type": "object",
-            "properties": {
-                "name": {
-                    "type": "string"
-                },
-                "secretName": {
-                    "type": "string"
-                }
+              ]
             },
-            "required": [
-                "name",
-                "secretName"
-            ]
+            "annotations": {
+              "type": "object"
+            }
+          }
         },
         "oidc": {
             "type": "object",

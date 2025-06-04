@@ -1,0 +1,1343 @@
+File: ./_resource.tpl
+{{/* vim: set filetype=mustache: */}}
+
+{{- define "resource.dex.name" -}}
+dex
+{{- end -}}
+
+{{- define "resource.dex.networkPolicy.name" -}}
+{{- include "resource.dex.name" . -}}-network-policy
+{{- end -}}
+
+{{- define "resource.dex.psp.name" -}}
+{{- include "resource.dex.name" . -}}-psp
+{{- end -}}
+
+{{- define "resource.dexk8sauth.name" -}}
+dex-k8s-authenticator
+{{- end -}}
+
+{{- define "resource.dexk8sauth.networkPolicy.name" -}}
+{{- include "resource.dexk8sauth.name" . -}}-network-policy
+{{- end -}}
+
+{{- define "resource.dexk8sauth.psp.name" -}}
+{{- include "resource.dexk8sauth.name" . -}}-psp
+{{- end -}}
+
+
+File: ./dex-k8s-authenticator/deployment-customer.yaml
+{{- if .Values.deployDexK8SAuthenticator }}
+{{ if .Values.oidc.customer.enabled }}
+{{- if .Values.oidc.customer.connectors -}}
+{{ $values := .Values }}
+{{ $resource := . }}
+{{- range .Values.oidc.customer.connectors }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "resource.dexk8sauth.name" $resource }}-{{ .id }}
+  labels:
+    {{- include "dexk8sauth.labels.common" $resource | nindent 4 }}
+    app.kubernetes.io/name: dex-k8s-authenticator-{{ .id }}
+    app.kubernetes.io/component: dex-k8s-authenticator-{{ .id }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: dex-k8s-authenticator-{{ .id }}
+      app.kubernetes.io/component: dex-k8s-authenticator-{{ .id }}
+  template:
+    metadata:
+      labels:
+        {{- include "dexk8sauth.labels.common" $resource | nindent 8 }}
+        app.kubernetes.io/name: dex-k8s-authenticator-{{ .id }}
+        app.kubernetes.io/component: dex-k8s-authenticator-{{ .id }}
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+      - name: {{ $resource.Chart.Name }}
+        {{- if $values.isManagementCluster }}
+        image: "{{ $values.registry.domain }}/{{ $values.client.image.name }}:{{ $values.client.image.tag }}"
+        {{- else }}
+        image: "{{ $values.client.image.registry }}/{{ $values.client.image.name }}:{{ $values.client.image.tag }}"
+        {{- end }}
+        imagePullPolicy: {{ $values.client.image.pullPolicy }}
+        env:
+        - name: KUBERNETES_CACERT
+          valueFrom:
+            configMapKeyRef:
+              name: "kube-root-ca.crt"
+              key: "ca.crt"
+        args: [ "--config", "config.yaml" ]
+        ports:
+        - name: http
+          containerPort: 5555
+          protocol: TCP
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: http
+        readinessProbe:
+          httpGet:
+            path: /healthz
+            port: http
+        volumeMounts:
+        - name: config
+          subPath: config.yaml
+          mountPath: /app/config.yaml
+        {{- if not $values.ingress.tls.letsencrypt }}
+        - mountPath: /app/ssl/ca.crt
+          name: ca-cert
+          subPath: ca.crt
+        {{- end }}
+        resources:
+          limits:
+            cpu: 50m
+            memory: 64Mi
+          requests:
+            cpu: 50m
+            memory: 64Mi
+        securityContext:
+          allowPrivilegeEscalation: false
+          runAsNonRoot: true
+          capabilities:
+            drop:
+              - ALL
+          seccompProfile:
+            type: RuntimeDefault
+    {{- with $values.nodeSelector }}
+      nodeSelector:
+{{ toYaml . | indent 6 }}
+    {{- end }}
+    {{- with $values.affinity }}
+      affinity:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with $values.tolerations }}
+      tolerations:
+{{ toYaml . | indent 6 }}
+    {{- end }}
+      volumes:
+      - name: config
+        configMap:
+          name: {{ include "resource.dexk8sauth.name" $resource }}-{{ .id }}
+      {{- if not $values.ingress.tls.letsencrypt }}
+      {{- if $values.trustedRootCA }}
+      - name: ca-cert
+        secret:
+          defaultMode: 420
+          items:
+            - key: {{ $values.trustedRootCA.name }}
+              path: ca.crt
+          secretName: {{ $values.trustedRootCA.secretName }}
+      {{- else }}
+      - secret:
+          defaultMode: 420
+          items:
+          - key: ca.crt
+            path: ca.crt
+          secretName: {{ include "resource.dexk8sauth.name" $resource }}
+        name: ca-cert
+      {{- end }}
+      {{- end }}
+{{- end }}
+{{- else }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "resource.dexk8sauth.name" . }}-customer
+  labels:
+    {{- include "dexk8sauth.labels.common" . | nindent 4 }}
+    {{- include "dexk8sauth.customer.labels.selector" . | nindent 4 }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "dexk8sauth.customer.labels.selector" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "dexk8sauth.labels.common" . | nindent 8 }}
+        {{- include "dexk8sauth.customer.labels.selector" . | nindent 8 }}
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+      - name: {{ .Chart.Name }}
+        {{- if .Values.isManagementCluster }}
+        image: "{{ .Values.registry.domain }}/{{ .Values.client.image.name }}:{{ .Values.client.image.tag }}"
+        {{- else }}
+        image: "{{ .Values.client.image.registry }}/{{ .Values.client.image.name }}:{{ .Values.client.image.tag }}"
+        {{- end }}
+        imagePullPolicy: {{ .Values.client.image.pullPolicy }}
+        env:
+        - name: KUBERNETES_CACERT
+          valueFrom:
+            configMapKeyRef:
+              name: "kube-root-ca.crt"
+              key: "ca.crt"
+        args: [ "--config", "config.yaml" ]
+        ports:
+        - name: http
+          containerPort: 5555
+          protocol: TCP
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: http
+        readinessProbe:
+          httpGet:
+            path: /healthz
+            port: http
+        volumeMounts:
+        - name: config
+          subPath: config.yaml
+          mountPath: /app/config.yaml
+        {{- if not .Values.ingress.tls.letsencrypt }}
+        - mountPath: /app/ssl/ca.crt
+          name: ca-cert
+          subPath: ca.crt
+        {{- end }}
+        resources:
+          limits:
+            cpu: 50m
+            memory: 64Mi
+          requests:
+            cpu: 50m
+            memory: 64Mi
+        securityContext:
+          allowPrivilegeEscalation: false
+          runAsNonRoot: true
+          capabilities:
+            drop:
+              - ALL
+          seccompProfile:
+            type: RuntimeDefault
+    {{- with .Values.nodeSelector }}
+      nodeSelector:
+{{ toYaml . | indent 6 }}
+    {{- end }}
+    {{- with .Values.affinity }}
+      affinity:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.tolerations }}
+      tolerations:
+{{ toYaml . | indent 6 }}
+    {{- end }}
+      volumes:
+      - name: config
+        configMap:
+          name: {{ include "resource.dexk8sauth.name" . }}-customer
+      {{- if not .Values.ingress.tls.letsencrypt }}
+      {{- if .Values.trustedRootCA }}
+      - name: ca-cert
+        secret:
+          defaultMode: 420
+          items:
+            - key: {{ .Values.trustedRootCA.name }}
+              path: ca.crt
+          secretName: {{ .Values.trustedRootCA.secretName }}
+      {{- else }}
+      - secret:
+          defaultMode: 420
+          items:
+          - key: ca.crt
+            path: ca.crt
+          secretName: {{ include "resource.dexk8sauth.name" . }}
+        name: ca-cert
+      {{- end }}
+      {{- end }}
+{{ end }}
+{{ end }}
+{{- end }}
+
+
+File: ./dex-k8s-authenticator/certs-secret.yaml
+{{- if .Values.deployDexK8SAuthenticator }}
+{{- if not .Values.ingress.tls.letsencrypt }}
+{{- if not .Values.ingress.tls.externalSecret.enabled }}
+apiVersion: v1
+kind: Secret
+type: kubernetes.io/tls
+metadata:
+  labels:
+    {{- include "dexk8sauth.labels.common" . | nindent 4 }}
+  name: {{ include "resource.dexk8sauth.name" . }}
+data:
+  ca.crt: {{ .Values.ingress.tls.caPemB64 | quote }}
+  tls.crt: {{ .Values.ingress.tls.crtPemB64 | quote }}
+  tls.key: {{ .Values.ingress.tls.keyPemB64 | quote }}
+{{- end }}
+{{- end }}
+{{- end }}
+
+
+File: ./dex-k8s-authenticator/ingress.yaml
+{{- if .Values.deployDexK8SAuthenticator }}
+{{ if or (eq (include "has-giantswarm-connector" .) "true") .Values.oidc.customer.enabled }}
+{{- if .Capabilities.APIVersions.Has "networking.k8s.io/v1/Ingress" }}
+apiVersion: networking.k8s.io/v1
+{{- else }}
+apiVersion: networking.k8s.io/v1beta1
+{{- end }}
+kind: Ingress
+metadata:
+  name: {{ include "resource.dexk8sauth.name" . }}
+  labels:
+    {{- include "dexk8sauth.labels.common" . | nindent 4 }}
+  annotations:
+    cert-manager.io/cluster-issuer: {{ .Values.ingress.tls.clusterIssuer }}
+    {{- if .Values.ingress.externalDNS }}
+    {{- if eq (include "is-workload-cluster" .) "true" }}
+    external-dns.alpha.kubernetes.io/hostname: login.{{ .Values.baseDomain }}
+    {{- else if .Values.isManagementCluster }}
+    external-dns.alpha.kubernetes.io/hostname: {{ .Values.oidc.staticClients.dexK8SAuthenticator.clientAddress }}
+    {{- end }}
+    giantswarm.io/external-dns: managed
+    {{- end }}
+spec:
+  ingressClassName: {{ .Values.ingress.ingressClassName }}
+  tls:
+  - hosts:
+    {{- if eq (include "is-workload-cluster" .) "true" }}
+      - login.{{ .Values.baseDomain }}
+    {{- else if .Values.isManagementCluster }}
+      - {{ .Values.oidc.staticClients.dexK8SAuthenticator.clientAddress }}
+    {{- end }}
+    {{- if .Values.ingress.tls.letsencrypt }}
+    secretName: {{ include "resource.dexk8sauth.name" . }}-le
+    {{- else }}
+    secretName: {{ include "resource.dexk8sauth.name" . }}
+    {{- end }}
+  rules:
+  - http:
+      paths:
+{{- if eq (include "has-giantswarm-connector" .) "true" }}
+      - path: /admin/
+        pathType: Prefix
+        backend:
+  {{- if .Capabilities.APIVersions.Has "networking.k8s.io/v1/Ingress" }}
+          service:
+            name: {{ include "resource.dexk8sauth.name" . }}-giantswarm
+            port:
+              name: http
+  {{- else }}
+          serviceName: {{ include "resource.dexk8sauth.name" . }}-giantswarm
+          servicePort: http
+  {{- end }}
+{{- end }}
+{{- if .Values.oidc.customer.enabled }}
+{{- if .Values.oidc.customer.connectors -}}
+{{ $values := .Values -}}
+{{ $resource := . }}
+{{- range .Values.oidc.customer.connectors }}
+      - path: /
+        pathType: Prefix
+        backend:
+  {{- if $resource.Capabilities.APIVersions.Has "networking.k8s.io/v1/Ingress" }}
+          service:
+            name: {{ include "resource.dexk8sauth.name" $resource }}-{{ .id }}
+            port:
+              name: http
+  {{- else }}
+          serviceName: {{ include "resource.dexk8sauth.name" $resource }}-{{ .id }}
+          servicePort: http
+  {{- end }}
+{{- end }}
+{{- else }}
+      - path: /
+        pathType: Prefix
+        backend:
+  {{- if .Capabilities.APIVersions.Has "networking.k8s.io/v1/Ingress" }}
+          service:
+            name: {{ include "resource.dexk8sauth.name" . }}-customer
+            port:
+              name: http
+  {{- else }}
+          serviceName: {{ include "resource.dexk8sauth.name" . }}-customer
+          servicePort: http
+  {{- end }}
+{{ end }}
+{{ end }}
+  {{- if eq (include "is-workload-cluster" .) "true" }}
+    host: login.{{ .Values.baseDomain }}
+  {{- else if .Values.isManagementCluster  }}
+    host: {{ .Values.oidc.staticClients.dexK8SAuthenticator.clientAddress }}
+  {{- end }}
+{{ end }}
+{{- end }}
+
+
+File: ./dex-k8s-authenticator/clusterrole.yaml
+{{- if .Values.deployDexK8SAuthenticator }}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    {{- include "dexk8sauth.labels.common" . | nindent 4 }}
+  name: {{ include "resource.dexk8sauth.name" . }}
+rules:
+- apiGroups:
+  - policy
+  resources:
+  - podsecuritypolicies
+  resourceNames:
+  - {{ include  "resource.dexk8sauth.psp.name" . }}
+  verbs:
+  - use
+{{- end }}
+
+
+File: ./dex-k8s-authenticator/service-customer.yaml
+{{- if .Values.deployDexK8SAuthenticator }}
+{{ if .Values.oidc.customer.enabled }}
+{{- if .Values.oidc.customer.connectors -}}
+{{ $values := .Values }}
+{{ $resource := . }}
+{{- range .Values.oidc.customer.connectors }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "resource.dexk8sauth.name" $resource }}-{{ .id }}
+  labels:
+    {{- include "dexk8sauth.labels.common" $resource | nindent 4 }}
+spec:
+  type: ClusterIP
+  ports:
+  - port: 5555
+    targetPort: http
+    protocol: TCP
+    name: http
+  selector:
+    app.kubernetes.io/name: dex-k8s-authenticator-{{ .id }}
+    app.kubernetes.io/component: dex-k8s-authenticator-{{ .id }}
+{{- end }}
+{{- else }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "resource.dexk8sauth.name" . }}-customer
+  labels:
+    {{- include "dexk8sauth.labels.common" . | nindent 4 }}
+spec:
+  type: ClusterIP
+  ports:
+  - port: 5555
+    targetPort: http
+    protocol: TCP
+    name: http
+  selector:
+    {{- include "dexk8sauth.customer.labels.selector" . | nindent 4 }}
+{{ end }}
+{{ end }}
+{{- end }}
+
+
+File: ./dex-k8s-authenticator/serviceaccount.yaml
+{{- if .Values.deployDexK8SAuthenticator }}
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  labels:
+    {{- include "dexk8sauth.labels.common" . | nindent 4 }}
+  name: {{ include "resource.dexk8sauth.name" . }}
+{{- end }}
+
+
+File: ./dex-k8s-authenticator/psp.yaml
+{{- if .Values.deployDexK8SAuthenticator }}
+{{- if not .Values.global.podSecurityStandards.enforced }}
+apiVersion: policy/v1beta1
+kind: PodSecurityPolicy
+metadata:
+  name: {{ include "resource.dexk8sauth.psp.name" . }}
+  labels:
+    {{- include "dexk8sauth.labels.common" . | nindent 4 }}
+spec:
+  privileged: false
+  fsGroup:
+    rule: MustRunAs
+    ranges:
+      - min: 1
+        max: 65535
+  runAsUser:
+    rule: MustRunAsNonRoot
+  runAsGroup:
+    rule: MustRunAs
+    ranges:
+      - min: 1
+        max: 65535
+  seLinux:
+    rule: RunAsAny
+  supplementalGroups:
+    rule: RunAsAny
+  volumes:
+    - 'configMap'
+  allowPrivilegeEscalation: false
+  hostNetwork: false
+  hostIPC: false
+  hostPID: false
+{{- end }}
+{{- end }}
+
+
+File: ./dex-k8s-authenticator/np.yaml
+{{- if .Values.deployDexK8SAuthenticator }}
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: {{ include "resource.dexk8sauth.networkPolicy.name" . }}
+  labels:
+    {{- include "dexk8sauth.labels.common" . | nindent 4 }}
+spec:
+  podSelector:
+    matchLabels:
+      {{- include "dexk8sauth.customer.labels.selector" . | nindent 6 }}
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress:
+  - ports:
+    - port: 5555
+      protocol: TCP
+  egress:
+  - {}
+{{- end }}
+
+
+File: ./dex-k8s-authenticator/clusterrolebinding.yaml
+{{- if .Values.deployDexK8SAuthenticator }}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  labels:
+    {{- include "dexk8sauth.labels.common" . | nindent 4 }}
+  name: {{ include "resource.dexk8sauth.name" . }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: {{ include "resource.dexk8sauth.name" . }}
+subjects:
+  - kind: ServiceAccount
+    name: {{ include "resource.dexk8sauth.name" . }}
+    namespace: {{ .Release.Namespace }}
+{{- end }}
+
+
+File: ./dex-k8s-authenticator/configmap-customer.yaml
+{{- if .Values.deployDexK8SAuthenticator }}
+{{ if .Values.oidc.customer.enabled }}
+{{- if .Values.oidc.customer.connectors -}}
+{{ $values := .Values }}
+{{ $resource := . }}
+{{- range .Values.oidc.customer.connectors }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "resource.dexk8sauth.name" $resource }}-{{ .id }}
+  labels:
+    {{- include "dexk8sauth.labels.common" $resource | nindent 4 }}
+data:
+  config.yaml: |-
+    listen: http://0.0.0.0:5555
+    web_path_prefix: "/"
+    debug: "false"
+    logo_uri: {{ $values.logoURI }}
+    {{- if not $values.ingress.tls.letsencrypt }}
+    trusted_root_ca_file: /app/ssl/ca.crt
+    {{- end }}
+    clusters:
+    {{- if $values.isManagementCluster }}
+    - client_id: dex-k8s-authenticator
+      {{- if (eq (kindOf $values.managementCluster) "string") }}
+      name: {{ $values.managementCluster }}
+      description: "Management Cluster Kubernetes API for installation '{{ $values.managementCluster }}', as a Giant Swarm customer"
+      short_description: "{{ $values.managementCluster }} management cluster"
+      {{- else }}
+      name: {{ $values.managementCluster.name }}
+      description: "Management Cluster Kubernetes API for installation '{{ $values.managementCluster.name }}', as a Giant Swarm customer"
+      short_description: "{{ $values.managementCluster.name }} management cluster"    
+      {{- end }}
+      client_secret: {{ $values.oidc.staticClients.dexK8SAuthenticator.clientSecret }}
+      connector_id: {{ .id }}
+      issuer: https://{{ $values.oidc.issuerAddress }}
+      {{- if $values.services.kubernetes.api.public }}
+      k8s_master_uri: {{ $values.services.kubernetes.api.address }}
+      {{- else }}
+      k8s_master_uri: {{ $values.services.kubernetes.api.internalAddress }}:{{ $values.services.kubernetes.api.port }}
+      {{- end }}
+      k8s_ca_pem: ${KUBERNETES_CACERT}
+      redirect_uri: https://{{ $values.oidc.staticClients.dexK8SAuthenticator.clientAddress }}/callback
+    {{- else if eq (include "is-workload-cluster" $resource) "true" }}
+    - name: {{ $values.clusterID }}
+      description: "Cluster Kubernetes API {{ $values.clusterID }}"
+      short_description: "{{ $values.clusterID }} cluster"
+      client_id: dex-k8s-authenticator
+      client_secret: {{ $values.oidc.staticClients.dexK8SAuthenticator.clientSecret }}
+      connector_id: {{ .id }}
+      issuer: https://dex.{{ $values.baseDomain }}
+      {{- if $values.services.kubernetes.api.public }}
+      k8s_master_uri: https://api.{{ $values.baseDomain }}:{{ $values.services.kubernetes.api.port }}
+      {{- else }}
+      k8s_master_uri: {{ $values.services.kubernetes.api.internalAddress }}:{{ $values.services.kubernetes.api.port }}
+      {{- end }}
+      k8s_ca_pem: {{ toYaml $values.clusterCA | indent 8 }}
+      redirect_uri: https://login.{{ $values.baseDomain }}/callback
+    {{- end }}
+{{- end }}
+{{- else }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "resource.dexk8sauth.name" . }}-customer
+  labels:
+    {{- include "dexk8sauth.labels.common" . | nindent 4 }}
+data:
+  config.yaml: |-
+    listen: http://0.0.0.0:5555
+    web_path_prefix: "/"
+    debug: "false"
+    logo_uri: {{ .Values.logoURI }}
+    {{- if not .Values.ingress.tls.letsencrypt }}
+    trusted_root_ca_file: /app/ssl/ca.crt
+    {{- end }}
+    clusters:
+    {{- if .Values.isManagementCluster }}
+    - client_id: dex-k8s-authenticator
+      {{- if (eq (kindOf .Values.managementCluster) "string") }}
+      name: {{ .Values.managementCluster }}
+      description: "Management Cluster Kubernetes API for installation '{{ .Values.managementCluster }}', as a Giant Swarm customer"
+      short_description: "{{ .Values.managementCluster }} management cluster"
+      {{- else }}
+      name: {{ .Values.managementCluster.name }}
+      description: "Management Cluster Kubernetes API for installation '{{ .Values.managementCluster.name }}', as a Giant Swarm customer"
+      short_description: "{{ .Values.managementCluster.name }} management cluster"    
+      {{- end }}
+      client_secret: {{ .Values.oidc.staticClients.dexK8SAuthenticator.clientSecret }}
+      connector_id: customer
+      issuer: https://{{ .Values.oidc.issuerAddress }}
+      {{- if .Values.services.kubernetes.api.public }}
+      k8s_master_uri: {{ .Values.services.kubernetes.api.address }}
+      {{- else }}
+      k8s_master_uri: {{ .Values.services.kubernetes.api.internalAddress }}:{{ .Values.services.kubernetes.api.port }}
+      {{- end }}
+      k8s_ca_pem: ${KUBERNETES_CACERT}
+      redirect_uri: https://{{ .Values.oidc.staticClients.dexK8SAuthenticator.clientAddress }}/callback
+    {{- else if eq (include "is-workload-cluster" .) "true" }}
+    - name: {{ .Values.clusterID }}
+      description: "Cluster Kubernetes API {{ .Values.clusterID }}"
+      short_description: "{{ .Values.clusterID }} cluster"
+      client_id: dex-k8s-authenticator
+      client_secret: {{ .Values.oidc.staticClients.dexK8SAuthenticator.clientSecret }}
+      connector_id: customer
+      issuer: https://dex.{{ .Values.baseDomain }}
+      {{- if .Values.services.kubernetes.api.public }}
+      k8s_master_uri: https://api.{{ .Values.baseDomain }}:{{ .Values.services.kubernetes.api.port }}
+      {{- else }}
+      k8s_master_uri: {{ .Values.services.kubernetes.api.internalAddress }}:{{ .Values.services.kubernetes.api.port }}
+      {{- end }}
+      k8s_ca_pem: {{ toYaml .Values.clusterCA | indent 8 }}
+      redirect_uri: https://login.{{ .Values.baseDomain }}/callback
+    {{- end }}
+{{ end }}
+{{ end }}
+{{- end }}
+
+
+File: ./dex/service-monitor.yaml
+{{- if .Capabilities.APIVersions.Has "monitoring.coreos.com/v1" }}
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ include "resource.dex.name"  . }}
+  labels:
+  {{- include "dex.labels.common" . | nindent 4 }}
+spec:
+  endpoints:
+    - path: /metrics
+      port: metrics
+      metricRelabelings:
+      - targetLabel: cluster_id
+        {{- if .Values.isManagementCluster }}
+        {{- if (eq (kindOf .Values.managementCluster) "string") }}
+        replacement: {{ .Values.managementCluster }}
+        {{- else }}
+        replacement: {{ .Values.managementCluster.name }}
+        {{- end }}
+        {{- else if eq (include "is-workload-cluster" .) "true" }}
+        replacement: {{ .Values.clusterID }}
+        {{- end }}
+  selector:
+    matchLabels:
+  {{- include "dex.labels.selector" . | nindent 6 }}
+{{- end }}
+
+
+File: ./dex/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "resource.dex.name" . }}
+  labels:
+    {{- include "dex.labels.common" . | nindent 4 }}
+  annotations:
+    app.giantswarm.io/secret-checksum: {{ include (print .Template.BasePath "/dex/secret.yaml") . | sha256sum | quote }}
+spec:
+  replicas: 2
+  strategy:
+    rollingUpdate:
+      maxSurge: 0
+      maxUnavailable: 1
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      {{- include "dex.labels.selector" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "dex.labels.common" . | nindent 8 }}
+      annotations:
+        checksum/config: {{ include (print .Template.BasePath "/dex/secret.yaml") . | sha256sum | quote }}
+    spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - podAffinityTerm:
+              labelSelector:
+                matchLabels:
+                  {{- include "dex.labels.selector" . | nindent 18 }}
+              topologyKey: kubernetes.io/hostname
+            weight: 100
+      serviceAccountName: {{ include "resource.dex.name" . }}
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+      - name: dex
+        env:
+        {{- if .Values.cluster.proxy }}
+        {{- if .Values.cluster.proxy.http }}
+        - name: HTTP_PROXY
+          value: {{ .Values.cluster.proxy.http }}
+        {{- end }}
+        {{- if .Values.cluster.proxy.https }}
+        - name: HTTPS_PROXY
+          value: {{ .Values.cluster.proxy.https }}
+        {{- end }}
+        {{- if .Values.cluster.proxy.noProxy }}
+        - name: NO_PROXY
+          value: {{ .Values.cluster.proxy.noProxy }}
+        {{- end }}
+        {{- end }}
+        - name: KUBERNETES_POD_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        {{ if .Values.isManagementCluster }}
+        image: "{{ .Values.registry.domain }}/{{ .Values.dex.image.name }}:{{ .Chart.AppVersion }}"
+        {{ else }}
+        image: "{{ .Values.dex.image.registry }}/{{ .Values.dex.image.name }}:{{ .Chart.AppVersion }}"
+        {{ end }}
+        imagePullPolicy: {{ .Values.dex.image.pullPolicy }}
+        command:
+        - /usr/local/bin/dex
+        - serve
+        - /etc/dex/cfg/config.yaml
+        resources:
+          limits:
+            cpu: 100m
+            memory: 50Mi
+          requests:
+            cpu: 100m
+            memory: 50Mi
+        securityContext:
+          allowPrivilegeEscalation: false
+          runAsNonRoot: true
+          capabilities:
+            drop:
+              - ALL
+          seccompProfile:
+            type: RuntimeDefault    
+        ports:
+        - name: http
+          containerPort: 5556
+          protocol: TCP
+        - name: metrics
+          containerPort: 5558
+          protocol: TCP
+
+        livenessProbe:
+          httpGet:
+            path: "/healthz"
+            port: http
+          initialDelaySeconds: 1
+          periodSeconds: 10
+          timeoutSeconds: 1
+          failureThreshold: 1
+        readinessProbe:
+          httpGet:
+            path: "/healthz"
+            port: http
+          initialDelaySeconds: 1
+          periodSeconds: 10
+          timeoutSeconds: 1
+          failureThreshold: 1
+        volumeMounts:
+        - mountPath: /etc/dex/cfg
+          name: config
+{{- if ne (len .Values.extraVolumeMounts) 0 }}
+{{ toYaml .Values.extraVolumeMounts | nindent 8 }}
+{{- end }}
+      volumes:
+      - secret:
+          defaultMode: 420
+          items:
+          - key: config.yaml
+            path: config.yaml
+          secretName: {{ include "resource.dex.name" . }}
+        name: config
+{{- if ne (len .Values.extraVolumes) 0 }}
+{{ toYaml .Values.extraVolumes | nindent 6 }}
+{{- end }}
+
+
+File: ./dex/certs-secret.yaml
+{{- if not .Values.ingress.tls.letsencrypt }}
+{{- if not .Values.ingress.tls.externalSecret.enabled }}
+apiVersion: v1
+kind: Secret
+type: kubernetes.io/tls
+metadata:
+  labels:
+    {{- include "dex.labels.common" . | nindent 4 }}
+  name: {{ include "resource.dex.name" . }}-tls
+data:
+  ca.crt: {{ .Values.ingress.tls.caPemB64 | quote }}
+  tls.crt: {{ .Values.ingress.tls.crtPemB64 | quote }}
+  tls.key: {{ .Values.ingress.tls.keyPemB64 | quote }}
+{{- end }}
+{{- end }}
+
+
+File: ./dex/pdb.yaml
+{{- if .Capabilities.APIVersions.Has "policy/v1/PodDisruptionBudget" }}
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: {{ include "resource.dex.name" . }}
+spec:
+  minAvailable: 50%
+  selector:
+    matchLabels:
+      {{- include "dex.labels.common" . | nindent 6 }}
+{{- end }}
+
+
+File: ./dex/ingress.yaml
+{{- if .Capabilities.APIVersions.Has "networking.k8s.io/v1/Ingress" }}
+apiVersion: networking.k8s.io/v1
+{{- else }}
+apiVersion: networking.k8s.io/v1beta1
+{{- end }}
+kind: Ingress
+metadata:
+  name: {{ include "resource.dex.name" . }}
+  labels:
+    {{- include "dex.labels.common" . | nindent 4 }}
+  annotations:
+    cert-manager.io/cluster-issuer: {{ .Values.ingress.tls.clusterIssuer }}
+    {{- if .Values.ingress.externalDNS }}
+    {{- if eq (include "is-workload-cluster" .) "true" }}
+    external-dns.alpha.kubernetes.io/hostname: dex.{{ .Values.baseDomain }}
+    {{- else if .Values.isManagementCluster }}
+    external-dns.alpha.kubernetes.io/hostname: {{ .Values.oidc.issuerAddress }}
+    {{- end }}
+    giantswarm.io/external-dns: managed
+    {{- end }}
+spec:
+  ingressClassName: {{ .Values.ingress.ingressClassName }}
+  tls:
+    - hosts:
+      {{- if eq (include "is-workload-cluster" .) "true" }}
+        - dex.{{ .Values.baseDomain }}
+      {{- else if .Values.isManagementCluster }}
+        - {{ .Values.oidc.issuerAddress }}
+      {{- end }}
+      {{- if .Values.ingress.tls.letsencrypt }}
+      secretName: {{ include "resource.dex.name" . }}-tls-le
+      {{- else }}
+      secretName: {{ include "resource.dex.name" . }}-tls
+      {{- end }}
+  rules:
+    - http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+{{- if .Capabilities.APIVersions.Has "networking.k8s.io/v1/Ingress" }}
+              service:
+                name: {{ include "resource.dex.name" . }}
+                port:
+                  number: 32000
+{{- else }}
+              serviceName: {{ include "resource.dex.name" . }}
+              servicePort: 32000
+{{- end }}
+  {{- if eq (include "is-workload-cluster" .) "true" }}
+      host: dex.{{ .Values.baseDomain }}
+  {{- else if .Values.isManagementCluster }}
+      host: {{ .Values.oidc.issuerAddress }}
+  {{- end }}
+
+
+File: ./dex/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "resource.dex.name" . }}
+  labels:
+    {{- include "dex.labels.common" . | nindent 4 }}
+spec:
+  type: ClusterIP
+  sessionAffinity: None
+  ports:
+  - name: http
+    targetPort: http
+    port: 32000
+  - name: metrics
+    port: 5558
+    targetPort: metrics
+  selector:
+    {{- include "dex.labels.selector" . | nindent 4 }}
+
+
+File: ./dex/clusterrole.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    {{- include "dex.labels.common" . | nindent 4 }}
+  name: {{ include "resource.dex.name" . }}
+rules:
+- apiGroups: ["dex.coreos.com"] # API group created by dex
+  resources: ["*"]
+  verbs: ["*"]
+- apiGroups: ["apiextensions.k8s.io"]
+  resources: ["customresourcedefinitions"]
+  verbs: ["create"] # To manage its own resources, dex must be able to create customresourcedefinitions
+- apiGroups:
+  - policy
+  resources:
+  - podsecuritypolicies
+  resourceNames:
+  - {{ include "resource.dex.psp.name" . }}
+  verbs:
+  - use
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ include "resource.dex.name"  . }}-metrics
+  labels:
+  {{- include "dex.labels.common" . | nindent 4 }}
+rules:
+- nonResourceURLs:
+  - "/metrics"
+  verbs:
+  - get
+
+
+File: ./dex/serviceaccount.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  labels:
+    {{- include "dex.labels.common" . | nindent 4 }}
+  name: {{ include "resource.dex.name" . }}
+
+
+File: ./dex/psp.yaml
+{{- if not .Values.global.podSecurityStandards.enforced }}
+apiVersion: policy/v1beta1
+kind: PodSecurityPolicy
+metadata:
+  labels:
+    {{- include "dex.labels.common" . | nindent 4 }}
+  name: {{ include "resource.dex.psp.name" . }}
+spec:
+  privileged: false
+  fsGroup:
+    rule: MustRunAs
+    ranges:
+      - min: 1
+        max: 65535
+  runAsUser:
+    rule: MustRunAsNonRoot
+  runAsGroup:
+    rule: MustRunAs
+    ranges:
+      - min: 1
+        max: 65535
+  seLinux:
+    rule: RunAsAny
+  supplementalGroups:
+    rule: RunAsAny
+  volumes:
+    - 'secret'
+  allowPrivilegeEscalation: false
+  hostNetwork: false
+  hostIPC: false
+  hostPID: false
+{{- end }}
+
+
+File: ./dex/np.yaml
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: {{ include "resource.dex.networkPolicy.name" . }}
+  labels:
+    {{- include "dex.labels.common" . | nindent 4 }}
+spec:
+  podSelector:
+    matchLabels:
+      {{- include "dex.labels.selector" . | nindent 6 }}
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress:
+  - ports:
+    - port: 5556
+      protocol: TCP
+    - port: 5558
+      protocol: TCP
+  egress:
+  - {}
+
+
+File: ./dex/clusterrolebinding.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  labels:
+    {{- include "dex.labels.common" . | nindent 4 }}
+  name: {{ include "resource.dex.name" . }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: {{ include "resource.dex.name" . }}
+subjects:
+  - kind: ServiceAccount
+    name: {{ include "resource.dex.name" . }}
+    namespace: {{ .Release.Namespace }}
+
+
+File: ./dex/secret.yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  labels:
+    {{- include "dex.labels.common" . | nindent 4 }}
+  name: {{ include "resource.dex.name" . }}
+stringData:
+  config.yaml: |-
+    web:
+      http: 0.0.0.0:5556
+      {{- if eq (include "is-any-service-listed" .) "true" }}
+      allowedOrigins:
+      {{- range $k, $v := .Values.services }}
+      {{- if and (ne $k "kubernetes") (ne (len $v.address) 0) }}
+      {{- if kindIs "slice" $v.address }}
+      {{- range $item := $v.address }}
+      - {{ $item }}
+      {{- end }}
+      {{- else }}
+      - {{ $v.address }}
+      {{- end }}
+      {{- end }}
+      {{- end }}
+      {{- end }}
+    telemetry:
+      http: 0.0.0.0:5558
+    storage:
+      type: kubernetes
+      config:
+        inCluster: true
+    logger:
+      level: info
+    oauth2:
+      responseTypes: ["code", "token", "id_token"]
+      alwaysShowLoginScreen: false
+      skipApprovalScreen: true
+    enablePasswordDB: false
+    oidcGroupsPrefix: true
+    frontend:
+      logoURL: https://s.giantswarm.io/brand/1/logo.svg
+    {{- if eq (include "is-workload-cluster" .) "true" }}
+    issuer: https://dex.{{ .Values.baseDomain }}
+    {{- else }}
+    issuer: https://{{ .Values.oidc.issuerAddress }}
+    {{- end }}
+    expiry:
+      signingKeys: "{{ .Values.oidc.expiry.signingKeys }}"
+      idTokens: "{{ .Values.oidc.expiry.idTokens }}"
+    staticClients:
+    {{- if .Values.oidc.staticClients.gitopsui.clientID }}
+    - id: {{ .Values.oidc.staticClients.gitopsui.clientID }}
+      {{- if .Values.oidc.staticClients.gitopsui.clientSecret }}
+      secret: {{ .Values.oidc.staticClients.gitopsui.clientSecret }}
+      {{- else }}
+      public: true
+      {{- end }}
+      name: gitopsui
+      redirectURIs:
+      - {{ .Values.oidc.staticClients.gitopsui.redirectURI }}
+      - http://localhost:9001/oauth2/callback
+      {{- include "trusted-peers" .Values.oidc.staticClients.gitopsui.trustedPeers }}
+    {{- end }}
+    {{- if .Values.oidc.staticClients.happa.clientID }}
+    - id: {{ .Values.oidc.staticClients.happa.clientID }}
+      {{- if .Values.oidc.staticClients.happa.clientSecret }}
+      secret: {{ .Values.oidc.staticClients.happa.clientSecret }}
+      {{- else }}
+      public: true
+      {{- end }}
+      redirectURIs:
+      - {{ .Values.oidc.staticClients.happa.redirectURI }}
+      - http://localhost:7000
+      name: happa
+      {{- include "trusted-peers" .Values.oidc.staticClients.happa.trustedPeers }}
+    {{- end }}
+    {{- if .Values.isManagementCluster }}
+    - id: dex-k8s-authenticator
+      redirectURIs:
+      {{- if .Values.oidc.customer.enabled }}
+      - https://{{ .Values.oidc.staticClients.dexK8SAuthenticator.clientAddress }}/callback
+      {{- end }}
+      {{- if .Values.oidc.giantswarm.connectorConfig.clientID }}
+      - https://{{ .Values.oidc.staticClients.dexK8SAuthenticator.clientAddress }}/admin/callback
+      {{- end }}
+      name: dex-k8s-authenticator
+      secret: {{ .Values.oidc.staticClients.dexK8SAuthenticator.clientSecret }}
+      {{- include "trusted-peers" ( concat (.Values.oidc.staticClients.dexK8SAuthenticator.trustedPeers | default list ) (list .Values.oidc.staticClients.happa.clientID .Values.oidc.staticClients.gsCLIAuth.clientID) ) }}
+    {{- end }}
+    {{- if eq (include "is-workload-cluster" .) "true" }}
+    - id: dex-k8s-authenticator
+      redirectURIs:
+      - https://login.{{ .Values.baseDomain }}/callback
+      {{- if .Values.oidc.giantswarm.connectorConfig.clientID }}
+      - https://login.{{ .Values.baseDomain }}/admin/callback
+      {{- end }}
+      name: dex-k8s-authenticator
+      secret: {{ .Values.oidc.staticClients.dexK8SAuthenticator.clientSecret }}
+      {{- include "trusted-peers" ( concat (.Values.oidc.staticClients.dexK8SAuthenticator.trustedPeers | default list ) (list .Values.oidc.staticClients.gsCLIAuth.clientID) ) }}
+    {{- end }}
+    {{- include "print-clean-extra-static-clients" .Values.oidc.extraStaticClients }}
+    connectors:
+    {{- if .Values.oidc.giantswarm.connectorConfig.clientID }}
+    - type: github
+      id: giantswarm
+      name: GitHub for Giant Swarm staff
+      config:
+        clientID: {{ .Values.oidc.giantswarm.connectorConfig.clientID }}
+        clientSecret: {{ .Values.oidc.giantswarm.connectorConfig.clientSecret }}
+        loadAllGroups: false
+        {{- if eq (include "is-workload-cluster" .) "true" }}
+        redirectURI: https://dex.{{ .Values.baseDomain }}/callback
+        {{- else }}
+        redirectURI: https://{{ .Values.oidc.issuerAddress }}/callback
+        {{- end }}
+        orgs:
+        - name: giantswarm
+          teams:
+          - {{ .Values.oidc.giantswarm.connectorConfig.team }}
+    {{- end }}
+    {{- if .Values.oidc.giantswarm.connectors }}
+    {{- range .Values.oidc.giantswarm.connectors }}
+    - type: {{ .connectorType }}
+      id: {{ .id }}
+      name: {{ .connectorName }}
+      config:
+        {{- .connectorConfig | nindent 8 }}
+    {{- end }}
+    {{- end }}
+    {{- if .Values.oidc.customer.connectors }}
+    {{- range .Values.oidc.customer.connectors }}
+    - type: {{ .connectorType }}
+      id: {{ .id }}
+      name: {{ .connectorName }}
+      config:
+        {{- .connectorConfig | nindent 8 }}
+    {{- end }}
+    {{- end }}
+    {{- if .Values.oidc.customer.connectorConfig }}
+    - type: {{ .Values.oidc.customer.connectorType }}
+      id: customer
+      name: {{ .Values.oidc.customer.connectorName }}
+      config:
+        {{- .Values.oidc.customer.connectorConfig | nindent 8 }}
+    {{- end }}
+
+
+File: ./_helpers.tpl
+{{/*
+Create chart name and version as used by the chart label.
+*/}}
+{{- define "dex.chart" -}}
+{{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" -}}
+{{- end -}}
+
+{{/*
+Helpers for dex.
+*/}}
+{{- define "dex.name" -}}
+dex
+{{- end -}}
+
+{{/*
+Common dex labels
+*/}}
+{{- define "dex.labels.common" -}}
+{{ include "dex.labels.selector" . }}
+helm.sh/chart: {{ include "dex.chart" . }}
+{{- if .Chart.AppVersion }}
+app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
+{{- end }}
+app.kubernetes.io/managed-by: {{ .Release.Service }}
+application.giantswarm.io/team: {{ index .Chart.Annotations "application.giantswarm.io/team" | quote }}
+giantswarm.io/service-type: "managed"
+{{- end -}}
+
+{{/*
+Selector dex labels
+*/}}
+{{- define "dex.labels.selector" -}}
+app.kubernetes.io/name: {{ include "dex.name" . }}
+app.kubernetes.io/component: {{ include "dex.name" . }}
+app.kubernetes.io/instance: {{ .Release.Name | quote }}
+{{- end -}}
+
+{{/*
+Helpers for dex-k8s-authenticator.
+*/}}
+{{- define "dexk8sauth.customer.name" -}}
+dex-k8s-authenticator
+{{- end -}}
+
+{{/*
+Common dex-k8s-authenticator labels
+*/}}
+{{- define "dexk8sauth.labels.common" -}}
+helm.sh/chart: {{ include "dex.chart" . }}
+{{- if .Chart.AppVersion }}
+app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
+{{- end }}
+app.kubernetes.io/managed-by: {{ .Release.Service }}
+giantswarm.io/service-type: "managed"
+{{- end -}}
+
+{{/*
+Selector dex-k8s-authenticator customer labels
+*/}}
+{{- define "dexk8sauth.customer.labels.selector" -}}
+app.kubernetes.io/name: dex-k8s-authenticator-customer
+app.kubernetes.io/component: dex-k8s-authenticator-customer
+{{- end -}}
+
+{{/*
+Selector dex-k8s-authenticator giantswarm labels
+*/}}
+{{- define "dexk8sauth.giantswarm.labels.selector" -}}
+app.kubernetes.io/name: dex-k8s-authenticator-giantswarm
+app.kubernetes.io/component: dex-k8s-authenticator-giantswarm
+{{- end -}}
+
+{{/*
+Abstract the knowledge to know if it needs a Giant Swarm connector or not
+*/}}
+{{- define "has-giantswarm-connector" -}}
+{{- if .Values.oidc.giantswarm.connectorConfig.clientID -}}
+  {{- printf "true" }}
+{{- else -}}
+  {{- printf "false" }}
+{{- end -}}
+{{- end -}}
+
+{{/*
+Abstract the knowledge to know if its installed on a workload cluster or not
+*/}}
+{{- define "is-workload-cluster" -}}
+{{- if .Values.isWorkloadCluster -}}
+  {{- printf "true" }}
+{{- else if .Values.isManagementCluster -}}
+  {{- printf "false" }}
+{{- else if and .Values.baseDomain .Values.clusterID -}}
+  {{- printf "true" }}
+{{- else -}}
+  {{- printf "false" }}
+{{- end -}}
+{{- end -}}
+
+{{/*
+Gather and print trusted peers of a static client from various sources
+*/}}
+{{- define "trusted-peers" -}}
+  {{- if . }}
+    {{- $trustedPeers := uniq ( compact . ) -}}
+    {{- if $trustedPeers }}
+      {{- print "trustedPeers:" | nindent 6 -}}
+      {{- if $trustedPeers -}}
+        {{- $trustedPeers | toYaml | nindent 6 -}}
+      {{- end -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+
+{{/*
+Clean up and print extra static clients
+*/}}
+{{- define "print-clean-extra-static-clients" -}}
+  {{- if . }}
+    {{- $extraStaticClients := list nil -}}
+    {{- range . -}}
+    {{- $client := omit . "trustedPeerOf" -}}
+      {{- if not $client.clientSecret -}}
+        {{- $client = set $client "public" true -}}
+      {{- end -}}
+      {{- $extraStaticClients = append $extraStaticClients $client -}}
+    {{- end -}}
+    {{- compact $extraStaticClients | toYaml | nindent 4 -}}
+  {{- end -}}
+{{- end -}}
+
+{{/*
+Checks if any services in addition to Kubernetes are defined in values
+*/}}
+{{- define "is-any-service-listed" -}}
+{{- $ok := false -}}
+{{- range $k, $v := .Values.services -}}
+{{- if ne $k "kubernetes" }}
+{{- $ok = or $ok (ne (len $v.address) 0) -}}
+{{- end -}}
+{{- end -}}
+{{- printf "%v" $ok -}}
+{{- end -}}
+
+

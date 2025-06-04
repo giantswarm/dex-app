@@ -7,9 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.42.15] - 2025-05-08
+
+## Added
+
+- Added `largeHeaderBuffers` to ingress for large request header size.
+
+## [1.42.14] - 2025-05-06
+
 ### Added
 
-- Added renovate configutarion
+- Added renovate configuration
+- Make Ingress annotations configurable via values (`.Values.ingress.annotations`)
+- Increased request header size limit in NGINX ingress controller annotations
 
 ### Removed
 
@@ -567,7 +577,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add helm chart for dex.
 
 
-[Unreleased]: https://github.com/giantswarm/dex-app/compare/v1.42.13...HEAD
+[Unreleased]: https://github.com/giantswarm/dex-app/compare/v1.42.15...HEAD
+[1.42.15]: https://github.com/giantswarm/dex-app/compare/v1.42.14...v1.42.15
+[1.42.14]: https://github.com/giantswarm/dex-app/compare/v1.42.13...v1.42.14
 [1.42.13]: https://github.com/giantswarm/dex-app/compare/v1.42.12...v1.42.13
 [1.42.12]: https://github.com/giantswarm/dex-app/compare/v1.42.11...v1.42.12
 [1.42.11]: https://github.com/giantswarm/dex-app/compare/v1.42.10...v1.42.11

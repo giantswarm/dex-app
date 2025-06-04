@@ -23,6 +23,7 @@ logoURI: https://s.giantswarm.io/brand/1/logo.svg
 ingress:
   ingressClassName: "nginx"
   externalDNS: false
+  largeHeaderBuffers: false
   tls:
     letsencrypt: true
     clusterIssuer: "letsencrypt-giantswarm"
@@ -31,6 +32,7 @@ ingress:
     keyPemB64: ""
     externalSecret:
       enabled: false
+  annotations: {}
 
 oidc:
   issuerAddress: ""

@@ -1,17 +1,17 @@
-{{- if .Values.ingress.enabled }}
+{{- if .Values.dex.ingress.enabled }}
 {{- $fullName := include "dex.fullname" . }}
-{{- $svcPort := .Values.service.ports.http.port }}
+{{- $svcPort := .Values.dex.service.ports.http.port }}
 {{- $host := "" }}
 {{- if eq (include "is-workload-cluster" .) "true" }}
-{{- $host = printf "dex.%s" .Values.baseDomain }}
-{{- else if .Values.isManagementCluster }}
-{{- $host = .Values.oidc.issuerAddress }}
+{{- $host = printf "dex.%s" .Values.dex.baseDomain }}
+{{- else if .Values.dex.isManagementCluster }}
+{{- $host = .Values.dex.oidc.issuerAddress }}
 {{- else }}
-{{- $host = printf "dex.%s" (.Values.baseDomain | default "localhost") }}
+{{- $host = printf "dex.%s" (.Values.dex.baseDomain | default "localhost") }}
 {{- end }}
-{{- if and .Values.ingress.className (not (semverCompare ">=1.18-0" .Capabilities.KubeVersion.GitVersion)) }}
-{{- if not (hasKey .Values.ingress.annotations "kubernetes.io/ingress.class") }}
-{{- $_ := set .Values.ingress.annotations "kubernetes.io/ingress.class" .Values.ingress.className }}
+{{- if and .Values.dex.ingress.className (not (semverCompare ">=1.18-0" .Capabilities.KubeVersion.GitVersion)) }}
+{{- if not (hasKey .Values.dex.ingress.annotations "kubernetes.io/ingress.class") }}
+{{- $_ := set .Values.dex.ingress.annotations "kubernetes.io/ingress.class" .Values.dex.ingress.className }}
 {{- end }}
 {{- end }}
 {{- if semverCompare ">=1.19-0" .Capabilities.KubeVersion.GitVersion }}
@@ -27,29 +27,29 @@ metadata:
   namespace: {{ include "dex.namespace" . }}
   labels:
     {{- include "dex.labels" . | nindent 4 }}
-  {{- with .Values.ingress.annotations }}
+  {{- with .Values.dex.ingress.annotations }}
   annotations:
     {{- toYaml . | nindent 4 }}
   {{- end }}
 spec:
-  {{- if and .Values.ingress.className (semverCompare ">=1.18-0" .Capabilities.KubeVersion.GitVersion) }}
-  ingressClassName: {{ .Values.ingress.className }}
+  {{- if and .Values.dex.ingress.className (semverCompare ">=1.18-0" .Capabilities.KubeVersion.GitVersion) }}
+  ingressClassName: {{ .Values.dex.ingress.className }}
   {{- end }}
-  {{- if kindIs "slice" .Values.ingress.tls }}
+  {{- if kindIs "slice" .Values.dex.ingress.tls }}
   tls:
-    {{- range .Values.ingress.tls }}
+    {{- range .Values.dex.ingress.tls }}
     - hosts:
         {{- range .hosts }}
         - {{ tpl . $ | quote }}
         {{- end }}
       secretName: {{ .secretName }}
     {{- end }}
-  {{- else if and (kindIs "map" .Values.ingress.tls) .Values.ingress.tls.letsencrypt }}
+  {{- else if and (kindIs "map" .Values.dex.ingress.tls) .Values.dex.ingress.tls.letsencrypt }}
   tls:
     - hosts:
         - {{ $host | quote }}
       secretName: {{ include "dex.name" . }}-tls-le
-  {{- else if kindIs "map" .Values.ingress.tls }}
+  {{- else if kindIs "map" .Values.dex.ingress.tls }}
   tls:
     - hosts:
         - {{ $host | quote }}

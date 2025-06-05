@@ -16,11 +16,11 @@ spec:
       toPorts:
         - ports:
             - port: http
-        {{- if .Values.https.enabled }}
+        {{- if .Values.dex.https.enabled }}
         - ports:
             - port: https
         {{- end }}
-        {{- if .Values.grpc.enabled }}
+        {{- if .Values.dex.grpc.enabled }}
         - ports:
             - port: grpc
         {{- end }}
@@ -37,6 +37,6 @@ spec:
   egress:
     - toEntities:
         - kube-apiserver
-    {{- with .Values.networkPolicy.egressRules }}
+    {{- with .Values.dex.networkPolicy.egressRules }}
     {{- toYaml . | nindent 4 }}
     {{- end }}

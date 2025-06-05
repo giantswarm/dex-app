@@ -8,18 +8,19 @@ replicaCount: 1
 # -- Labels to apply to all resources and selectors.
 commonLabels: {}
 # team_name: dev
-client:
-  image:
-    registry: gsoci.azurecr.io
-    name: giantswarm/dex-k8s-authenticator
-    tag: 1.4.0
-    pullPolicy: IfNotPresent
 
-dex:
-  image:
-    registry: gsoci.azurecr.io
-    name: giantswarm/dex-app
-    pullPolicy: IfNotPresent
+image:
+  # -- Name of the image repository to pull the container image from.
+  repository: ghcr.io/dexidp/dex
+
+  # -- [Image pull policy](https://kubernetes.io/docs/concepts/containers/images/#updating-images) for updating already existing images on a node.
+  pullPolicy: IfNotPresent
+
+  # -- Image tag override for the default value (chart appVersion).
+  tag: ""
+
+  # -- When digest is set to a non-empty value, images will be pulled by digest (regardless of tag value).
+  digest: ""
 
 # -- Reference to one or more secrets to be used when [pulling images](https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/#create-a-pod-that-uses-your-secret) (from private registries).
 imagePullSecrets: []
@@ -49,12 +50,12 @@ grpc:
 configSecret:
   # -- Enable creating a secret from the values passed to `config`.
   # If set to false, name must point to an existing secret.
-  create: false
+  create: true
 
   # -- The name of the secret to mount as configuration in the pod.
   # If not set and create is true, a name is generated using the fullname template.
   # Must point to secret that contains at least a `config.yaml` key.
-  name: "dex"
+  name: ""
 
 # -- Application configuration.
 # See the [official documentation](https://dexidp.io/docs/).
@@ -149,17 +150,7 @@ revisionHistoryLimit: 10
 
 # -- Container [security context](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-container).
 # See the [API reference](https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/pod-v1/#security-context-1) for details.
-securityContext:
-  runAsNonRoot: true
-  runAsUser: 1000
-  runAsGroup: 1000
-  allowPrivilegeEscalation: false
-  readOnlyRootFilesystem: true
-  capabilities:
-    drop:
-      - ALL
-  seccompProfile:
-    type: RuntimeDefault
+securityContext: {}
   # capabilities:
   #   drop:
   #   - ALL
@@ -204,28 +195,35 @@ service:
 
 ingress:
   # -- Enable [ingress](https://kubernetes.io/docs/concepts/services-networking/ingress/).
-  enabled: true
+  enabled: false
 
   # -- Ingress [class name](https://kubernetes.io/docs/concepts/services-networking/ingress/#ingress-class).
-  className: "nginx"
+  className: ""
 
   # -- Annotations to be added to the ingress.
-  annotations:
-    cert-manager.io/cluster-issuer: letsencrypt-giantswarm
+  annotations: {}
     # kubernetes.io/ingress.class: nginx
     # kubernetes.io/tls-acme: "true"
 
+  # -- Ingress host configuration.
+  # @default -- See [values.yaml](values.yaml).
+  hosts:
+    - host: chart-example.local
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+
   # -- Ingress TLS configuration.
-  # Note: Host and secretName are now determined dynamically by the template
-  # based on cluster type (workload vs management) and baseDomain/oidc.issuerAddress
-  tls:
-    # -- Enable Let's Encrypt certificate generation
-    letsencrypt: true
+  # @default -- See [values.yaml](values.yaml).
+  tls: []
+  #  - secretName: chart-example-tls
+  #    hosts:
+  #      - chart-example.local
 
 serviceMonitor:
   # -- Enable Prometheus ServiceMonitor.
   # See the [documentation](https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/design.md#servicemonitor) and the [API reference](https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/api.md#servicemonitor) for details.
-  enabled: true
+  enabled: false
 
   # -- Namespace where the ServiceMonitor resource should be deployed.
   # @default -- Release namespace.
@@ -285,13 +283,7 @@ serviceMonitor:
 # -- Container resource [requests and limits](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/).
 # See the [API reference](https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/pod-v1/#resources) for details.
 # @default -- No requests or limits.
-resources:
-  limits:
-    cpu: 100m
-    memory: 50Mi
-  requests:
-    cpu: 100m
-    memory: 50Mi
+resources: {}
   # We usually recommend not to specify default resources and to leave this as a conscious
   # choice for the user. This also increases chances charts run on environments with little
   # resources, such as Minikube. If you do want to specify resources, uncomment the following
@@ -351,87 +343,3 @@ networkPolicy:
   #    ports:
   #      - port: 636
   #        protocol: TCP
-
-extraVolumes: []
-extraVolumeMounts: []
-logoURI: https://s.giantswarm.io/brand/1/logo.svg
-
-oidc:
-  issuerAddress: ""
-  expiry:
-    signingKeys: 6h
-    idTokens: 30m
-  staticClients:
-    gitopsui:
-      clientID: ""
-      clientSecret: ""
-      redirectURI: ""
-    grafana:
-      cliendID: ""
-      redirectURI: ""
-    gsCLIAuth:
-      clientID: "zQiFLUnrTFQwrybYzeY53hWWfhOKWRAU"
-      address: http://localhost:8085/oauth/callback
-    happa:
-      clientID: ""
-      redirectURI: ""
-    dexK8SAuthenticator:
-      clientAddress: ""
-      clientSecret: "default-client-dex-authenticator-secret"
-  extraStaticClients: []
-  # Giant Swarm OIDC values to run DEX in the management clusters
-  giantswarm:
-    connectorConfig:
-      clientID: ""
-      clientSecret: ""
-      team: ""
-    connectors: []
-  customer:
-    enabled: false
-    connectorType: ""
-    connectorName: ""
-    connectorConfig: ""
-    connectors: []
-
-# Note that the public address in Giant Swarm management cluster configurations already includes the port
-services:
-  kubernetes:
-    api:
-      public: true
-      address: ""
-      internalAddress: ""
-      caPem: ""
-      port: 443
-  happa:
-    address: ""
-  grafana:
-    address: ""
-  gitopsui:
-    address: ""
-  backstage:
-    address: []
-
-registry:
-  domain: gsoci.azurecr.io
-
-# Giant Swarm properties for management clusters
-isManagementCluster: false
-managementCluster:
-  name: ""
-
-# Giant Swarm properties for workload clusters
-isWorkloadCluster: false
-
-# Enable the deployment of the dex k8s authenticator together with dex
-# Please note that this app is deprecated and will be removed in the future
-deployDexK8SAuthenticator: false
-
-cluster:
-  proxy:
-    http: ""
-    https: ""
-    noProxy: ""
-
-global:
-  podSecurityStandards:
-    enforced: false

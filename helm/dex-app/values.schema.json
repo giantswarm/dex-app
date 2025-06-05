@@ -1,0 +1,520 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Dex App Helm Chart Values Schema",
+  "description": "Schema for validating values.yaml for the dex-app Helm chart",
+  "type": "object",
+  "properties": {
+    "dex": {
+      "type": "object",
+      "description": "Dex configuration",
+      "properties": {
+        "replicaCount": {
+          "type": "integer",
+          "description": "Number of replicas (pods) to launch",
+          "minimum": 1,
+          "default": 1
+        },
+        "client": {
+          "type": "object",
+          "properties": {
+            "image": {
+              "type": "object",
+              "properties": {
+                "registry": {
+                  "type": "string",
+                  "description": "Container registry for client image"
+                },
+                "name": {
+                  "type": "string",
+                  "description": "Client image name"
+                },
+                "tag": {
+                  "type": "string",
+                  "description": "Client image tag"
+                },
+                "pullPolicy": {
+                  "type": "string",
+                  "enum": ["Always", "Never", "IfNotPresent"],
+                  "description": "Image pull policy"
+                }
+              },
+              "required": ["registry", "name", "tag", "pullPolicy"]
+            }
+          },
+          "required": ["image"]
+        },
+        "dex": {
+          "type": "object",
+          "properties": {
+            "image": {
+              "type": "object",
+              "properties": {
+                "registry": {
+                  "type": "string",
+                  "description": "Container registry for dex image"
+                },
+                "name": {
+                  "type": "string",
+                  "description": "Dex image name"
+                },
+                "pullPolicy": {
+                  "type": "string",
+                  "enum": ["Always", "Never", "IfNotPresent"],
+                  "description": "Image pull policy"
+                }
+              },
+              "required": ["registry", "name", "pullPolicy"]
+            }
+          },
+          "required": ["image"]
+        },
+        "configSecret": {
+          "type": "object",
+          "properties": {
+            "create": {
+              "type": "boolean",
+              "description": "Enable creating a secret from the values passed to config"
+            },
+            "name": {
+              "type": "string",
+              "description": "The name of the secret to mount as configuration in the pod"
+            }
+          },
+          "required": ["create"]
+        },
+        "securityContext": {
+          "type": "object",
+          "properties": {
+            "runAsNonRoot": {
+              "type": "boolean"
+            },
+            "runAsUser": {
+              "type": "integer"
+            },
+            "runAsGroup": {
+              "type": "integer"
+            },
+            "allowPrivilegeEscalation": {
+              "type": "boolean"
+            },
+            "readOnlyRootFilesystem": {
+              "type": "boolean"
+            },
+            "capabilities": {
+              "type": "object",
+              "properties": {
+                "drop": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "seccompProfile": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "ingress": {
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "type": "boolean",
+              "description": "Enable ingress"
+            },
+            "className": {
+              "type": "string",
+              "description": "Ingress class name"
+            },
+            "annotations": {
+              "type": "object",
+              "description": "Annotations to be added to the ingress"
+            },
+            "tls": {
+              "type": "object",
+              "properties": {
+                "letsencrypt": {
+                  "type": "boolean",
+                  "description": "Enable Let's Encrypt certificate generation"
+                }
+              }
+            }
+          },
+          "required": ["enabled"]
+        },
+        "serviceMonitor": {
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "type": "boolean",
+              "description": "Enable Prometheus ServiceMonitor"
+            },
+            "namespace": {
+              "type": "string",
+              "description": "Namespace where the ServiceMonitor resource should be deployed"
+            },
+            "interval": {
+              "type": "string",
+              "description": "Prometheus scrape interval"
+            },
+            "scrapeTimeout": {
+              "type": "string",
+              "description": "Prometheus scrape timeout"
+            },
+            "labels": {
+              "type": "object",
+              "description": "Labels to be added to the ServiceMonitor"
+            },
+            "annotations": {
+              "type": "object",
+              "description": "Annotations to be added to the ServiceMonitor"
+            },
+            "scheme": {
+              "type": "string",
+              "description": "HTTP scheme to use for scraping"
+            },
+            "path": {
+              "type": "string",
+              "description": "HTTP path to scrape for metrics"
+            },
+            "tlsConfig": {
+              "type": "object",
+              "description": "TLS configuration to use when scraping the endpoint"
+            },
+            "bearerTokenFile": {
+              "type": "string",
+              "description": "Prometheus scrape bearerTokenFile"
+            },
+            "honorLabels": {
+              "type": "boolean",
+              "description": "HonorLabels chooses the metric's labels on collisions with target labels"
+            },
+            "metricRelabelings": {
+              "type": "array",
+              "description": "Prometheus scrape metric relabel configs"
+            },
+            "relabelings": {
+              "type": "array",
+              "description": "Relabel configs to apply to samples before ingestion"
+            }
+          },
+          "required": ["enabled"]
+        },
+        "resources": {
+          "type": "object",
+          "description": "Container resource requests and limits",
+          "properties": {
+            "limits": {
+              "type": "object",
+              "properties": {
+                "cpu": {
+                  "type": "string"
+                },
+                "memory": {
+                  "type": "string"
+                }
+              }
+            },
+            "requests": {
+              "type": "object",
+              "properties": {
+                "cpu": {
+                  "type": "string"
+                },
+                "memory": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "extraVolumes": {
+          "type": "array",
+          "description": "Extra volumes to add to the pod"
+        },
+        "extraVolumeMounts": {
+          "type": "array",
+          "description": "Extra volume mounts to add to the container"
+        },
+        "logoURI": {
+          "type": "string",
+          "format": "uri",
+          "description": "URI for the logo"
+        }
+      },
+      "required": ["replicaCount"]
+    },
+    "oidc": {
+      "type": "object",
+      "description": "OIDC configuration",
+      "properties": {
+        "issuerAddress": {
+          "type": "string",
+          "description": "OIDC issuer address"
+        },
+        "expiry": {
+          "type": "object",
+          "properties": {
+            "signingKeys": {
+              "type": "string",
+              "description": "Signing keys expiry duration"
+            },
+            "idTokens": {
+              "type": "string",
+              "description": "ID tokens expiry duration"
+            }
+          }
+        },
+        "staticClients": {
+          "type": "object",
+          "properties": {
+            "gitopsui": {
+              "type": "object",
+              "properties": {
+                "clientID": {
+                  "type": "string"
+                },
+                "clientSecret": {
+                  "type": "string"
+                },
+                "redirectURI": {
+                  "type": "string"
+                }
+              }
+            },
+            "grafana": {
+              "type": "object",
+              "properties": {
+                "cliendID": {
+                  "type": "string"
+                },
+                "redirectURI": {
+                  "type": "string"
+                }
+              }
+            },
+            "gsCLIAuth": {
+              "type": "object",
+              "properties": {
+                "clientID": {
+                  "type": "string"
+                },
+                "address": {
+                  "type": "string"
+                }
+              }
+            },
+            "happa": {
+              "type": "object",
+              "properties": {
+                "clientID": {
+                  "type": "string"
+                },
+                "redirectURI": {
+                  "type": "string"
+                }
+              }
+            },
+            "dexK8SAuthenticator": {
+              "type": "object",
+              "properties": {
+                "clientAddress": {
+                  "type": "string"
+                },
+                "clientSecret": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "extraStaticClients": {
+          "type": "array",
+          "description": "Extra static clients configuration"
+        },
+        "giantswarm": {
+          "type": "object",
+          "properties": {
+            "connectorConfig": {
+              "type": "object",
+              "properties": {
+                "clientID": {
+                  "type": "string"
+                },
+                "clientSecret": {
+                  "type": "string"
+                },
+                "team": {
+                  "type": "string"
+                }
+              }
+            },
+            "connectors": {
+              "type": "array"
+            }
+          }
+        },
+        "customer": {
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "type": "boolean"
+            },
+            "connectorType": {
+              "type": "string"
+            },
+            "connectorName": {
+              "type": "string"
+            },
+            "connectorConfig": {
+              "type": "string"
+            },
+            "connectors": {
+              "type": "array"
+            }
+          },
+          "required": ["enabled"]
+        }
+      }
+    },
+    "services": {
+      "type": "object",
+      "description": "Services configuration",
+      "properties": {
+        "kubernetes": {
+          "type": "object",
+          "properties": {
+            "api": {
+              "type": "object",
+              "properties": {
+                "public": {
+                  "type": "boolean"
+                },
+                "address": {
+                  "type": "string"
+                },
+                "internalAddress": {
+                  "type": "string"
+                },
+                "caPem": {
+                  "type": "string"
+                },
+                "port": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        },
+        "happa": {
+          "type": "object",
+          "properties": {
+            "address": {
+              "type": "string"
+            }
+          }
+        },
+        "grafana": {
+          "type": "object",
+          "properties": {
+            "address": {
+              "type": "string"
+            }
+          }
+        },
+        "gitopsui": {
+          "type": "object",
+          "properties": {
+            "address": {
+              "type": "string"
+            }
+          }
+        },
+        "backstage": {
+          "type": "object",
+          "properties": {
+            "address": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "registry": {
+      "type": "object",
+      "properties": {
+        "domain": {
+          "type": "string",
+          "description": "Container registry domain"
+        }
+      }
+    },
+    "isManagementCluster": {
+      "type": "boolean",
+      "description": "Whether this is a management cluster"
+    },
+    "managementCluster": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Name of the management cluster"
+        }
+      }
+    },
+    "isWorkloadCluster": {
+      "type": "boolean",
+      "description": "Whether this is a workload cluster"
+    },
+    "deployDexK8SAuthenticator": {
+      "type": "boolean",
+      "description": "Enable the deployment of the dex k8s authenticator together with dex"
+    },
+    "cluster": {
+      "type": "object",
+      "properties": {
+        "proxy": {
+          "type": "object",
+          "properties": {
+            "http": {
+              "type": "string",
+              "description": "HTTP proxy URL"
+            },
+            "https": {
+              "type": "string",
+              "description": "HTTPS proxy URL"
+            },
+            "noProxy": {
+              "type": "string",
+              "description": "No proxy configuration"
+            }
+          }
+        }
+      }
+    },
+    "global": {
+      "type": "object",
+      "properties": {
+        "podSecurityStandards": {
+          "type": "object",
+          "properties": {
+            "enforced": {
+              "type": "boolean",
+              "description": "Whether pod security standards are enforced"
+            }
+          }
+        }
+      }
+    }
+  },
+  "additionalProperties": false
+}

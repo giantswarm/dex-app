@@ -45,26 +45,6 @@ dex:
     # runAsNonRoot: true
     # runAsUser: 1000
 
-  ingress:
-    # -- Enable [ingress](https://kubernetes.io/docs/concepts/services-networking/ingress/).
-    enabled: true
-
-    # -- Ingress [class name](https://kubernetes.io/docs/concepts/services-networking/ingress/#ingress-class).
-    className: "nginx"
-
-    # -- Annotations to be added to the ingress.
-    annotations:
-      cert-manager.io/cluster-issuer: letsencrypt-giantswarm
-      # kubernetes.io/ingress.class: nginx
-      # kubernetes.io/tls-acme: "true"
-
-    # -- Ingress TLS configuration.
-    # Note: Host and secretName are now determined dynamically by the template
-    # based on cluster type (workload vs management) and baseDomain/oidc.issuerAddress
-    tls:
-      # -- Enable Let's Encrypt certificate generation
-      letsencrypt: true
-
   serviceMonitor:
     # -- Enable Prometheus ServiceMonitor.
     # See the [documentation](https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/design.md#servicemonitor) and the [API reference](https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/api.md#servicemonitor) for details.
@@ -149,6 +129,23 @@ dex:
   extraVolumes: []
   extraVolumeMounts: []
   logoURI: https://s.giantswarm.io/brand/1/logo.svg
+
+ingress:
+  # -- Enable [ingress](https://kubernetes.io/docs/concepts/services-networking/ingress/).
+  enabled: true
+  # -- Ingress [class name](https://kubernetes.io/docs/concepts/services-networking/ingress/#ingress-class).
+  className: "nginx"
+  # -- Annotations to be added to the ingress.
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-giantswarm
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+  # -- Ingress TLS configuration.
+  # Note: Host and secretName are now determined dynamically by the template
+  # based on cluster type (workload vs management) and baseDomain/oidc.issuerAddress
+  tls:
+    # -- Enable Let's Encrypt certificate generation
+    letsencrypt: true
 
 oidc:
   issuerAddress: ""

@@ -60,6 +60,84 @@
       "type": "object",
       "description": "Labels to be added to the pod"
     },
+    "ingress": {
+      "type": "object",
+      "description": "Global ingress configuration",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "description": "Enable ingress"
+        },
+        "className": {
+          "type": "string",
+          "description": "Ingress class name"
+        },
+        "annotations": {
+          "type": "object",
+          "description": "Annotations to be added to the ingress"
+        },
+        "hosts": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "host": {
+                "type": "string"
+              },
+              "paths": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "path": {
+                      "type": "string"
+                    },
+                    "pathType": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tls": {
+          "description": "TLS configuration - can be array of TLS configs or object with letsencrypt setting",
+          "anyOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "secretName": {
+                    "type": "string"
+                  },
+                  "hosts": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "type": "object",
+              "properties": {
+                "letsencrypt": {
+                  "type": "boolean"
+                }
+              },
+              "additionalProperties": true
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "additionalProperties": true
+    },
     "dex": {
       "type": "object",
       "description": "Dex configuration",
@@ -214,64 +292,6 @@
             }
           }
         },
-        "ingress": {
-          "type": "object",
-          "properties": {
-            "enabled": {
-              "type": "boolean",
-              "description": "Enable ingress"
-            },
-            "className": {
-              "type": "string",
-              "description": "Ingress class name"
-            },
-            "annotations": {
-              "type": "object",
-              "description": "Annotations to be added to the ingress"
-            },
-            "tls": {
-              "oneOf": [
-                {
-                  "type": "array",
-                  "description": "Array of TLS configurations for custom certificates",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "hosts": {
-                        "type": "array",
-                        "items": {
-                          "type": "string"
-                        },
-                        "description": "List of hosts for this TLS certificate"
-                      },
-                      "secretName": {
-                        "type": "string",
-                        "description": "Name of the TLS secret"
-                      }
-                    },
-                    "required": ["hosts", "secretName"]
-                  }
-                },
-                {
-                  "type": "object",
-                  "description": "TLS configuration object",
-                  "properties": {
-                    "letsencrypt": {
-                      "type": "boolean",
-                      "description": "Enable Let's Encrypt certificate generation"
-                    }
-                  },
-                  "additionalProperties": true
-                },
-                {
-                  "type": "null",
-                  "description": "No TLS configuration"
-                }
-              ]
-            }
-          },
-          "required": ["enabled"]
-        },
         "serviceMonitor": {
           "type": "object",
           "properties": {
@@ -370,6 +390,33 @@
           "type": "string",
           "format": "uri",
           "description": "URI for the logo"
+        },
+        "https": {
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "type": "boolean",
+              "description": "Enable HTTPS support"
+            }
+          }
+        },
+        "grpc": {
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "type": "boolean",
+              "description": "Enable gRPC support"
+            }
+          }
+        },
+        "networkPolicy": {
+          "type": "object",
+          "properties": {
+            "egressRules": {
+              "type": "array",
+              "description": "Additional egress rules for network policy"
+            }
+          }
         }
       },
       "required": ["replicaCount"]

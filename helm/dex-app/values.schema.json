@@ -14,6 +14,43 @@
           "minimum": 1,
           "default": 1
         },
+        "baseDomain": {
+          "type": "string",
+          "description": "Base domain for ingress host generation"
+        },
+        "isManagementCluster": {
+          "type": "boolean",
+          "description": "Whether this dex instance is for a management cluster"
+        },
+        "oidc": {
+          "type": "object",
+          "properties": {
+            "issuerAddress": {
+              "type": "string",
+              "description": "OIDC issuer address for management clusters"
+            }
+          }
+        },
+        "service": {
+          "type": "object",
+          "properties": {
+            "ports": {
+              "type": "object",
+              "properties": {
+                "http": {
+                  "type": "object",
+                  "properties": {
+                    "port": {
+                      "type": "integer",
+                      "description": "HTTP service port number"
+                    }
+                  },
+                  "required": ["port"]
+                }
+              }
+            }
+          }
+        },
         "client": {
           "type": "object",
           "properties": {
@@ -137,13 +174,40 @@
               "description": "Annotations to be added to the ingress"
             },
             "tls": {
-              "type": "object",
-              "properties": {
-                "letsencrypt": {
-                  "type": "boolean",
-                  "description": "Enable Let's Encrypt certificate generation"
+              "oneOf": [
+                {
+                  "type": "array",
+                  "description": "Array of TLS configurations for custom certificates",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "hosts": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        },
+                        "description": "List of hosts for this TLS certificate"
+                      },
+                      "secretName": {
+                        "type": "string",
+                        "description": "Name of the TLS secret"
+                      }
+                    },
+                    "required": ["hosts", "secretName"]
+                  }
+                },
+                {
+                  "type": "object",
+                  "description": "TLS configuration object",
+                  "properties": {
+                    "letsencrypt": {
+                      "type": "boolean",
+                      "description": "Enable Let's Encrypt certificate generation"
+                    }
+                  },
+                  "additionalProperties": true
                 }
-              }
+              ]
             }
           },
           "required": ["enabled"]

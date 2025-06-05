@@ -75,10 +75,10 @@ dex:
     namespace: ""
 
     # -- (duration) Prometheus scrape interval.
-    interval:
+    interval: ""
 
     # -- (duration) Prometheus scrape timeout.
-    scrapeTimeout:
+    scrapeTimeout: ""
 
     # -- Labels to be added to the ServiceMonitor.
     ## ref: https://github.com/coreos/prometheus-operator/blob/master/Documentation/api.md#prometheusspec
@@ -101,7 +101,7 @@ dex:
     tlsConfig: {}
 
     # -- Prometheus scrape bearerTokenFile
-    bearerTokenFile:
+    bearerTokenFile: ""
 
     # -- HonorLabels chooses the metric's labels on collisions with target labels.
     honorLabels: false

@@ -4,6 +4,10 @@ directories:
   - helmChart:
       appVersion: 2.42.0
       version: 0.23.0
+    path: dex
+  path: vendor
+- contents:
+  - directory: {}
     path: .
   path: helm/dex-app/charts/dex
 kind: LockConfig

@@ -32,4 +32,3 @@ annotations:
 dependencies:
   - name: dex
     version: "0.23.0"
-    repository: "file://./charts/dex"

@@ -6,7 +6,7 @@ annotations:
     - name: dex
       image: ghcr.io/dexidp/dex:v2.42.0
 apiVersion: v2
-appVersion: 4a81bce18d5dcac35489cd95ebc363314
+appVersion: 4a81bce18d5dcac35489cd95ebc36331479bbeb6
 description: OpenID Connect (OIDC) identity and OAuth 2.0 provider with pluggable
   connectors.
 home: https://dexidp.io/

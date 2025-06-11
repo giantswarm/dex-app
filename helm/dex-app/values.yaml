@@ -152,13 +152,17 @@ oidc:
   expiry:
     signingKeys: 6h
     idTokens: 30m
+    refreshTokens:
+      reuseInterval: "3s"        # Official Dex example uses "3s"
+      validIfNotUsedFor: "12h"   # Official Dex example (90 days)
+      absoluteLifetime: "12h"    # Official Dex example (165 days)
   staticClients:
     gitopsui:
       clientID: ""
       clientSecret: ""
       redirectURI: ""
     grafana:
-      cliendID: ""
+      clientID: ""
       redirectURI: ""
     gsCLIAuth:
       clientID: "zQiFLUnrTFQwrybYzeY53hWWfhOKWRAU"

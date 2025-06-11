@@ -13,8 +13,8 @@ dex:
 
   dex:
     image:
-      registry: gsoci.azurecr.io
-      name: giantswarm/dex-app
+      registry: quay.io
+      name: giantswarm/dex
       pullPolicy: IfNotPresent
 
   configSecret:

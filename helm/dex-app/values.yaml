@@ -14,7 +14,7 @@ dex:
   dex:
     image:
       registry: gsoci.azurecr.io
-      name: giantswarm/dex
+      name: giantswarm/dex-app
       pullPolicy: IfNotPresent
 
   configSecret:

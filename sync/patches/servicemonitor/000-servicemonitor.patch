@@ -1,0 +1,22 @@
+diff --git a/vendor/dex/templates/servicemonitor.yaml b/helm/dex-app/charts/dex/templates/servicemonitor.yaml
+index aa21985..eb410b4 100644
+--- a/vendor/dex/templates/servicemonitor.yaml
++++ b/helm/dex-app/charts/dex/templates/servicemonitor.yaml
+@@ -6,7 +6,7 @@ metadata:
+   annotations:
+     {{- toYaml . | nindent 4 }}
+   {{- end }}
+-  name: {{ include "dex.fullname" . }}
++  name: {{ include "dex.name" . }}
+   namespace: {{ include "dex.serviceMonitor.namespace" . }}
+   labels:
+     {{- include "dex.labels" . | nindent 4 }}
+@@ -42,7 +42,7 @@ spec:
+       relabelings:
+         {{- toYaml . | nindent 6 }}
+       {{- end }}
+-  jobLabel: {{ include "dex.fullname" . }}
++  jobLabel: {{ include "dex.name" . }}
+   selector:
+     matchLabels:
+       {{- include "dex.selectorLabels" . | nindent 6 }}

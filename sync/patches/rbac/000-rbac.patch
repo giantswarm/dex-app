@@ -1,0 +1,55 @@
+diff --git a/vendor/dex/templates/rbac.yaml b/helm/dex-app/charts/dex/templates/rbac.yaml
+index 8f92361..b158ce6 100644
+--- a/vendor/dex/templates/rbac.yaml
++++ b/helm/dex-app/charts/dex/templates/rbac.yaml
+@@ -2,7 +2,7 @@
+ apiVersion: rbac.authorization.k8s.io/v1
+ kind: Role
+ metadata:
+-  name: {{ include "dex.fullname" . }}
++  name: {{ include "dex.name" . }}
+   namespace: {{ include "dex.namespace" . }}
+   labels:
+     {{- include "dex.labels" . | nindent 4 }}
+@@ -14,14 +14,14 @@ rules:
+ apiVersion: rbac.authorization.k8s.io/v1
+ kind: RoleBinding
+ metadata:
+-  name: {{ include "dex.fullname" . }}
++  name: {{ include "dex.name" . }}
+   namespace: {{ include "dex.namespace" . }}
+   labels:
+     {{- include "dex.labels" . | nindent 4 }}
+ roleRef:
+   kind: Role
+   apiGroup: rbac.authorization.k8s.io
+-  name: {{ include "dex.fullname" . }}
++  name: {{ include "dex.name" . }}
+ subjects:
+ - kind: ServiceAccount
+   namespace: {{ include "dex.namespace" . }}
+@@ -31,7 +31,7 @@ subjects:
+ apiVersion: rbac.authorization.k8s.io/v1
+ kind: ClusterRole
+ metadata:
+-  name: {{ include "dex.fullname" . }}
++  name: {{ include "dex.name" . }}
+   labels:
+     {{- include "dex.labels" . | nindent 4 }}
+ rules:
+@@ -42,13 +42,13 @@ rules:
+ apiVersion: rbac.authorization.k8s.io/v1
+ kind: ClusterRoleBinding
+ metadata:
+-  name: {{ include "dex.fullname" . }}-cluster
++  name: {{ include "dex.name" . }}-cluster
+   labels:
+     {{- include "dex.labels" . | nindent 4 }}
+ roleRef:
+   kind: ClusterRole
+   apiGroup: rbac.authorization.k8s.io
+-  name: {{ include "dex.fullname" . }}
++  name: {{ include "dex.name" . }}
+ subjects:
+ - kind: ServiceAccount
+   namespace: {{ include "dex.namespace" . }}

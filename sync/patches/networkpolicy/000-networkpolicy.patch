@@ -1,0 +1,13 @@
+diff --git a/vendor/dex/templates/networkpolicy.yaml b/helm/dex-app/charts/dex/templates/networkpolicy.yaml
+index 521cd49..2b59966 100644
+--- a/vendor/dex/templates/networkpolicy.yaml
++++ b/helm/dex-app/charts/dex/templates/networkpolicy.yaml
+@@ -6,7 +6,7 @@ apiVersion: networking.k8s.io/v1
+ {{- end }}
+ kind: NetworkPolicy
+ metadata:
+-  name: {{ include "dex.fullname" . }}
++  name: {{ include "dex.name" . }}
+   namespace: {{ include "dex.namespace" . }}
+   labels:
+     {{- include "dex.labels" . | nindent 4 }}

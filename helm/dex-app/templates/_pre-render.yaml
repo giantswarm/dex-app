@@ -1,0 +1,8 @@
+{{- /* Force set the image tag before subchart rendering */ -}}
+{{- if not (hasKey .Values "dex") -}}
+{{- $_ := set .Values "dex" dict -}}
+{{- end -}}
+{{- if not (hasKey .Values.dex "image") -}}
+{{- $_ := set .Values.dex "image" dict -}}
+{{- end -}}
+{{- $_ := set .Values.dex.image "tag" .Chart.Version -}}

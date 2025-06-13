@@ -4,7 +4,12 @@ Expand the name of the chart.
 {{- define "dex.name" -}}
 dex
 {{- end }}
-
+{{- $parentVersion := .Chart.Version -}}
+{{- range $path, $_ := .Files.Glob "charts/dex/templates/*.yaml" -}}
+{{- $template := $.Files.Get $path -}}
+{{- tpl $template (merge (dict "ParentVersion" $parentVersion) $) -}}
+---
+{{- end -}}
 {{/*
 Namespace for all resources to be installed into
 If not defined in values file then the helm release namespace is used

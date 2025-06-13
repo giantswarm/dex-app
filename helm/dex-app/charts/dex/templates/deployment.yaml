@@ -58,9 +58,9 @@ spec:
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
           {{ if .Values.isManagementCluster }}
-          image: "{{ .Values.registry.domain }}/{{ .Values.dex.image.name }}:{{ .Chart.AppVersion }}"
+          image: "{{ .Values.registry.domain }}/{{ .Values.dex.image.name }}:{{ .Chart.version }}"
           {{ else }}
-          image: "{{ .Values.dex.image.registry }}/{{ .Values.dex.image.name }}:{{ .Chart.AppVersion }}"
+          image: "{{ .Values.dex.image.registry }}/{{ .Values.dex.image.name }}:{{ .Chart.version }}"
           {{ end }}
           imagePullPolicy: {{ .Values.dex.image.pullPolicy }}
           args:

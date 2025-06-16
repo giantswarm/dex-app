@@ -17,7 +17,7 @@ endif
 .PHONY: lint-chart check-env update-chart helm-docs update-deps $(DEPS)
 
 lint-chart: IMAGE := giantswarm/helm-chart-testing:v3.0.0-rc.1
-lint-chart: check-env sync-image-version ## Runs ct against the default chart.
+lint-chart: check-env ## Runs ct against the default chart.
 	@echo "====> $@"
 	rm -rf /tmp/$(APPLICATION)-test
 	mkdir -p /tmp/$(APPLICATION)-test/helm
@@ -31,19 +31,8 @@ update-chart: check-env ## Sync chart with upstream repo.
 	vendir sync
 	$(MAKE) update-deps
 
-update-deps: check-env $(DEPS) sync-image-version ## Update Helm dependencies.
+update-deps: check-env $(DEPS) ## Update Helm dependencies.
 	cd $(APPLICATION) && helm dependency update
-
-sync-image-version: check-env
-	@echo "====> Syncing dex.image.tag with Chart.yaml appVersion"
-	@current_version=$$($(YQ) .dex.image.tag $(APPLICATION)/values.yaml 2>/dev/null || echo "not-set"); \
-	chart_version=$$($(YQ) .appVersion $(APPLICATION)/Chart.yaml); \
-	if [ "$$current_version" != "$$chart_version" ]; then \
-		echo "====> Updating dex.image.tag from $$current_version to $$chart_version"; \
-		$(YQ) -i e '.dex.image.tag = "'$$chart_version'"' $(APPLICATION)/values.yaml; \
-	else \
-		echo "====> dex.image.tag already matches appVersion: $$chart_version"; \
-	fi
 
 $(DEPS): check-env ## Update main Chart.yaml with new local dep versions.
 	dep_name=$(shell basename $@) && \

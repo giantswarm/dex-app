@@ -33,6 +33,8 @@ update-chart: check-env ## Sync chart with upstream repo.
 
 update-deps: check-env $(DEPS) sync-image-version ## Update Helm dependencies.
 	cd $(APPLICATION) && helm dependency update
+
+sync-image-version: check-env
 	@echo "====> Syncing dex.image.tag with Chart.yaml appVersion"
 	@current_version=$$($(YQ) .dex.image.tag $(APPLICATION)/values.yaml 2>/dev/null || echo "not-set"); \
 	chart_version=$$($(YQ) .appVersion $(APPLICATION)/Chart.yaml); \

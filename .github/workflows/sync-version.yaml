@@ -1,0 +1,34 @@
+name: "Validate version sync"
+on:
+  pull_request:
+    branches:
+      - main
+      - master
+  push:
+    branches:
+      - main
+      - master
+
+jobs:
+  check-version-sync:
+    name: "Check sync-version.sh was called"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run sync-version.sh
+        run: |
+          chmod +x sync-version.sh
+          ./sync/sync-version.sh
+
+      - name: Check there is no diff
+        run: |
+          if ! git diff --exit-code; then
+            echo "❌ Version sync required!"
+            echo "The dex.image.tag in values.yaml doesn't match Chart.yaml appVersion."
+            echo "Please run './sync/sync-version.sh' and commit the changes."
+            exit 1
+          else
+            echo "✅ Version sync is up to date!"
+          fi

@@ -12,9 +12,10 @@ HELM_DOCS=docker run --rm -u $$(id -u) -v $${PWD}:/helm-docs jnorwood/helm-docs:
 
 ifdef APPLICATION
 DEPS := $(shell find $(APPLICATION)/charts -maxdepth 2 -name "Chart.yaml" -printf "%h\n")
+APP_VERSION := $(shell $(YQ) .appVersion $(APPLICATION)/Chart.yaml)
 endif
 
-.PHONY: lint-chart check-env update-chart helm-docs update-deps $(DEPS)
+.PHONY: lint-chart check-env update-chart helm-docs update-deps $(DEPS) sync-version template-with-version
 
 lint-chart: IMAGE := giantswarm/helm-chart-testing:v3.0.0-rc.1
 lint-chart: check-env ## Runs ct against the default chart.
@@ -41,6 +42,20 @@ $(DEPS): check-env ## Update main Chart.yaml with new local dep versions.
 
 helm-docs: check-env ## Update $(APPLICATION) README.
 	$(HELM_DOCS) -c $(APPLICATION) -g $(APPLICATION)
+
+##@ Version Management
+
+sync-version: check-env ## Sync dex.image.tag with parent chart appVersion in values.yaml
+	@echo "====> Syncing version to $(APP_VERSION)"
+	$(YQ) -i e '.dex.image.tag = "$(APP_VERSION)"' $(APPLICATION)/values.yaml
+
+template-with-version: check-env ## Template chart with synced version
+	@echo "====> Templating with version: $(APP_VERSION)"
+	cd $(APPLICATION) && helm template . --set dex.image.tag=$(APP_VERSION)
+
+check-image: check-env ## Show current image configuration
+	@echo "====> Current image configuration:"
+	cd $(APPLICATION) && helm template . --set dex.image.tag=$(APP_VERSION) | grep "image:" | head -1
 
 check-env:
 ifndef APPLICATION

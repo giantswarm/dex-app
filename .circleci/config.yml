@@ -29,11 +29,11 @@ workflows:
 
                 echo "Pre-setting dex.image.tag to: $EXPECTED_VERSION"
 
-                # Update values.yaml with the expected version
-                sed -i "s/tag: \".*\"/tag: \"$EXPECTED_VERSION\"/" helm/dex-app/values.yaml
+                # Update values.yaml with the expected version - target only the giantswarm/dex-app image
+                sed -i "/name: giantswarm\/dex-app/,/pullPolicy:/ s/tag: \".*\"/tag: \"$EXPECTED_VERSION\"/" helm/dex-app/values.yaml
 
-                # Verify the update
-                IMAGE_TAG=$(grep -A 10 "dex:" helm/dex-app/values.yaml | grep "tag:" | head -1 | awk '{print $2}' | tr -d '"')
+                # Verify the update - specifically check the giantswarm/dex-app image tag
+                IMAGE_TAG=$(sed -n '/name: giantswarm\/dex-app/,/pullPolicy:/p' helm/dex-app/values.yaml | grep "tag:" | awk '{print $2}' | tr -d '"')
                 echo "Pre-synced dex.image.tag: $IMAGE_TAG"
 
                 if [ "$EXPECTED_VERSION" = "$IMAGE_TAG" ]; then
@@ -48,7 +48,6 @@ workflows:
                 - helm/dex-app/values.yaml
                 - helm/dex-app/Chart.yaml
         filters:
-            # Trigger the job also on git tag.
           tags:
             only: /^v.*/
           branches:

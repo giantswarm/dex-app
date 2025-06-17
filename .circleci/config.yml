@@ -8,6 +8,26 @@ workflows:
     - architect/push-to-registries:
         context: architect
         name: push-to-registries
+        filters:
+            # Trigger the job also on git tag.
+          tags:
+            only: /^v.*/
+          branches:
+            ignore:
+            - main
+            - master
+
+    - architect/push-to-app-catalog:
+        name: push-to-control-plane-app-catalog
+        app_catalog: control-plane-catalog
+        app_catalog_test: control-plane-test-catalog
+        context: architect
+        chart: dex-app
+        executor: app-build-suite
+        persist_chart_archive: true
+        push_to_oci_registry: true
+        requires:
+        - push-to-registries
         pre-steps:
           - checkout
           - run:
@@ -52,26 +72,6 @@ workflows:
                 grep -A 5 "dex:" "$VALUES_PATH" | grep "tag:"
 
                 echo "✅ Version sync complete!"
-        filters:
-            # Trigger the job also on git tag.
-          tags:
-            only: /^v.*/
-          branches:
-            ignore:
-            - main
-            - master
-
-    - architect/push-to-app-catalog:
-        name: push-to-control-plane-app-catalog
-        app_catalog: control-plane-catalog
-        app_catalog_test: control-plane-test-catalog
-        context: architect
-        chart: dex-app
-        executor: app-build-suite
-        persist_chart_archive: true
-        push_to_oci_registry: true
-        requires:
-        - push-to-registries
         filters:
             # Trigger the job also on git tag.
           tags:

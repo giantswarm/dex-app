@@ -8,6 +8,45 @@ workflows:
     - architect/push-to-registries:
         context: architect
         name: push-to-registries
+        post-steps:
+          - run:
+              name: Pre-sync dex image tag for ABS
+              command: |
+                echo "🔧 Pre-syncing dex.image.tag for ABS build..."
+
+                # Calculate the exact version that ABS will generate
+                if [ -n "${CIRCLE_TAG:-}" ]; then
+                    # For tagged builds: just the version without 'v'
+                    EXPECTED_VERSION=$(echo "$CIRCLE_TAG" | sed 's/^v//')
+                    echo "Tagged build - expected version: $EXPECTED_VERSION"
+                else
+                    # For branch builds: appVersion + full commit SHA
+                    CHART_VERSION=$(grep '^appVersion:' helm/dex-app/Chart.yaml | awk '{print $2}' | tr -d '"')
+                    COMMIT_SHA=$(git rev-parse HEAD)
+                    EXPECTED_VERSION="${CHART_VERSION}-${COMMIT_SHA}"
+                    echo "Branch build - expected version: $EXPECTED_VERSION"
+                fi
+
+                echo "Pre-setting dex.image.tag to: $EXPECTED_VERSION"
+
+                # Update values.yaml with the expected version
+                sed -i "s/tag: \".*\"/tag: \"$EXPECTED_VERSION\"/" helm/dex-app/values.yaml
+
+                # Verify the update
+                IMAGE_TAG=$(grep -A 10 "dex:" helm/dex-app/values.yaml | grep "tag:" | head -1 | awk '{print $2}' | tr -d '"')
+                echo "Pre-synced dex.image.tag: $IMAGE_TAG"
+
+                if [ "$EXPECTED_VERSION" = "$IMAGE_TAG" ]; then
+                    echo "✅ Pre-sync successful!"
+                else
+                    echo "❌ Pre-sync failed!"
+                    exit 1
+                fi
+          - persist_to_workspace:
+              root: .
+              paths:
+                - helm/dex-app/values.yaml
+                - helm/dex-app/Chart.yaml
         filters:
             # Trigger the job also on git tag.
           tags:
@@ -28,8 +67,17 @@ workflows:
         push_to_oci_registry: true
         requires:
         - push-to-registries
+        pre-steps:
+          - attach_workspace:
+              at: .
+          - run:
+              name: Verify pre-synced version
+              command: |
+                echo "🔍 Verifying pre-synced dex image tag..."
+                IMAGE_TAG=$(grep -A 10 "dex:" helm/dex-app/values.yaml | grep "tag:" | head -1 | awk '{print $2}' | tr -d '"')
+                echo "Current dex.image.tag: $IMAGE_TAG"
+                echo "✅ Values are pre-synced for ABS build"
         filters:
-            # Trigger the job also on git tag.
           tags:
             only: /^v.*/
           branches:

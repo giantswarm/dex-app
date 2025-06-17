@@ -8,8 +8,37 @@ workflows:
     - architect/push-to-registries:
         context: architect
         name: push-to-registries
+        post-steps:
+          - run:
+              name: Sync dex image tag for next jobs
+              command: |
+                echo "🔧 Syncing dex.image.tag for subsequent jobs..."
+
+                # Calculate the version that ABS will use
+                if [ -n "${CIRCLE_TAG:-}" ]; then
+                    BUILD_VERSION=$(echo "$CIRCLE_TAG" | sed 's/^v//')
+                    echo "Tagged build - version: $BUILD_VERSION"
+                else
+                    CHART_VERSION=$(grep '^appVersion:' helm/dex-app/Chart.yaml | awk '{print $2}' | tr -d '"')
+                    COMMIT_SHA=$(git rev-parse HEAD)
+                    BUILD_VERSION="${CHART_VERSION}-${COMMIT_SHA}"
+                    echo "Branch build - version: $BUILD_VERSION"
+                fi
+
+                echo "Pre-setting dex.image.tag to: $BUILD_VERSION"
+
+                # Update values.yaml
+                sed -i "s/tag: \".*\"/tag: \"$BUILD_VERSION\"/" helm/dex-app/values.yaml
+
+                # Verify
+                grep -A 5 "dex:" helm/dex-app/values.yaml | grep "tag:"
+
+                echo "✅ Pre-sync complete"
+          - persist_to_workspace:
+              root: .
+              paths:
+                - helm/dex-app/values.yaml
         filters:
-            # Trigger the job also on git tag.
           tags:
             only: /^v.*/
           branches:

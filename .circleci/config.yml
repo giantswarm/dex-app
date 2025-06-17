@@ -28,7 +28,7 @@ workflows:
         push_to_oci_registry: true
         requires:
         - push-to-registries
-        pre-steps:
+        post-steps:
           - checkout
           - run:
               name: Sync dex image tag with build version

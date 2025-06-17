@@ -4,3 +4,36 @@ generate-metadata: true
 chart-dir: ./helm/dex-app
 destination: ./build
 catalog-base-url: https://giantswarm.github.io/giantswarm-playground-catalog/
+
+custom-build-steps:
+  pre-build:
+    - name: "Sync dex image tag with Chart appVersion"
+      stage: "after-git-version-setter"
+      command: |
+        echo "🔧 ABS Custom Step: Syncing dex.image.tag with Chart.yaml appVersion..."
+
+        CHART_PATH="./helm/dex-app/Chart.yaml"
+        VALUES_PATH="./helm/dex-app/values.yaml"
+
+        if [ ! -f "$CHART_PATH" ] || [ ! -f "$VALUES_PATH" ]; then
+            echo "❌ Required files not found"
+            exit 1
+        fi
+
+        # Get the appVersion that ABS just set
+        APP_VERSION=$(grep '^appVersion:' "$CHART_PATH" | awk '{print $2}' | tr -d '"')
+        echo "Chart appVersion (set by ABS): $APP_VERSION"
+
+        # Update dex.image.tag in values.yaml to match
+        sed -i "s/tag: \".*\"/tag: \"$APP_VERSION\"/" "$VALUES_PATH"
+
+        # Verify the sync worked
+        IMAGE_TAG=$(grep -A 10 "dex:" "$VALUES_PATH" | grep "tag:" | head -1 | awk '{print $2}' | tr -d '"')
+        echo "Updated dex.image.tag to: $IMAGE_TAG"
+
+        if [ "$APP_VERSION" = "$IMAGE_TAG" ]; then
+            echo "✅ Image tag synced with Chart appVersion!"
+        else
+            echo "❌ Sync failed - versions don't match"
+            exit 1
+        fi

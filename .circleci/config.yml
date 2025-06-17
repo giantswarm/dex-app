@@ -28,50 +28,6 @@ workflows:
         push_to_oci_registry: true
         requires:
         - push-to-registries
-        post-steps:
-          - checkout
-          - run:
-              name: Sync dex image tag with build version
-              command: |
-                echo "🔧 Syncing dex.image.tag with build version..."
-
-                # Use the parent chart paths (not the subchart)
-                CHART_PATH="./helm/dex-app/Chart.yaml"
-                VALUES_PATH="./helm/dex-app/values.yaml"
-
-                echo "Chart path: $CHART_PATH"
-                echo "Values path: $VALUES_PATH"
-
-                # Verify files exist
-                if [ ! -f "$CHART_PATH" ] || [ ! -f "$VALUES_PATH" ]; then
-                    echo "❌ Could not find required files"
-                    exit 1
-                fi
-
-                # Use the same logic as architect for version determination
-                if [ -n "${CIRCLE_TAG:-}" ]; then
-                    # For tagged builds, use the tag (remove 'v' prefix if present)
-                    BUILD_VERSION=$(echo "$CIRCLE_TAG" | sed 's/^v//')
-                    echo "Tagged build - version: $BUILD_VERSION"
-                else
-                    # For branch builds, use appVersion + commit SHA (like architect does)
-                    CHART_VERSION=$(grep '^appVersion:' "$CHART_PATH" | awk '{print $2}' | tr -d '"')
-                    COMMIT_SHA=$(git rev-parse HEAD)
-                    BUILD_VERSION="${CHART_VERSION}-${COMMIT_SHA}"
-                    echo "Branch build - version: $BUILD_VERSION"
-                fi
-
-                echo "Using build version: $BUILD_VERSION"
-
-                # Update dex.image.tag in values.yaml
-                echo "Updating $VALUES_PATH..."
-                sed -i "s/tag: \".*\"/tag: \"$BUILD_VERSION\"/" "$VALUES_PATH"
-
-                # Verify the update
-                echo "Verifying update:"
-                grep -A 5 "dex:" "$VALUES_PATH" | grep "tag:"
-
-                echo "✅ Version sync complete!"
         filters:
             # Trigger the job also on git tag.
           tags:

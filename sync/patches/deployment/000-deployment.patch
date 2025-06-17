@@ -1,5 +1,5 @@
 diff --git a/vendor/dex/templates/deployment.yaml b/helm/dex-app/charts/dex/templates/deployment.yaml
-index 607cafd..7cba225 100644
+index 607cafd..cf29ca5 100644
 --- a/vendor/dex/templates/deployment.yaml
 +++ b/helm/dex-app/charts/dex/templates/deployment.yaml
 @@ -1,7 +1,7 @@
@@ -11,7 +11,7 @@ index 607cafd..7cba225 100644
    namespace: {{ include "dex.namespace" . }}
    labels:
      {{- include "dex.labels" . | nindent 4 }}
-@@ -57,12 +57,12 @@ spec:
+@@ -57,12 +57,8 @@ spec:
          - name: {{ .Chart.Name }}
            securityContext:
              {{- toYaml .Values.securityContext | nindent 12 }}
@@ -21,16 +21,12 @@ index 607cafd..7cba225 100644
 -          image: "{{ tpl .Values.image.repository . }}:{{ tpl .Values.image.tag . | default (printf "v%s" .Chart.AppVersion) }}"
 -          {{- end }}
 -          imagePullPolicy: {{ .Values.image.pullPolicy }}
-+          {{ if .Values.isManagementCluster }}
-+          image: "{{ .Values.registry.domain }}/{{ .Values.dex.image.name }}:v{{ .Chart.AppVersion }}"
-+          {{ else }}
-+          image: "{{ .Values.dex.image.registry }}/{{ .Values.dex.image.name }}:v{{ .Chart.AppVersion }}"
-+          {{ end }}
++          image: "{{ .Values.dex.image.registry }}/{{ .Values.dex.image.name }}:{{ .Values.dex.image.tag }}"
 +          imagePullPolicy: {{ .Values.dex.image.pullPolicy }}
            args:
              - dex
              - serve
-@@ -122,6 +122,8 @@ spec:
+@@ -122,6 +118,8 @@ spec:
              - name: config
                mountPath: /etc/dex
                readOnly: true
@@ -39,7 +35,7 @@ index 607cafd..7cba225 100644
            {{- with .Values.volumeMounts }}
              {{- toYaml . | nindent 12 }}
            {{- end }}
-@@ -129,6 +131,8 @@ spec:
+@@ -129,6 +127,8 @@ spec:
          - name: config
            secret:
              secretName: {{ include "dex.configSecretName" . }}

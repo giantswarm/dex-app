@@ -9,6 +9,7 @@ workflows:
         context: architect
         name: push-to-registries
         pre-steps:
+          - checkout
           - run:
               name: Sync dex image tag with build version
               command: |
@@ -30,6 +31,10 @@ workflows:
                     echo "❌ Could not find Chart.yaml or values.yaml for dex-app"
                     echo "Directory structure:"
                     ls -la
+                    echo "All Chart.yaml files:"
+                    find . -name "Chart.yaml"
+                    echo "All values.yaml files:"
+                    find . -name "values.yaml"
                     exit 1
                 fi
 

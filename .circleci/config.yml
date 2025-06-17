@@ -8,8 +8,43 @@ workflows:
     - architect/push-to-registries:
         context: architect
         name: push-to-registries
+        post-steps:
+          - run:
+              name: Pre-sync dex image tag for ABS
+              command: |
+                echo "🔧 Pre-syncing dex.image.tag for ABS build..."
+                
+                # Calculate the exact version that ABS will generate
+                if [ -n "${CIRCLE_TAG:-}" ]; then
+                    EXPECTED_VERSION=$(echo "$CIRCLE_TAG" | sed 's/^v//')
+                    echo "Tagged build - expected version: $EXPECTED_VERSION"
+                else
+                    CHART_VERSION=$(grep '^appVersion:' helm/dex-app/Chart.yaml | awk '{print $2}' | tr -d '"')
+                    COMMIT_SHA=$(git rev-parse HEAD)
+                    EXPECTED_VERSION="${CHART_VERSION}-${COMMIT_SHA}"
+                    echo "Branch build - expected version: $EXPECTED_VERSION"
+                fi
+                
+                echo "Pre-setting dex.image.tag to: $EXPECTED_VERSION"
+                
+                # Update values.yaml with the expected version
+                sed -i "/name: giantswarm\/dex-app/,/pullPolicy:/ s/tag: \".*\"/tag: \"$EXPECTED_VERSION\"/" helm/dex-app/values.yaml
+                
+                # Verify the update
+                IMAGE_TAG=$(sed -n '/name: giantswarm\/dex-app/,/pullPolicy:/p' helm/dex-app/values.yaml | grep "tag:" | awk '{print $2}' | tr -d '"')
+                echo "Pre-synced dex.image.tag: $IMAGE_TAG"
+                
+                if [ "$EXPECTED_VERSION" = "$IMAGE_TAG" ]; then
+                    echo "✅ Pre-sync successful!"
+                else
+                    echo "❌ Pre-sync failed!"
+                    exit 1
+                fi
+          - persist_to_workspace:
+              root: .
+              paths:
+                - helm/
         filters:
-            # Trigger the job also on git tag.
           tags:
             only: /^v.*/
           branches:
@@ -28,33 +63,12 @@ workflows:
         push_to_oci_registry: true
         requires:
         - push-to-registries
-        post-steps:
-          - run:
-              name: Sync dex image tag after checkout
-              command: |
-                echo "🔧 Post-checkout: Syncing dex.image.tag with Chart.yaml appVersion..."
-
-                # At this point, ABS has already set Chart.yaml appVersion, so read it
-                CHART_PATH="./helm/dex-app/Chart.yaml"
-                VALUES_PATH="./helm/dex-app/values.yaml"
-
-                # Get the appVersion that ABS set
-                APP_VERSION=$(grep '^appVersion:' "$CHART_PATH" | awk '{print $2}' | tr -d '"')
-                echo "Chart.yaml appVersion (set by ABS): $APP_VERSION"
-
-                # Update values.yaml to match
-                sed -i "/name: giantswarm\/dex-app/,/pullPolicy:/ s/tag: \".*\"/tag: \"$APP_VERSION\"/" "$VALUES_PATH"
-
-                # Verify
-                IMAGE_TAG=$(sed -n '/name: giantswarm\/dex-app/,/pullPolicy:/p' "$VALUES_PATH" | grep "tag:" | awk '{print $2}' | tr -d '"')
-                echo "Updated dex.image.tag to: $IMAGE_TAG"
-
-                if [ "$APP_VERSION" = "$IMAGE_TAG" ]; then
-                    echo "✅ Post-checkout sync successful!"
-                else
-                    echo "❌ Post-checkout sync failed!"
-                    exit 1
-                fi
+        # Use environment variable to skip checkout in the orb
+        environment:
+          CIRCLE_INTERNAL_TASK_DATA: /tmp/circle-internal-task-data
+        pre-steps:
+          - attach_workspace:
+              at: .
         filters:
           tags:
             only: /^v.*/

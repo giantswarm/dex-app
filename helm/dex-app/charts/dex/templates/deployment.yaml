@@ -57,7 +57,7 @@ spec:
         - name: {{ .Chart.Name }}
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
-          image: "{{ .Values.dex.image.registry }}/{{ .Values.dex.image.name }}:{{ .Values.dex.image.tag }}"
+          image: "{{ .Values.dex.image.registry }}/{{ .Values.dex.image.name }}:{{ include "dex.image.tag" . }}"
           imagePullPolicy: {{ .Values.dex.image.pullPolicy }}
           args:
             - dex

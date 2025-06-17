@@ -77,24 +77,6 @@ workflows:
             - main
             - master
 
-      # make it available to customers (only tags)
-    - architect/push-to-app-catalog:
-        name: package and push chart to giantswarm catalog
-        app_catalog: giantswarm-catalog
-        app_catalog_test: giantswarm-test-catalog
-        chart: dex-app
-        context: architect
-        executor: app-build-suite
-        push_to_oci_registry: true
-        requires:
-        - push-to-registries
-        filters:
-          tags:
-            only: /^v.*/
-          branches:
-            ignore:
-            - main
-            - master
 
     - architect/push-to-app-catalog:
         name: package and push chart

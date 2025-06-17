@@ -8,6 +8,29 @@ workflows:
     - architect/push-to-registries:
         context: architect
         name: push-to-registries
+        pre-steps:
+          - run:
+              name: Sync dex image tag with architect version
+              command: |
+                echo "🔧 Syncing dex.image.tag with architect project version..."
+
+                # Get architect project version (same as what architect uses)
+                ARCHITECT_VERSION=$(architect project version)
+                echo "Architect version: $ARCHITECT_VERSION"
+
+                # Update dex.image.tag in values.yaml
+                sed -i "s/tag: \".*\"/tag: \"$ARCHITECT_VERSION\"/" helm/dex-app/values.yaml
+
+                # Verify the change
+                IMAGE_TAG=$(grep -A 10 "dex:" helm/dex-app/values.yaml | grep "tag:" | head -1 | awk '{print $2}' | tr -d '"')
+                echo "Updated dex.image.tag to: $IMAGE_TAG"
+
+                if [ "$ARCHITECT_VERSION" = "$IMAGE_TAG" ]; then
+                    echo "✅ Version sync successful!"
+                else
+                    echo "❌ Version sync failed!"
+                    exit 1
+                fi
         filters:
             # Trigger the job also on git tag.
           tags:

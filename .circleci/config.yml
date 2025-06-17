@@ -14,6 +14,25 @@ workflows:
               command: |
                 echo "🔧 Syncing dex.image.tag with build version..."
 
+                # Debug: show current directory and files
+                echo "Current directory: $(pwd)"
+                echo "Available files:"
+                find . -name "Chart.yaml" -o -name "values.yaml" | head -10
+
+                # Find the correct paths
+                CHART_PATH=$(find . -name "Chart.yaml" -path "*/dex-app/*" | head -1)
+                VALUES_PATH=$(find . -name "values.yaml" -path "*/dex-app/*" | head -1)
+
+                echo "Chart path: $CHART_PATH"
+                echo "Values path: $VALUES_PATH"
+
+                if [ -z "$CHART_PATH" ] || [ -z "$VALUES_PATH" ]; then
+                    echo "❌ Could not find Chart.yaml or values.yaml for dex-app"
+                    echo "Directory structure:"
+                    ls -la
+                    exit 1
+                fi
+
                 # Use the same logic as architect for version determination
                 if [ -n "${CIRCLE_TAG:-}" ]; then
                     # For tagged builds, use the tag (remove 'v' prefix if present)
@@ -21,19 +40,19 @@ workflows:
                     echo "Tagged build - version: $BUILD_VERSION"
                 else
                     # For branch builds, use appVersion from Chart.yaml
-                    BUILD_VERSION=$(grep '^appVersion:' helm/dex-app/Chart.yaml | awk '{print $2}' | tr -d '"')
+                    BUILD_VERSION=$(grep '^appVersion:' "$CHART_PATH" | awk '{print $2}' | tr -d '"')
                     echo "Branch build - version: $BUILD_VERSION"
                 fi
 
                 echo "Using build version: $BUILD_VERSION"
 
                 # Update dex.image.tag in values.yaml
-                echo "Updating helm/dex-app/values.yaml..."
-                sed -i "s/tag: \".*\"/tag: \"$BUILD_VERSION\"/" helm/dex-app/values.yaml
+                echo "Updating $VALUES_PATH..."
+                sed -i "s/tag: \".*\"/tag: \"$BUILD_VERSION\"/" "$VALUES_PATH"
 
                 # Show what changed
                 echo "Updated values.yaml - dex image section:"
-                grep -A 5 -B 5 "tag: \"$BUILD_VERSION\"" helm/dex-app/values.yaml || echo "Tag not found in expected location"
+                grep -A 5 -B 5 "tag: \"$BUILD_VERSION\"" "$VALUES_PATH" || echo "Tag not found in expected location"
 
                 echo "✅ Version sync complete!"
         filters:

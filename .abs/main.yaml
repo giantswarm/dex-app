@@ -4,3 +4,5 @@ generate-metadata: true
 chart-dir: ./helm/dex-app
 destination: ./build
 catalog-base-url: https://giantswarm.github.io/giantswarm-playground-catalog/
+set-image-tag-in-values: true
+image-tag-paths: "dex.dex.image.tag"

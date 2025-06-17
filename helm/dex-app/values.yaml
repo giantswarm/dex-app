@@ -15,7 +15,7 @@ dex:
     image:
       registry: gsoci.azurecr.io
       name: giantswarm/dex-app
-      tag: "1.42.15"
+      tag: "[[ .Version ]]"
       pullPolicy: IfNotPresent
 
   configSecret:

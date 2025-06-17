@@ -15,26 +15,16 @@ workflows:
               command: |
                 echo "🔧 Syncing dex.image.tag with build version..."
 
-                # Debug: show current directory and files
-                echo "Current directory: $(pwd)"
-                echo "Available files:"
-                find . -name "Chart.yaml" -o -name "values.yaml" | head -10
-
-                # Find the correct paths
-                CHART_PATH=$(find . -name "Chart.yaml" -path "*/dex-app/*" | head -1)
-                VALUES_PATH=$(find . -name "values.yaml" -path "*/dex-app/*" | head -1)
+                # Use the parent chart paths (not the subchart)
+                CHART_PATH="./helm/dex-app/Chart.yaml"
+                VALUES_PATH="./helm/dex-app/values.yaml"
 
                 echo "Chart path: $CHART_PATH"
                 echo "Values path: $VALUES_PATH"
 
-                if [ -z "$CHART_PATH" ] || [ -z "$VALUES_PATH" ]; then
-                    echo "❌ Could not find Chart.yaml or values.yaml for dex-app"
-                    echo "Directory structure:"
-                    ls -la
-                    echo "All Chart.yaml files:"
-                    find . -name "Chart.yaml"
-                    echo "All values.yaml files:"
-                    find . -name "values.yaml"
+                # Verify files exist
+                if [ ! -f "$CHART_PATH" ] || [ ! -f "$VALUES_PATH" ]; then
+                    echo "❌ Could not find required files"
                     exit 1
                 fi
 
@@ -56,8 +46,8 @@ workflows:
                 sed -i "s/tag: \".*\"/tag: \"$BUILD_VERSION\"/" "$VALUES_PATH"
 
                 # Show what changed
-                echo "Updated values.yaml - dex image section:"
-                grep -A 5 -B 5 "tag: \"$BUILD_VERSION\"" "$VALUES_PATH" || echo "Tag not found in expected location"
+                echo "Updated values.yaml - checking dex image section:"
+                grep -A 3 -B 1 "dex:" "$VALUES_PATH" | grep -A 10 "image:" || echo "Could not find dex image section"
 
                 echo "✅ Version sync complete!"
         filters:

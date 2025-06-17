@@ -1,14 +1,4 @@
 {{/*
-Define image tag for dex.
-*/}}
-{{- define "dex.image.tag" -}}
-{{- if .Values.dex.image.tag }}
-{{- .Values.dex.image.tag }}
-{{- else }}
-{{- .Chart.AppVersion }}
-{{- end }}
-{{- end }}
-{{/*
 Expand the name of the chart.
 */}}
 {{- define "dex.name" -}}

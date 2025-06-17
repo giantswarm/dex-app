@@ -34,8 +34,10 @@ workflows:
                     BUILD_VERSION=$(echo "$CIRCLE_TAG" | sed 's/^v//')
                     echo "Tagged build - version: $BUILD_VERSION"
                 else
-                    # For branch builds, use appVersion from Chart.yaml
-                    BUILD_VERSION=$(grep '^appVersion:' "$CHART_PATH" | awk '{print $2}' | tr -d '"')
+                    # For branch builds, use appVersion + commit SHA (like architect does)
+                    CHART_VERSION=$(grep '^appVersion:' "$CHART_PATH" | awk '{print $2}' | tr -d '"')
+                    COMMIT_SHA=$(git rev-parse HEAD)
+                    BUILD_VERSION="${CHART_VERSION}-${COMMIT_SHA}"
                     echo "Branch build - version: $BUILD_VERSION"
                 fi
 
@@ -45,9 +47,9 @@ workflows:
                 echo "Updating $VALUES_PATH..."
                 sed -i "s/tag: \".*\"/tag: \"$BUILD_VERSION\"/" "$VALUES_PATH"
 
-                # Show what changed
-                echo "Updated values.yaml - checking dex image section:"
-                grep -A 3 -B 1 "dex:" "$VALUES_PATH" | grep -A 10 "image:" || echo "Could not find dex image section"
+                # Verify the update
+                echo "Verifying update:"
+                grep -A 5 "dex:" "$VALUES_PATH" | grep "tag:"
 
                 echo "✅ Version sync complete!"
         filters:

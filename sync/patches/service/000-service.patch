@@ -1,0 +1,13 @@
+diff --git a/vendor/dex/templates/service.yaml b/helm/dex-app/charts/dex/templates/service.yaml
+index 2a0122f..4dee25a 100644
+--- a/vendor/dex/templates/service.yaml
++++ b/helm/dex-app/charts/dex/templates/service.yaml
+@@ -1,7 +1,7 @@
+ apiVersion: v1
+ kind: Service
+ metadata:
+-  name: {{ include "dex.fullname" . }}
++  name: {{ include "dex.name" . }}
+   namespace: {{ include "dex.namespace" . }}
+   labels:
+     {{- include "dex.labels" . | nindent 4 }}

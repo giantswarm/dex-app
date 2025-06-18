@@ -14,7 +14,8 @@ dex:
   dex:
     image:
       registry: gsoci.azurecr.io
-      name: giantswarm/dex
+      name: giantswarm/dex-app
+      tag: "1.42.15-d40e463b5f9db98c6183ce5e0df58423e01c6a0d"
       pullPolicy: IfNotPresent
 
   configSecret:
@@ -152,13 +153,17 @@ oidc:
   expiry:
     signingKeys: 6h
     idTokens: 30m
+    refreshTokens:
+      reuseInterval: "3s"        # Official Dex example uses "3s"
+      validIfNotUsedFor: "12h"   # Official Dex example (90 days)
+      absoluteLifetime: "12h"    # Official Dex example (165 days)
   staticClients:
     gitopsui:
       clientID: ""
       clientSecret: ""
       redirectURI: ""
     grafana:
-      cliendID: ""
+      clientID: ""
       redirectURI: ""
     gsCLIAuth:
       clientID: "zQiFLUnrTFQwrybYzeY53hWWfhOKWRAU"

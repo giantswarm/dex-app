@@ -1,0 +1,22 @@
+diff --git a/vendor/dex/templates/hpa.yaml b/helm/dex-app/charts/dex/templates/hpa.yaml
+index fb4296d..78ba600 100644
+--- a/vendor/dex/templates/hpa.yaml
++++ b/helm/dex-app/charts/dex/templates/hpa.yaml
+@@ -6,7 +6,7 @@ apiVersion: autoscaling/v2beta1
+ {{- end }}
+ kind: HorizontalPodAutoscaler
+ metadata:
+-  name: {{ include "dex.fullname" . }}
++  name: {{ include "dex.name" . }}
+   namespace: {{ include "dex.namespace" . }}
+   labels:
+     {{- include "dex.labels" . | nindent 4 }}
+@@ -14,7 +14,7 @@ spec:
+   scaleTargetRef:
+     apiVersion: apps/v1
+     kind: Deployment
+-    name: {{ include "dex.fullname" . }}
++    name: {{ include "dex.name" . }}
+   minReplicas: {{ .Values.autoscaling.minReplicas }}
+   maxReplicas: {{ .Values.autoscaling.maxReplicas }}
+   metrics:

@@ -634,7 +634,7 @@
       "description": "Whether this is a management cluster"
     },
     "managementCluster": {
-      "type": "object",
+      "type": ["object", "string"],
       "properties": {
         "name": {
           "type": "string",

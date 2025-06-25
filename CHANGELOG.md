@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Allow for `managementCluster` value to be a `string` or `object`.
+
 ## [2.0.1] - 2025-06-25
 
 ### Changed

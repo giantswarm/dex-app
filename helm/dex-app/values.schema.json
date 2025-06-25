@@ -49,7 +49,7 @@
       "description": "Annotations to be added to the deployment"
     },
     "podAnnotations": {
-      "type": "object", 
+      "type": "object",
       "description": "Annotations to be added to the pod"
     },
     "deploymentLabels": {
@@ -687,5 +687,5 @@
       }
     }
   },
-  "additionalProperties": false
+  "additionalProperties": true
 }

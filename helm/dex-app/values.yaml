@@ -156,7 +156,7 @@ oidc:
     refreshTokens:
       reuseInterval: "3s"        # Official Dex example uses "3s"
       validIfNotUsedFor: "12h"   # Official Dex example (90 days)
-      absoluteLifetime: "12h"    # Official Dex example (165 days)
+      absoluteLifetime: "720h"    # Official Dex example (165 days)
   staticClients:
     gitopsui:
       clientID: ""

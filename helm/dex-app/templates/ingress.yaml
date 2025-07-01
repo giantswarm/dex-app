@@ -28,15 +28,15 @@ metadata:
   labels:
     {{- include "dex.labels" . | nindent 4 }}
   annotations:
-    {{- if and .Values.global .Values.global.ingress .Values.global.ingress.tls .Values.global.ingress.tls.clusterIssuer }}
-    cert-manager.io/cluster-issuer: {{ .Values.global.ingress.tls.clusterIssuer }}
+    {{- if and .Values .Values.ingress .Values.ingress.tls .Values.ingress.tls.clusterIssuer }}
+    cert-manager.io/cluster-issuer: {{ .Values.ingress.tls.clusterIssuer }}
     {{- end }}
     {{- with .Values.ingress.annotations }}
     {{- toYaml . | nindent 4 }}
     {{- end }}
 spec:
-  {{- if and .Values.global .Values.global.ingress .Values.global.ingress.ingressClassName }}
-  ingressClassName: {{ .Values.global.ingress.ingressClassName }}
+  {{- if .Values.ingress.ingressClassName }}
+  ingressClassName: {{ .Values.ingress.ingressClassName }}
   {{- else if and .Values.ingress.className (semverCompare ">=1.18-0" .Capabilities.KubeVersion.GitVersion) }}
   ingressClassName: {{ .Values.ingress.className }}
   {{- end }}
@@ -49,7 +49,7 @@ spec:
       {{- end }}
       secretName: {{ .secretName }}
     {{- end }}
-  {{- else if and .Values.global .Values.global.ingress .Values.global.ingress.tls .Values.global.ingress.tls.letsencrypt }}
+  {{- else if and .Values.ingress.tls.letsencrypt }}
   tls:
     - hosts:
       - {{ $host | quote }}

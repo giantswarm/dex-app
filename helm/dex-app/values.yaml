@@ -148,11 +148,6 @@ ingress:
     # -- Enable Let's Encrypt certificate generation
     letsencrypt: true
     clusterIssuer: "letsencrypt-giantswarm"
-    caPemB64: ""
-    crtPemB64: ""
-    keyPemB64: ""
-    externalSecret:
-      enabled: false
 
 oidc:
   issuerAddress: ""

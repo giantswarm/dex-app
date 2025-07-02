@@ -9,18 +9,7 @@
 {{- else }}
 {{- $host = printf "dex.%s" (.Values.baseDomain | default "localhost") }}
 {{- end }}
-{{- if and .Values.ingress.className (not (semverCompare ">=1.18-0" .Capabilities.KubeVersion.GitVersion)) }}
-{{- if not (hasKey .Values.ingress.annotations "kubernetes.io/ingress.class") }}
-{{- $_ := set .Values.ingress.annotations "kubernetes.io/ingress.class" .Values.ingress.className }}
-{{- end }}
-{{- end }}
-{{- if semverCompare ">=1.19-0" .Capabilities.KubeVersion.GitVersion }}
 apiVersion: networking.k8s.io/v1
-{{- else if semverCompare ">=1.14-0" .Capabilities.KubeVersion.GitVersion }}
-apiVersion: networking.k8s.io/v1beta1
-{{- else }}
-apiVersion: extensions/v1beta1
-{{- end }}
 kind: Ingress
 metadata:
   name: {{ include "dex.name" . }}
@@ -37,32 +26,32 @@ metadata:
 spec:
   {{- if .Values.ingress.ingressClassName }}
   ingressClassName: {{ .Values.ingress.ingressClassName }}
-  {{- else if and .Values.ingress.className (semverCompare ">=1.18-0" .Capabilities.KubeVersion.GitVersion) }}
+  {{- else if .Values.ingress.className }}
   ingressClassName: {{ .Values.ingress.className }}
   {{- end }}
   {{- if kindIs "slice" .Values.ingress.tls }}
   tls:
     {{- range .Values.ingress.tls }}
     - hosts:
-      {{- range .hosts }}
-      - {{ tpl . $ | quote }}
-      {{- end }}
+        {{- range .hosts }}
+        - {{ tpl . $ | quote }}
+        {{- end }}
       secretName: {{ .secretName }}
     {{- end }}
   {{- else if and .Values.ingress.tls.letsencrypt }}
   tls:
     - hosts:
-      - {{ $host | quote }}
+        - {{ $host | quote }}
       secretName: {{ include "dex.name" . }}-tls-le
   {{- else if and (kindIs "map" .Values.ingress.tls) .Values.ingress.tls.letsencrypt }}
   tls:
     - hosts:
-      - {{ $host | quote }}
+        - {{ $host | quote }}
       secretName: {{ include "dex.name" . }}-tls-le
   {{- else if kindIs "map" .Values.ingress.tls }}
   tls:
     - hosts:
-      - {{ $host | quote }}
+        - {{ $host | quote }}
       secretName: {{ include "dex.name" . }}-tls
   {{- end }}
   rules:
@@ -70,17 +59,10 @@ spec:
       http:
         paths:
           - path: /
-            {{- if semverCompare ">=1.18-0" .Capabilities.KubeVersion.GitVersion }}
             pathType: Prefix
-            {{- end }}
             backend:
-              {{- if semverCompare ">=1.19-0" .Capabilities.KubeVersion.GitVersion }}
               service:
                 name: {{ include "dex.name" . }}
                 port:
                   number: {{ $svcPort }}
-              {{- else }}
-              serviceName: {{ include "dex.name" . }}
-              servicePort: {{ $svcPort }}
-              {{- end }}
 {{- end }}

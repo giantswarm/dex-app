@@ -137,16 +137,14 @@ ingress:
   # -- Ingress [class name](https://kubernetes.io/docs/concepts/services-networking/ingress/#ingress-class).
   className: "nginx"
   # -- Annotations to be added to the ingress.
-  annotations:
-    cert-manager.io/cluster-issuer: letsencrypt-giantswarm
-    # kubernetes.io/ingress.class: nginx
-    # kubernetes.io/tls-acme: "true"
+  annotations: {}
   # -- Ingress TLS configuration.
   # Note: Host and secretName are now determined dynamically by the template
   # based on cluster type (workload vs management) and baseDomain/oidc.issuerAddress
   tls:
     # -- Enable Let's Encrypt certificate generation
     letsencrypt: true
+    clusterIssuer: "letsencrypt-giantswarm"
 
 oidc:
   issuerAddress: ""

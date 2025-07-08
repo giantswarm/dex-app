@@ -27,7 +27,7 @@ spec:
     replacement: dex
     targetLabel: component
 
-{{- if .Values.deployDexK8SAuthenticator.enabled }}
+{{- if .Values.deployDexK8SAuthenticator }}
 ---
 # PodLogs for dex-k8s-authenticator-customer
 apiVersion: monitoring.grafana.com/v1alpha2

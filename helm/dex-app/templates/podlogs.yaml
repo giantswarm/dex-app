@@ -7,7 +7,7 @@ metadata:
   name: dex-logs
   namespace: {{ include "dex.namespace" . }}
   labels:
-    {{- include "dex.labels" . | nindent 4 }}
+    {{- include "dex.labels.common" . | nindent 4 }}
   annotations:
     meta.helm.sh/release-name: {{ .Release.Name }}
     meta.helm.sh/release-namespace: {{ .Release.Namespace }}
@@ -15,7 +15,7 @@ metadata:
 spec:
   selector:
     matchLabels:
-      {{- include "dex.selectorLabels" . | nindent 6 }}
+      {{- include "dex.labels.selector" . | nindent 6 }}
   relabelings:
   - action: replace
     replacement: giantswarm
@@ -36,7 +36,7 @@ metadata:
   name: dex-k8s-authenticator-customer-logs
   namespace: {{ include "dex.namespace" . }}
   labels:
-    {{- include "dex.labels" . | nindent 4 }}
+    {{- include "dex.labels.common" . | nindent 4 }}
   annotations:
     meta.helm.sh/release-name: {{ .Release.Name }}
     meta.helm.sh/release-namespace: {{ .Release.Namespace }}
@@ -65,7 +65,7 @@ metadata:
   name: dex-k8s-authenticator-giantswarm-logs
   namespace: {{ include "dex.namespace" . }}
   labels:
-    {{- include "dex.labels" . | nindent 4 }}
+    {{- include "dex.labels.common" . | nindent 4 }}
   annotations:
     meta.helm.sh/release-name: {{ .Release.Name }}
     meta.helm.sh/release-namespace: {{ .Release.Namespace }}

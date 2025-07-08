@@ -55,6 +55,7 @@ spec:
   - action: replace
     replacement: dex-k8s-authenticator-customer
     targetLabel: component
+{{- end }}
 
 {{- if eq (include "has-giantswarm-connector" .) "true" }}
 ---
@@ -84,6 +85,5 @@ spec:
   - action: replace
     replacement: dex-k8s-authenticator-giantswarm
     targetLabel: component
-{{- end }}
 {{- end }}
 {{- end }}

@@ -5,6 +5,7 @@ annotations:
   artifacthub.io/images: |
     - name: dex
       image: ghcr.io/dexidp/dex:v2.42.0
+  application.giantswarm.io/team: shield
 apiVersion: v2
 appVersion: 2.42.0
 description: OpenID Connect (OIDC) identity and OAuth 2.0 provider with pluggable

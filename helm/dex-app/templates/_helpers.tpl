@@ -253,7 +253,6 @@ Override for original helper because Giant Swarm cert-manager chart v2 label sel
 {{- end -}}
 {{- printf "%s" $registry -}}
 {{- end -}}
-{{/*
 
 {{/*
 Common dex labels

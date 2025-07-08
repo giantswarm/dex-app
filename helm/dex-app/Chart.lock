@@ -1,0 +1,6 @@
+dependencies:
+- name: dex
+  repository: ""
+  version: 0.23.0
+digest: sha256:00ac0cdfce37e4c6fda4ee828a7a7731428b187a1e27ceb00e7147a7468309f8
+generated: "2025-07-08T09:12:57.947130292Z"

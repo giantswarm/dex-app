@@ -48,7 +48,11 @@ dex:
 
   serviceMonitor:
     # -- Enable Prometheus ServiceMonitor.
-    # See the [documentation](https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/design.md#servicemonitor) and the [API reference](https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/api.md#servicemonitor) for details.
+    # See the [documentation](https://github.com/prometheus-operator/prometheus-operator/blob/main/
+    # Documentation/design.md#servicemonitor)
+    # and the [API reference](https://github.com/prometheus-operator/prometheus-operator/blob/main/
+    # Documentation/api.md#servicemonitor)
+    # for details.
     enabled: true
 
     # -- Namespace where the ServiceMonitor resource should be deployed.
@@ -89,7 +93,8 @@ dex:
 
     # -- Prometheus scrape metric relabel configs
     # to apply to samples before ingestion.
-    ## [Metric Relabeling](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#metric_relabel_configs)
+    ## [Metric Relabeling](https://prometheus.io/docs/prometheus/latest/
+    ## configuration/configuration/#metric_relabel_configs)
     metricRelabelings: []
     # - action: keep
     #   regex: 'kube_(daemonset|deployment|pod|namespace|node|statefulset).+'
@@ -106,8 +111,10 @@ dex:
     #   replacement: $1
     #   action: replace
 
-  # -- Container resource [requests and limits](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/).
-  # See the [API reference](https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/pod-v1/#resources) for details.
+  # -- Container resource [requests and limits](https://kubernetes.io/docs/concepts/
+  # configuration/manage-resources-containers/).
+  # See the [API reference](https://kubernetes.io/docs/reference/kubernetes-api/
+  # workload-resources/pod-v1/#resources) for details.
   # @default -- No requests or limits.
   resources:
     limits:

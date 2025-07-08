@@ -1,4 +1,0 @@
-chart-dirs:
-  - helm
-validate-maintainers: false
-target-branch: main

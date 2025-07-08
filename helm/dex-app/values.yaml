@@ -232,5 +232,5 @@ global:
 
 # Enable log collection for observability
 monitoring:
-  podLog:
+  podLogs:
     enabled: true

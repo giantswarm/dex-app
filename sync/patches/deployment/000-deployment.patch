@@ -1,0 +1,59 @@
+diff --git a/vendor/dex/templates/deployment.yaml b/helm/dex-app/charts/dex/templates/deployment.yaml
+index 607cafd..9fe2c8b 100644
+--- a/vendor/dex/templates/deployment.yaml
++++ b/helm/dex-app/charts/dex/templates/deployment.yaml
+@@ -1,7 +1,7 @@
+ apiVersion: apps/v1
+ kind: Deployment
+ metadata:
+-  name: {{ include "dex.fullname" . }}
++  name: {{ include "dex.name" . }}
+   namespace: {{ include "dex.namespace" . }}
+   labels:
+     {{- include "dex.labels" . | nindent 4 }}
+@@ -33,6 +33,12 @@ spec:
+       {{ if .Values.configSecret.create }}
+         checksum/config: {{ include (print $.Template.BasePath "/secret.yaml") . | sha256sum }}
+       {{- end }}
++        {{- $operatorSecret := (lookup "v1" "Secret" .Release.Namespace "dex-app-default-dex-config") }}
++        {{- if and $operatorSecret $operatorSecret.data $operatorSecret.data.default }}
++        checksum/operator-config: {{ $operatorSecret.data.default | sha256sum }}
++        {{- else }}
++        checksum/operator-config: {{ "empty" | sha256sum }}
++        {{- end }}
+       labels:
+         {{- include "dex.selectorLabels" . | nindent 8 }}
+         {{- with .Values.podLabels }}
+@@ -57,12 +63,8 @@ spec:
+         - name: {{ .Chart.Name }}
+           securityContext:
+             {{- toYaml .Values.securityContext | nindent 12 }}
+-          {{- if .Values.image.digest }}
+-          image: "{{ tpl .Values.image.repository . }}@{{ tpl .Values.image.digest . }}"
+-          {{- else }}
+-          image: "{{ tpl .Values.image.repository . }}:{{ tpl .Values.image.tag . | default (printf "v%s" .Chart.AppVersion) }}"
+-          {{- end }}
+-          imagePullPolicy: {{ .Values.image.pullPolicy }}
++          image: "{{ .Values.dex.image.registry }}/{{ .Values.dex.image.name }}:{{ .Values.dex.image.tag }}"
++          imagePullPolicy: {{ .Values.dex.image.pullPolicy }}
+           args:
+             - dex
+             - serve
+@@ -122,6 +124,8 @@ spec:
+             - name: config
+               mountPath: /etc/dex
+               readOnly: true
++            - name: tmp-volume
++              mountPath: /tmp
+           {{- with .Values.volumeMounts }}
+             {{- toYaml . | nindent 12 }}
+           {{- end }}
+@@ -129,6 +133,8 @@ spec:
+         - name: config
+           secret:
+             secretName: {{ include "dex.configSecretName" . }}
++        - name: tmp-volume
++          emptyDir: {}
+       {{- with .Values.volumes }}
+         {{- toYaml . | nindent 8 }}
+       {{- end }}

@@ -152,9 +152,9 @@ oidc:
     signingKeys: 6h
     idTokens: 30m
     refreshTokens:
-      reuseInterval: "3s"
-      validIfNotUsedFor: "12h"
-      absoluteLifetime: "720h"
+      reuseInterval: 3s
+      validIfNotUsedFor: 720h
+      absoluteLifetime: 720h
   staticClients:
     gitopsui:
       clientID: ""

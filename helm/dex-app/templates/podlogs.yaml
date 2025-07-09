@@ -5,17 +5,17 @@ apiVersion: monitoring.grafana.com/v1alpha2
 kind: PodLogs
 metadata:
   name: dex-logs
-  namespace: {{ include "dex.namespace" . }}
+  namespace: giantswarm
   labels:
-    {{- include "dex.labels.common" . | nindent 4 }}
+    app.kubernetes.io/name: dex
   annotations:
-    meta.helm.sh/release-name: {{ .Release.Name }}
-    meta.helm.sh/release-namespace: {{ .Release.Namespace }}
-    giantswarm.io/notes: "Log collection for Dex OIDC service"
+    giantswarm.io/notes: "Log collection for DEX identity provider"
 spec:
   selector:
     matchLabels:
-      {{- include "dex.labels.selector" . | nindent 6 }}
+      app.kubernetes.io/name: dex
+      app.kubernetes.io/component: dex
+      app.kubernetes.io/instance: dex-app
   relabelings:
   - action: replace
     replacement: giantswarm
@@ -27,24 +27,22 @@ spec:
     replacement: dex
     targetLabel: component
 
-{{- if .Values.deployDexK8SAuthenticator }}
 ---
-# PodLogs for dex-k8s-authenticator-customer
+# PodLogs for dex-operator
 apiVersion: monitoring.grafana.com/v1alpha2
 kind: PodLogs
 metadata:
-  name: dex-k8s-authenticator-customer-logs
-  namespace: {{ include "dex.namespace" . }}
+  name: dex-operator-logs
+  namespace: giantswarm
   labels:
-    {{- include "dex.labels.common" . | nindent 4 }}
+    app.kubernetes.io/name: dex-operator
   annotations:
-    meta.helm.sh/release-name: {{ .Release.Name }}
-    meta.helm.sh/release-namespace: {{ .Release.Namespace }}
-    giantswarm.io/notes: "Log collection for Dex K8s Authenticator (Customer)"
+    giantswarm.io/notes: "Log collection for DEX operator"
 spec:
   selector:
     matchLabels:
-      {{- include "dexk8sauth.customer.labels.selector" . | nindent 6 }}
+      app.kubernetes.io/name: dex-operator
+      app.kubernetes.io/instance: dex-operator
   relabelings:
   - action: replace
     replacement: giantswarm
@@ -53,37 +51,6 @@ spec:
     sourceLabels: [__meta_kubernetes_pod_node_name]
     targetLabel: node_name
   - action: replace
-    replacement: dex-k8s-authenticator-customer
+    replacement: dex-operator
     targetLabel: component
-{{- end }}
-
-{{- if eq (include "has-giantswarm-connector" .) "true" }}
----
-# PodLogs for dex-k8s-authenticator-giantswarm
-apiVersion: monitoring.grafana.com/v1alpha2
-kind: PodLogs
-metadata:
-  name: dex-k8s-authenticator-giantswarm-logs
-  namespace: {{ include "dex.namespace" . }}
-  labels:
-    {{- include "dex.labels.common" . | nindent 4 }}
-  annotations:
-    meta.helm.sh/release-name: {{ .Release.Name }}
-    meta.helm.sh/release-namespace: {{ .Release.Namespace }}
-    giantswarm.io/notes: "Log collection for Dex K8s Authenticator (Giant Swarm)"
-spec:
-  selector:
-    matchLabels:
-      {{- include "dexk8sauth.giantswarm.labels.selector" . | nindent 6 }}
-  relabelings:
-  - action: replace
-    replacement: giantswarm
-    targetLabel: giantswarm_observability_tenant
-  - action: replace
-    sourceLabels: [__meta_kubernetes_pod_node_name]
-    targetLabel: node_name
-  - action: replace
-    replacement: dex-k8s-authenticator-giantswarm
-    targetLabel: component
-{{- end }}
 {{- end }}

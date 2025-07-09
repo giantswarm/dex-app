@@ -33,6 +33,12 @@ spec:
       {{ if .Values.configSecret.create }}
         checksum/config: {{ include (print $.Template.BasePath "/secret.yaml") . | sha256sum }}
       {{- end }}
+        {{- $operatorSecret := (lookup "v1" "Secret" .Release.Namespace "dex-app-default-dex-config") }}
+        {{- if and $operatorSecret $operatorSecret.data $operatorSecret.data.default }}
+        checksum/operator-config: {{ $operatorSecret.data.default | sha256sum }}
+        {{- else }}
+        checksum/operator-config: {{ "empty" | sha256sum }}
+        {{- end }}
       labels:
         {{- include "dex.selectorLabels" . | nindent 8 }}
         {{- with .Values.podLabels }}

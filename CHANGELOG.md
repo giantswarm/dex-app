@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Added `checksum/operator-config` at the Pod level so it restarts when `dex-operator` updates the credentials in `dex-app-default-dex-config` secret.
+
 ## [2.1.1] - 2025-07-09
 
 ### Changed

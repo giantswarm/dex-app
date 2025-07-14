@@ -26,31 +26,4 @@ spec:
   - action: replace
     replacement: dex
     targetLabel: component
-
----
-# PodLogs for dex-operator
-apiVersion: monitoring.grafana.com/v1alpha2
-kind: PodLogs
-metadata:
-  name: dex-operator-logs
-  namespace: giantswarm
-  labels:
-    app.kubernetes.io/name: dex-operator
-  annotations:
-    giantswarm.io/notes: "Log collection for DEX operator"
-spec:
-  selector:
-    matchLabels:
-      app.kubernetes.io/name: dex-operator
-      app.kubernetes.io/instance: dex-operator
-  relabelings:
-  - action: replace
-    replacement: giantswarm
-    targetLabel: giantswarm_observability_tenant
-  - action: replace
-    sourceLabels: [__meta_kubernetes_pod_node_name]
-    targetLabel: node_name
-  - action: replace
-    replacement: dex-operator
-    targetLabel: component
 {{- end }}

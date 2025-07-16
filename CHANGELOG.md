@@ -7,16 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Enable observability platform log collection.
+
 ## [2.1.0] - 2025-07-03
 
 ### Changed
 
 - Fixed Ingress fields for workload clusters
 - Increased `oidc.expiry.refreshTokens.absoluteLifetime` to 30 days
-
-### Changed
-
-- Enable observability platform log collection.
 
 ### Removed
 

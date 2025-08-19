@@ -54,3 +54,6 @@ oidc:
         connectorConfig: |-
           test: test
 
+monitoring:
+  podLogs:
+    enabled: false

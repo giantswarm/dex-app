@@ -1,0 +1,29 @@
+{{- if and .Values.monitoring .Values.monitoring.podLogs .Values.monitoring.podLogs.enabled }}
+---
+# PodLogs for dex
+apiVersion: monitoring.grafana.com/v1alpha2
+kind: PodLogs
+metadata:
+  name: dex-logs
+  namespace: giantswarm
+  labels:
+    app.kubernetes.io/name: dex
+  annotations:
+    giantswarm.io/notes: "Log collection for DEX identity provider"
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: dex
+      app.kubernetes.io/component: dex
+      app.kubernetes.io/instance: dex-app
+  relabelings:
+  - action: replace
+    replacement: giantswarm
+    targetLabel: giantswarm_observability_tenant
+  - action: replace
+    sourceLabels: [__meta_kubernetes_pod_node_name]
+    targetLabel: node_name
+  - action: replace
+    replacement: dex
+    targetLabel: component
+{{- end }}

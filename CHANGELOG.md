@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Fix support for using a private CA in the ingresses
+
 ## [2.1.2] - 2025-10-07
 
 ### Changed

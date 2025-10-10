@@ -38,17 +38,7 @@ spec:
         {{- end }}
       secretName: {{ .secretName }}
     {{- end }}
-  {{- else if and .Values.ingress.tls.letsencrypt }}
-  tls:
-    - hosts:
-        - {{ $host | quote }}
-      secretName: {{ include "dex.name" . }}-tls-le
-  {{- else if and (kindIs "map" .Values.ingress.tls) .Values.ingress.tls.letsencrypt }}
-  tls:
-    - hosts:
-        - {{ $host | quote }}
-      secretName: {{ include "dex.name" . }}-tls-le
-  {{- else if kindIs "map" .Values.ingress.tls }}
+  {{- else }}
   tls:
     - hosts:
         - {{ $host | quote }}

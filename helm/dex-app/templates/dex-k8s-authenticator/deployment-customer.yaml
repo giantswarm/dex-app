@@ -63,7 +63,7 @@ spec:
         - name: config
           subPath: config.yaml
           mountPath: /app/config.yaml
-        {{- if not $values.ingress.tls.letsencrypt }}
+        {{- if $values.trustedRootCA }}
         - mountPath: /app/ssl/ca.crt
           name: ca-cert
           subPath: ca.crt
@@ -99,7 +99,6 @@ spec:
       - name: config
         configMap:
           name: {{ include "resource.dexk8sauth.name" $resource }}-{{ .id }}
-      {{- if not $values.ingress.tls.letsencrypt }}
       {{- if $values.trustedRootCA }}
       - name: ca-cert
         secret:
@@ -108,15 +107,6 @@ spec:
             - key: {{ $values.trustedRootCA.name }}
               path: ca.crt
           secretName: {{ $values.trustedRootCA.secretName }}
-      {{- else }}
-      - secret:
-          defaultMode: 420
-          items:
-          - key: ca.crt
-            path: ca.crt
-          secretName: {{ include "resource.dexk8sauth.name" $resource }}
-        name: ca-cert
-      {{- end }}
       {{- end }}
 {{- end }}
 {{- else }}
@@ -175,7 +165,7 @@ spec:
         - name: config
           subPath: config.yaml
           mountPath: /app/config.yaml
-        {{- if not .Values.ingress.tls.letsencrypt }}
+        {{- if .Values.trustedRootCA }}
         - mountPath: /app/ssl/ca.crt
           name: ca-cert
           subPath: ca.crt
@@ -211,7 +201,6 @@ spec:
       - name: config
         configMap:
           name: {{ include "resource.dexk8sauth.name" . }}-customer
-      {{- if not .Values.ingress.tls.letsencrypt }}
       {{- if .Values.trustedRootCA }}
       - name: ca-cert
         secret:
@@ -220,15 +209,6 @@ spec:
             - key: {{ .Values.trustedRootCA.name }}
               path: ca.crt
           secretName: {{ .Values.trustedRootCA.secretName }}
-      {{- else }}
-      - secret:
-          defaultMode: 420
-          items:
-          - key: ca.crt
-            path: ca.crt
-          secretName: {{ include "resource.dexk8sauth.name" . }}
-        name: ca-cert
-      {{- end }}
       {{- end }}
 {{ end }}
 {{ end }}

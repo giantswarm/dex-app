@@ -102,7 +102,7 @@
           }
         },
         "tls": {
-          "description": "TLS configuration - can be array of TLS configs or object with letsencrypt setting",
+          "description": "TLS configuration - can be array of TLS configs or object with clusterIssuer setting",
           "anyOf": [
             {
               "type": "array",
@@ -124,8 +124,8 @@
             {
               "type": "object",
               "properties": {
-                "letsencrypt": {
-                  "type": "boolean"
+                "clusterIssuer": {
+                  "type": "string"
                 }
               },
               "additionalProperties": true

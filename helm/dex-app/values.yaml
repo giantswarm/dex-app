@@ -142,8 +142,7 @@ ingress:
   # Note: Host and secretName are now determined dynamically by the template
   # based on cluster type (workload vs management) and baseDomain/oidc.issuerAddress
   tls:
-    # -- Enable Let's Encrypt certificate generation
-    letsencrypt: true
+    # -- Configure the cert-manager cluster issuer.
     clusterIssuer: "letsencrypt-giantswarm"
 
 oidc:

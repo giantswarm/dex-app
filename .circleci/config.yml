@@ -85,12 +85,24 @@ workflows:
         app-test-suite_version: v0.4.1
         app-test-suite_container_tag: 0.4.1
 
-      # deploy to vsphere installations (only tags)
     - architect/push-to-app-collection:
         context: architect
-        name: push-to-vsphere-app-collection
+        name: push-to-capa-app-collection
         app_name: dex-app
-        app_collection_repo: vsphere-app-collection
+        app_collection_repo: capa-app-collection
+        requires:
+        - push-to-control-plane-app-catalog
+        filters:
+          branches:
+            ignore: /.*/
+          tags:
+            only: /^v.*/
+
+    - architect/push-to-app-collection:
+        context: architect
+        name: push-to-capz-app-collection
+        app_name: dex-app
+        app_collection_repo: capz-app-collection
         requires:
         - push-to-control-plane-app-catalog
         filters:
@@ -114,9 +126,9 @@ workflows:
 
     - architect/push-to-app-collection:
         context: architect
-        name: push-to-capa-app-collection
+        name: push-to-proxmox-app-collection
         app_name: dex-app
-        app_collection_repo: capa-app-collection
+        app_collection_repo: proxmox-app-collection
         requires:
         - push-to-control-plane-app-catalog
         filters:
@@ -127,9 +139,9 @@ workflows:
 
     - architect/push-to-app-collection:
         context: architect
-        name: push-to-capz-app-collection
+        name: push-to-vsphere-app-collection
         app_name: dex-app
-        app_collection_repo: capz-app-collection
+        app_collection_repo: vsphere-app-collection
         requires:
         - push-to-control-plane-app-catalog
         filters:

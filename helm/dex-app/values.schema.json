@@ -350,6 +350,32 @@
           },
           "required": ["enabled"]
         },
+        "podLogs": {
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "type": "boolean",
+              "description": "Enable log collection for monitoring"
+            },
+            "annotations": {
+              "type": "object",
+              "description": "Optional additional annotations"
+            },
+            "labels": {
+              "type": "object",
+              "description": "Optional additional labels"
+            },
+            "relabelings": {
+              "type": "array",
+              "description": "List of relabeling rules for logs"
+            },
+            "tenant": {
+              "type": "string",
+              "description": "Tenant to use for monitoring",
+              "default": "giantswarm"
+            }
+          }
+        },
         "resources": {
           "type": "object",
           "description": "Container resource requests and limits",
@@ -683,6 +709,37 @@
               "description": "Whether pod security standards are enforced"
             }
           }
+        },
+        "tenant": {
+          "type": "string",
+          "description": "Tenant to use for monitoring",
+          "default": "giantswarm"
+        }
+      }
+    },
+    "podLogs": {
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "description": "Enable log collection for monitoring"
+        },
+        "annotations": {
+          "type": "object",
+          "description": "Optional additional annotations"
+        },
+        "labels": {
+          "type": "object",
+          "description": "Optional additional labels"
+        },
+        "relabelings": {
+          "type": "array",
+          "description": "List of relabeling rules for logs"
+        },
+        "tenant": {
+          "type": "string",
+          "description": "Tenant to use for monitoring",
+          "default": "giantswarm"
         }
       }
     }

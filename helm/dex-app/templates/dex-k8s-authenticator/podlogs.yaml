@@ -1,0 +1,49 @@
+{{- if and .Values.deployDexK8SAuthenticator .Values.oidc.customer.enabled }}
+{{- with .Values.podLogs }}
+{{- if .enabled }}
+apiVersion: monitoring.grafana.com/v1alpha2
+kind: PodLogs
+metadata:
+  name: {{ include "resource.dexk8sauth.name" $ }}
+  labels:
+    {{- include "dexk8sauth.labels.common" $ | nindent 4 }}
+    {{- with .labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+  {{- with .annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  namespaceSelector:
+    matchLabels:
+      kubernetes.io/metadata.name: {{ $.Release.Namespace }}
+  selector:
+    {{- if $.Values.oidc.customer.connectors }}
+    matchExpressions:
+    - key: app.kubernetes.io/name
+      operator: In
+      values:
+      {{- range $.Values.oidc.customer.connectors }}
+      - dex-k8s-authenticator-{{ .id }}
+      {{- end }}
+    - key: app.kubernetes.io/component
+      operator: In
+      values:
+      {{- range $.Values.oidc.customer.connectors }}
+      - dex-k8s-authenticator-{{ .id }}
+      {{- end }}
+    {{- else }}
+    matchLabels:
+      {{- include "dexk8sauth.customer.labels.selector" $ | nindent 6 }}
+    {{- end }}
+  relabelings:
+  - action: replace
+    replacement: {{ coalesce .tenant $.Values.global.tenant }}
+    targetLabel: giantswarm_observability_tenant
+  {{- with .relabelings }}
+  {{- toYaml . | nindent 2 }}
+  {{- end }}
+{{- end }}
+{{- end }}
+{{- end }}

@@ -1,0 +1,32 @@
+{{- with .Subcharts.dex.Values.podLogs }}
+{{- if .enabled }}
+apiVersion: monitoring.grafana.com/v1alpha2
+kind: PodLogs
+metadata:
+  name: {{ include "dex.name" $.Subcharts.dex }}
+  namespace: {{ include "dex.namespace" $.Subcharts.dex }}
+  labels:
+    {{- include "dex.labels" $.Subcharts.dex | nindent 4 }}
+    {{- with .labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+  {{- with .annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  namespaceSelector:
+    matchLabels:
+      kubernetes.io/metadata.name: {{ include "dex.namespace" $.Subcharts.dex }}
+  selector:
+    matchLabels:
+      {{- include "dex.selectorLabels" $.Subcharts.dex | nindent 6 }}
+  relabelings:
+  - action: replace
+    replacement: {{ coalesce .tenant $.Values.global.tenant }}
+    targetLabel: giantswarm_observability_tenant
+  {{- with .relabelings }}
+  {{- toYaml . | nindent 2 }}
+  {{- end }}
+{{- end }}
+{{- end }}

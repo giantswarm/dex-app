@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add PodLogs for log collection.
+
 ### Changed
 
 - Fix support for using a private CA in the ingresses

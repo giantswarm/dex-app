@@ -1,0 +1,17 @@
+apiVersion: vendir.k14s.io/v1alpha1
+kind: Config
+directories:
+- path: vendor
+  contents:
+  - path: dex
+    helmChart:
+      name: dex
+      version: "0.23.0"
+      repository:
+        url: https://charts.dexidp.io
+        name: dexidp
+- path: helm/dex-app/charts/dex
+  contents:
+  - path: .
+    directory:
+      path: vendor/dex

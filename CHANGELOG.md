@@ -7,6 +7,69 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Fix support for using a private CA in the ingresses
+
+## [2.1.2] - 2025-10-07
+
+### Changed
+
+- Change base image registry to `gsoci.azurecr.io`
+
+## [2.1.1] - 2025-07-09
+
+### Changed
+
+- Increased `oidc.expiry.refreshTokens.validIfNotUsedFor` to 30 days, according to `oidc.expiry.refreshTokens.absoluteLifetime`
+
+## [2.1.0] - 2025-07-03
+
+### Changed
+
+- Fixed Ingress fields for workload clusters
+- Increased `oidc.expiry.refreshTokens.absoluteLifetime` to 30 days
+
+### Removed
+
+- Removed support for deprecated Ingress versions
+
+## [2.0.2] - 2025-06-25
+
+### Changed
+
+- Allow for `managementCluster` value to be a `string` or `object`.
+
+## [2.0.1] - 2025-06-25
+
+### Changed
+
+- Allow for additionalProperties in the Chart values schema.
+
+## [2.0.0] - 2025-06-18
+
+### Changed
+- Added sync workflow to sync from upstream
+- Refactored chart to align with upstream
+
+## [1.42.15] - 2025-05-08
+
+## Added
+
+- Added `largeHeaderBuffers` to ingress for large request header size.
+
+## [1.42.14] - 2025-05-06
+
+### Added
+
+- Added renovate configuration
+- Make Ingress annotations configurable via values (`.Values.ingress.annotations`)
+- Increased request header size limit in NGINX ingress controller annotations
+
+### Removed
+
+- Removed dependabot configuration
+
 ## [1.42.13] - 2024-11-13
 
 ### Changed
@@ -559,7 +622,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add helm chart for dex.
 
 
-[Unreleased]: https://github.com/giantswarm/dex-app/compare/v1.42.13...HEAD
+[Unreleased]: https://github.com/giantswarm/dex-app/compare/v2.1.2...HEAD
+[2.1.2]: https://github.com/giantswarm/dex-app/compare/v2.1.1...v2.1.2
+[2.1.1]: https://github.com/giantswarm/dex-app/compare/v2.1.0...v2.1.1
+[2.1.0]: https://github.com/giantswarm/dex-app/compare/v2.0.2...v2.1.0
+[2.0.2]: https://github.com/giantswarm/dex-app/compare/v2.0.1...v2.0.2
+[2.0.1]: https://github.com/giantswarm/dex-app/compare/v2.0.0...v2.0.1
+[2.0.0]: https://github.com/giantswarm/dex-app/compare/v1.42.15...v2.0.0
+[1.42.15]: https://github.com/giantswarm/dex-app/compare/v1.42.14...v1.42.15
+[1.42.14]: https://github.com/giantswarm/dex-app/compare/v1.42.13...v1.42.14
 [1.42.13]: https://github.com/giantswarm/dex-app/compare/v1.42.12...v1.42.13
 [1.42.12]: https://github.com/giantswarm/dex-app/compare/v1.42.11...v1.42.12
 [1.42.11]: https://github.com/giantswarm/dex-app/compare/v1.42.10...v1.42.11

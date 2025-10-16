@@ -1,0 +1,40 @@
+{{- if .Capabilities.APIVersions.Has "cilium.io/v2/CiliumNetworkPolicy" }}
+apiVersion: "cilium.io/v2"
+kind: CiliumNetworkPolicy
+metadata:
+  name: {{ include "dex.name" . }}
+  namespace: {{ include "dex.namespace" . }}
+  labels:
+    {{- include "dex.labels" . | nindent 4 }}
+spec:
+  endpointSelector:
+    matchLabels:
+      {{- include "dex.selectorLabels" . | nindent 6 }}
+  ingress:
+    - fromEndpoints:
+        - {}
+      toPorts:
+        - ports:
+            - port: http
+        {{- if .Values.dex.https.enabled }}
+        - ports:
+            - port: https
+        {{- end }}
+        {{- if .Values.dex.grpc.enabled }}
+        - ports:
+            - port: grpc
+        {{- end }}
+        - ports:
+            - port: telemetry
+    - fromEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": kube-system
+    - fromEntities:
+        - world
+  egress:
+    - toEntities:
+        - kube-apiserver
+    {{- with .Values.dex.networkPolicy.egressRules }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+{{- end }}

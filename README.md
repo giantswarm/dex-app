@@ -1,4 +1,4 @@
-[![CircleCI](https://circleci.com/gh/giantswarm/dex-app.svg?style=shield&circle-token=7552290f91277c20801ee5bf7ff8c754a9f59d6d)](https://circleci.com/gh/giantswarm/dex-app)
+[![CircleCI](https://dl.circleci.com/status-badge/img/gh/giantswarm/dex-app/tree/main.svg?style=svg)](https://dl.circleci.com/status-badge/redirect/gh/giantswarm/dex-app/tree/main)
 
 # Dex
 

@@ -1,0 +1,58 @@
+{{- if .Values.ingress.enabled }}
+{{- $fullName := include "dex.fullname" . }}
+{{- $svcPort := .Values.dex.service.ports.http.port }}
+{{- $host := "" }}
+{{- if eq (include "is-workload-cluster" .) "true" }}
+{{- $host = printf "dex.%s" .Values.baseDomain }}
+{{- else if .Values.isManagementCluster }}
+{{- $host = .Values.oidc.issuerAddress }}
+{{- else }}
+{{- $host = printf "dex.%s" (.Values.baseDomain | default "localhost") }}
+{{- end }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ include "dex.name" . }}
+  namespace: {{ include "dex.namespace" . }}
+  labels:
+    {{- include "dex.labels" . | nindent 4 }}
+  annotations:
+    {{- if and .Values .Values.ingress .Values.ingress.tls .Values.ingress.tls.clusterIssuer }}
+    cert-manager.io/cluster-issuer: {{ .Values.ingress.tls.clusterIssuer }}
+    {{- end }}
+    {{- with .Values.ingress.annotations }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+spec:
+  {{- if .Values.ingress.ingressClassName }}
+  ingressClassName: {{ .Values.ingress.ingressClassName }}
+  {{- else if .Values.ingress.className }}
+  ingressClassName: {{ .Values.ingress.className }}
+  {{- end }}
+  {{- if kindIs "slice" .Values.ingress.tls }}
+  tls:
+    {{- range .Values.ingress.tls }}
+    - hosts:
+        {{- range .hosts }}
+        - {{ tpl . $ | quote }}
+        {{- end }}
+      secretName: {{ .secretName }}
+    {{- end }}
+  {{- else }}
+  tls:
+    - hosts:
+        - {{ $host | quote }}
+      secretName: {{ include "dex.name" . }}-tls
+  {{- end }}
+  rules:
+    - host: {{ $host | quote }}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ include "dex.name" . }}
+                port:
+                  number: {{ $svcPort }}
+{{- end }}

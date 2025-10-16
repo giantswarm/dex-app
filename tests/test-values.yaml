@@ -1,9 +1,6 @@
 isWorkloadCluster: false
 isManagementCluster: false
 
-ingress:
-  tls:
-    letsencrypt: true
 
 oidc:
   issuerAddress: 127.0.0.1:5556

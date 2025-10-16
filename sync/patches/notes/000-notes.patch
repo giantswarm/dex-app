@@ -1,0 +1,21 @@
+diff --git a/vendor/dex/templates/NOTES.txt b/helm/dex-app/charts/dex/templates/NOTES.txt
+index a3cdc5d..59e11e4 100644
+--- a/vendor/dex/templates/NOTES.txt
++++ b/helm/dex-app/charts/dex/templates/NOTES.txt
+@@ -6,13 +6,13 @@
+   {{- end }}
+ {{- end }}
+ {{- else if contains "NodePort" .Values.service.type }}
+-  export NODE_PORT=$(kubectl get --namespace {{ include "dex.namespace" . }} -o jsonpath="{.spec.ports[0].nodePort}" services {{ include "dex.fullname" . }})
++  export NODE_PORT=$(kubectl get --namespace {{ include "dex.namespace" . }} -o jsonpath="{.spec.ports[0].nodePort}" services {{ include "dex.name" . }})
+   export NODE_IP=$(kubectl get nodes --namespace {{ include "dex.namespace" . }} -o jsonpath="{.items[0].status.addresses[0].address}")
+   echo http://$NODE_IP:$NODE_PORT
+ {{- else if contains "LoadBalancer" .Values.service.type }}
+      NOTE: It may take a few minutes for the LoadBalancer IP to be available.
+-           You can watch the status of by running 'kubectl get --namespace {{ include "dex.namespace" . }} svc -w {{ include "dex.fullname" . }}'
+-  export SERVICE_IP=$(kubectl get svc --namespace {{ include "dex.namespace" . }} {{ include "dex.fullname" . }} --template "{{"{{ range (index .status.loadBalancer.ingress 0) }}{{.}}{{ end }}"}}")
++           You can watch the status of by running 'kubectl get --namespace {{ include "dex.namespace" . }} svc -w {{ include "dex.name" . }}'
++  export SERVICE_IP=$(kubectl get svc --namespace {{ include "dex.namespace" . }} {{ include "dex.name" . }} --template "{{"{{ range (index .status.loadBalancer.ingress 0) }}{{.}}{{ end }}"}}")
+   echo http://$SERVICE_IP:{{ .Values.service.port }}
+ {{- if .Values.service.loadBalancerIP }}
+ 

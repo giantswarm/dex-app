@@ -1,49 +1,166 @@
-# Default values for dex
-# This is a YAML-formatted file.
-# Declare name/value pairs to be passed into your templates.
-# name: value
-
-client:
-  image:
-    registry: quay.io
-    name: giantswarm/dex-k8s-authenticator
-    tag: 1.4.0
-    pullPolicy: IfNotPresent
-
 dex:
-  image:
-    registry: quay.io
-    name: giantswarm/dex-app
-    pullPolicy: IfNotPresent
+  # Default values for dex.
+  # This is a YAML-formatted file.
+  # Declare variables to be passed into your templates.
+  # -- Number of replicas (pods) to launch.
+  replicaCount: 1
+  client:
+    image:
+      registry: gsoci.azurecr.io
+      name: giantswarm/dex-k8s-authenticator
+      tag: 1.4.0
+      pullPolicy: IfNotPresent
 
-extraVolumes: []
-extraVolumeMounts: []
-logoURI: https://s.giantswarm.io/brand/1/logo.svg
+  dex:
+    image:
+      registry: gsoci.azurecr.io
+      name: giantswarm/dex-app
+      tag: "2.0.0"
+      pullPolicy: IfNotPresent
+
+  configSecret:
+    # -- Enable creating a secret from the values passed to `config`.
+    # If set to false, name must point to an existing secret.
+    create: false
+
+    # -- The name of the secret to mount as configuration in the pod.
+    # If not set and create is true, a name is generated using the fullname template.
+    # Must point to secret that contains at least a `config.yaml` key.
+    name: "dex"
+
+  securityContext:
+    runAsNonRoot: true
+    runAsUser: 1000
+    runAsGroup: 1000
+    allowPrivilegeEscalation: false
+    readOnlyRootFilesystem: true
+    capabilities:
+      drop:
+        - ALL
+    seccompProfile:
+      type: RuntimeDefault
+    # capabilities:
+    #   drop:
+    #   - ALL
+    # readOnlyRootFilesystem: true
+    # runAsNonRoot: true
+    # runAsUser: 1000
+
+  serviceMonitor:
+    # -- Enable Prometheus ServiceMonitor.
+    # See the [documentation](https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/design.md#servicemonitor) and the [API reference](https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/api.md#servicemonitor) for details.
+    enabled: true
+
+    # -- Namespace where the ServiceMonitor resource should be deployed.
+    # @default -- Release namespace.
+    namespace: ""
+
+    # -- (duration) Prometheus scrape interval.
+    interval: ""
+
+    # -- (duration) Prometheus scrape timeout.
+    scrapeTimeout: ""
+
+    # -- Labels to be added to the ServiceMonitor.
+    ## ref: https://github.com/coreos/prometheus-operator/blob/master/Documentation/api.md#prometheusspec
+    labels: {}
+
+    # -- Annotations to be added to the ServiceMonitor.
+    ## ref: https://github.com/coreos/prometheus-operator/blob/master/Documentation/api.md#prometheusspec
+    annotations: {}
+
+    # -- HTTP scheme to use for scraping.
+    # Can be used with `tlsConfig` for example if using istio mTLS.
+    scheme: ""
+
+    # -- HTTP path to scrape for metrics.
+    path: /metrics
+
+    # -- TLS configuration to use when scraping the endpoint.
+    # For example if using istio mTLS.
+    ## Of type: https://github.com/coreos/prometheus-operator/blob/master/Documentation/api.md#tlsconfig
+    tlsConfig: {}
+
+    # -- Prometheus scrape bearerTokenFile
+    bearerTokenFile: ""
+
+    # -- HonorLabels chooses the metric's labels on collisions with target labels.
+    honorLabels: false
+
+    # -- Prometheus scrape metric relabel configs
+    # to apply to samples before ingestion.
+    ## [Metric Relabeling](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#metric_relabel_configs)
+    metricRelabelings: []
+    # - action: keep
+    #   regex: 'kube_(daemonset|deployment|pod|namespace|node|statefulset).+'
+    #   sourceLabels: [__name__]
+
+    # -- Relabel configs to apply
+    # to samples before ingestion.
+    ## [Relabeling](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#relabel_config)
+    relabelings: []
+    # - sourceLabels: [__meta_kubernetes_pod_node_name]
+    #   separator: ;
+    #   regex: ^(.*)$
+    #   targetLabel: nodename
+    #   replacement: $1
+    #   action: replace
+
+  # -- Container resource [requests and limits](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/).
+  # See the [API reference](https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/pod-v1/#resources) for details.
+  # @default -- No requests or limits.
+  resources:
+    limits:
+      cpu: 100m
+      memory: 50Mi
+    requests:
+      cpu: 100m
+      memory: 50Mi
+    # We usually recommend not to specify default resources and to leave this as a conscious
+    # choice for the user. This also increases chances charts run on environments with little
+    # resources, such as Minikube. If you do want to specify resources, uncomment the following
+    # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+    # limits:
+    #   cpu: 100m
+    #   memory: 128Mi
+    # requests:
+    #   cpu: 100m
+    #   memory: 128Mi
+
+  extraVolumes: []
+  extraVolumeMounts: []
+  logoURI: https://s.giantswarm.io/brand/1/logo.svg
 
 ingress:
-  ingressClassName: "nginx"
-  externalDNS: false
+  # -- Enable [ingress](https://kubernetes.io/docs/concepts/services-networking/ingress/).
+  enabled: true
+  # -- Ingress [class name](https://kubernetes.io/docs/concepts/services-networking/ingress/#ingress-class).
+  className: "nginx"
+  # -- Annotations to be added to the ingress.
+  annotations: {}
+  # -- Ingress TLS configuration.
+  # Note: Host and secretName are now determined dynamically by the template
+  # based on cluster type (workload vs management) and baseDomain/oidc.issuerAddress
   tls:
-    letsencrypt: true
+    # -- Configure the cert-manager cluster issuer.
     clusterIssuer: "letsencrypt-giantswarm"
-    caPemB64: ""
-    crtPemB64: ""
-    keyPemB64: ""
-    externalSecret:
-      enabled: false
 
 oidc:
   issuerAddress: ""
   expiry:
     signingKeys: 6h
     idTokens: 30m
+    refreshTokens:
+      reuseInterval: 3s
+      validIfNotUsedFor: 720h
+      absoluteLifetime: 720h
   staticClients:
     gitopsui:
       clientID: ""
       clientSecret: ""
       redirectURI: ""
     grafana:
-      cliendID: ""
+      clientID: ""
       redirectURI: ""
     gsCLIAuth:
       clientID: "zQiFLUnrTFQwrybYzeY53hWWfhOKWRAU"

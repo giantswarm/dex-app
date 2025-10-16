@@ -1,0 +1,13 @@
+apiVersion: vendir.k14s.io/v1alpha1
+directories:
+- contents:
+  - helmChart:
+      appVersion: 2.42.0
+      version: 0.23.0
+    path: dex
+  path: vendor
+- contents:
+  - directory: {}
+    path: .
+  path: helm/dex-app/charts/dex
+kind: LockConfig

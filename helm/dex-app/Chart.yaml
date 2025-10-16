@@ -1,7 +1,7 @@
 apiVersion: v2
 name: dex-app
-version: "1.42.13"
-appVersion: ""
+version: "2.1.2"
+appVersion: "1.42.15"
 description: OpenID Connect (OIDC) identity and OAuth 2.0 provider with pluggable connectors
 keywords:
   - authentication
@@ -29,3 +29,6 @@ annotations:
   application.giantswarm.io/readme: https://raw.githubusercontent.com/giantswarm/dex-app/v[[ .Version ]]/README.md
   application.giantswarm.io/values-schema: https://raw.githubusercontent.com/giantswarm/dex-app/v[[ .Version ]]/helm/dex-app/values.schema.json
   config.giantswarm.io/version: 1.x.x
+dependencies:
+  - name: dex
+    version: "0.23.0"

@@ -11,7 +11,9 @@ metadata:
   labels:
     {{- include "dexk8sauth.labels.common" . | nindent 4 }}
   annotations:
+    {{- if and .Values .Values.ingress .Values.ingress.tls .Values.ingress.tls.clusterIssuer }}
     cert-manager.io/cluster-issuer: {{ .Values.ingress.tls.clusterIssuer }}
+    {{- end }}
     {{- if .Values.ingress.externalDNS }}
     {{- if eq (include "is-workload-cluster" .) "true" }}
     external-dns.alpha.kubernetes.io/hostname: login.{{ .Values.baseDomain }}
@@ -19,6 +21,9 @@ metadata:
     external-dns.alpha.kubernetes.io/hostname: {{ .Values.oidc.staticClients.dexK8SAuthenticator.clientAddress }}
     {{- end }}
     giantswarm.io/external-dns: managed
+    {{- end }}
+    {{- with .Values.ingress.annotations }}
+    {{- toYaml . | nindent 4 }}
     {{- end }}
 spec:
   ingressClassName: {{ .Values.ingress.ingressClassName }}
@@ -29,11 +34,7 @@ spec:
     {{- else if .Values.isManagementCluster }}
       - {{ .Values.oidc.staticClients.dexK8SAuthenticator.clientAddress }}
     {{- end }}
-    {{- if .Values.ingress.tls.letsencrypt }}
-    secretName: {{ include "resource.dexk8sauth.name" . }}-le
-    {{- else }}
-    secretName: {{ include "resource.dexk8sauth.name" . }}
-    {{- end }}
+    secretName: {{ include "resource.dexk8sauth.name" . }}-tls
   rules:
   - http:
       paths:

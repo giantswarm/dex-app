@@ -143,42 +143,23 @@ As a result, you should see Dex deployed in your workload cluster.
 Dex app exposes a web interface, which is accessible over https. Therefore, it creates an ingress, which needs to be configured with a TLS certificate signed by a certification authority, which needs to be trusted by the browsers.
 The app consists of several components, which also need to be able to communicate with each other internally over https. So the certification authority signing the certificates needs to be trusted by the individual app components as well.
 
-In case a custom certification authority is used, it needs to be exposed to the individual app components and set as trusted, otherwise the components will not be able to communicate with each other and the app may not work as expected.
-Based on the cluster setup, this can be achieved by providing an additional set of values to the app configuration:
-
-1. Add a base64-encoded certificate of the certification authority to the User Values configmap or secret. This option is useful when using custom, self-signed certificates in a cluster:
+By default, the app will use cert-manager to issue a TLS certificate signed by Let's Encrypt. To use a custom cert-manager ClusterIssuer, change the value of the `ingress.tls.clusterIssuer` property in the user values.
 
 ```yaml
 ingress:
   tls:
-    letsencrypt: false
-    caPemB64: "base64-encoded CA certificate"
+    clusterIssuer: my-custom-cluster-issuer
 ```
 
-2. Provide a reference to an existing Secret resource, which contains the custom certification authority. This option is useful for cluster setup, where TLS certificates signed by a custom certification authority are provided by an external service:
+To disable the automatic certificate generation by cert-manager and use a custom TLS certificate instead, set the `ingress.tls.clusterIssuer` property to a falsy value (for example an empty string) in the user values:
 
 ```yaml
 ingress:
   tls:
-    letsencrypt: false
-
-trustedRootCA:
-  name: "name-of-the property-in-the-secret"
-  secretName: "name-of-the-custom-ca-secret"
+    clusterIssuer: ""
 ```
 
-3. When disabling `letsencrypt`, a secret called `dex-tls` will be created and propagated with the b64-encoded values provided by the user.
-Alternatively, the user can manage the creation of this secret by themselves and enable its usage like so:
-
-```yaml
-ingress:
-  tls:
-    letsencrypt: false
-    externalSecret:
-      enabled: true
-```
-
-The following secret then needs to be applied to the namespace `dex` is running in:
+Then create a Secret in the `dex` namespace, which contains the TLS certificate and private key in the following format:
 
 ```yaml
 apiVersion: v1
@@ -190,6 +171,28 @@ data:
   ca.crt: ...
   tls.crt: ...
   tls.key: ...
+```
+
+In case a custom certification authority is used, it needs to be exposed to the individual app components and set as trusted, otherwise the components will not be able to communicate with each other and the app may not work as expected. This can be achieved by providing an additional set of values to the app configuration:
+
+Provide a reference to an existing Secret resource, which contains the custom certification authority:
+
+```yaml
+trustedRootCA:
+  name: ca.crt
+  secretName: "name-of-the-custom-ca-secret"
+```
+
+The referenced Secret needs to be created in the `dex` namespace and contain the custom CA certificate in a property with a name matching the one set in the user values (`trustedRootCA.name`):
+
+```yaml
+apiVersion: v1
+kind: Secret
+type: Opaque
+metadata:
+  name: name-of-the-custom-ca-secret
+data:
+  ca.crt: ...
 ```
 
 ### Proxy configuration

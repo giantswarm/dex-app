@@ -1,4 +1,4 @@
-{{- with .Subcharts.dex.Values.podLogs }}
+{{- with .Values.podLogs }}
 {{- if .enabled }}
 apiVersion: monitoring.grafana.com/v1alpha2
 kind: PodLogs
@@ -23,7 +23,7 @@ spec:
       {{- include "dex.selectorLabels" $.Subcharts.dex | nindent 6 }}
   relabelings:
   - action: replace
-    replacement: {{ coalesce .tenant $.Values.global.tenant }}
+    replacement: {{ .tenant }}
     targetLabel: giantswarm_observability_tenant
   {{- with .relabelings }}
   {{- toYaml . | nindent 2 }}

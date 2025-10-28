@@ -1,5 +1,5 @@
 {{- if and .Values.deployDexK8SAuthenticator .Values.oidc.customer.enabled }}
-{{- with .Values.podLogs }}
+{{- with (.Values.monitoring).podLogs }}
 {{- if .enabled }}
 apiVersion: monitoring.grafana.com/v1alpha2
 kind: PodLogs

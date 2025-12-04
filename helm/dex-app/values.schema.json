@@ -431,6 +431,7 @@
         },
         "expiry": {
           "type": "object",
+          "description": "Token expiry configuration",
           "properties": {
             "signingKeys": {
               "type": "string",
@@ -438,7 +439,34 @@
             },
             "idTokens": {
               "type": "string",
-              "description": "ID tokens expiry duration"
+              "description": "ID tokens expiry duration. Longer values reduce refresh frequency but tokens remain valid longer if compromised. Default: 24h",
+              "default": "24h"
+            },
+            "refreshTokens": {
+              "type": "object",
+              "description": "Refresh token configuration",
+              "properties": {
+                "disableRotation": {
+                  "type": "boolean",
+                  "description": "Disable refresh token rotation. When true, the same refresh token is reused until expiration, preventing 'token already claimed' errors with concurrent sessions or upstream provider token conflicts. Default: true",
+                  "default": true
+                },
+                "reuseInterval": {
+                  "type": "string",
+                  "description": "Allow the same refresh token to be reused within this interval. Fallback for clients that might still trigger rotation. Default: 30s",
+                  "default": "30s"
+                },
+                "validIfNotUsedFor": {
+                  "type": "string",
+                  "description": "Refresh token expires if not used within this duration. Default: 720h (30 days)",
+                  "default": "720h"
+                },
+                "absoluteLifetime": {
+                  "type": "string",
+                  "description": "Absolute lifetime of refresh tokens regardless of activity. Default: 720h (30 days)",
+                  "default": "720h"
+                }
+              }
             }
           }
         },

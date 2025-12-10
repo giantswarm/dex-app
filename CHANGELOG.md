@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Auto-include mcpKubernetes in dex-k8s-authenticator trustedPeers for seamless token exchange.
+
 ## [2.1.3] - 2025-12-09
 
 ### Added

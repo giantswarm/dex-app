@@ -146,6 +146,59 @@ ingress:
     # -- Configure the cert-manager cluster issuer.
     clusterIssuer: "letsencrypt-giantswarm"
 
+# -- Gateway API HTTPRoute configuration (alternative to ingress).
+# When enabled, creates an HTTPRoute resource for the Gateway API.
+# This is an alternative to the traditional Ingress resource.
+route:
+  # -- Enable Gateway API HTTPRoute.
+  enabled: false
+
+  # -- Set the route kind.
+  # Valid options are GRPCRoute, HTTPRoute, TCPRoute, TLSRoute, UDPRoute.
+  kind: HTTPRoute
+
+  # -- Override the route name (defaults to dex).
+  name: ""
+
+  # -- Annotations to be added to the HTTPRoute.
+  annotations: {}
+
+  # -- Labels to be added to the HTTPRoute.
+  labels: {}
+
+  # -- Hostnames for the route.
+  # If not specified, the hostname is automatically determined based on cluster type
+  # (workload vs management) and baseDomain/oidc.issuerAddress.
+  hostnames: []
+
+  # -- Parent references for the HTTPRoute.
+  # These specify which Gateways the route should be attached to.
+  parentRefs: []
+  # - name: giantswarm-default
+  #   namespace: envoy-gateway-system
+
+  # -- Path matches for the route.
+  matches:
+    - path:
+        type: PathPrefix
+        value: /
+
+  # -- Filters define the filters that are applied to requests that match this rule.
+  filters: []
+
+  # -- Additional custom rules that can be added to the route.
+  additionalRules: []
+
+  # -- Security policies to be attached to the HTTPRoute.
+  # Each key becomes a SecurityPolicy resource targeting this route.
+  securityPolicies: {}
+  # basicAuth:
+  #   name: dex-basic-auth
+  #   spec:
+  #     basicAuth:
+  #       users:
+  #         name: basic-auth-secret
+
 oidc:
   issuerAddress: ""
   expiry:

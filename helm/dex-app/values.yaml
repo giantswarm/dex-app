@@ -150,25 +150,14 @@ oidc:
   issuerAddress: ""
   expiry:
     signingKeys: 6h
-    # ID token lifetime. Longer values reduce refresh frequency but tokens
-    # remain valid longer if compromised. 24h balances security with usability
-    # for interactive kubectl sessions.
-    idTokens: 24h
+    # ID token lifetime set to match refresh token lifetime (30 days).
+    # This avoids triggering token refresh which fails with GitHub connector
+    # due to upstream GitHub access tokens expiring after 8 hours.
+    # Users will re-authenticate when the session expires instead of refreshing.
+    idTokens: 720h
     refreshTokens:
-      # Disable refresh token rotation to prevent "token already claimed" errors.
-      # When rotation is enabled (default), each refresh generates a new token and
-      # invalidates the old one. This causes issues with:
-      # - Multiple concurrent kubectl sessions
-      # - GitHub connector token rotation conflicts
-      # - Race conditions between token refresh and storage
-      # With rotation disabled, the same refresh token is reused until expiration.
-      disableRotation: true
-      # Allow the same refresh token to be reused within this interval.
-      # This is a fallback for clients that might still trigger rotation.
-      reuseInterval: 30s
-      # Token expires if not used within 30 days
+      reuseInterval: 3s
       validIfNotUsedFor: 720h
-      # Absolute maximum lifetime of 30 days regardless of usage
       absoluteLifetime: 720h
   staticClients:
     gitopsui:

@@ -9,8 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Add musterAgent as a public static client for muster-agent OAuth authentication.
-- Auto-include musterAgent in dex-k8s-authenticator trustedPeers for seamless token exchange.
+- Add muster as a public static client for muster OAuth authentication.
+- Auto-include muster in dex-k8s-authenticator trustedPeers for seamless token exchange.
 
 ## [2.1.4] - 2025-12-10
 

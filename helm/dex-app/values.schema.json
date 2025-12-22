@@ -518,9 +518,9 @@
                 }
               }
             },
-            "musterAgent": {
+            "muster": {
               "type": "object",
-              "description": "Muster Agent OAuth client configuration (public client)",
+              "description": "Muster OAuth client configuration (public client)",
               "properties": {
                 "clientID": {
                   "type": "string"

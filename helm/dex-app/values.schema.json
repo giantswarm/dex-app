@@ -517,6 +517,15 @@
                   "type": "string"
                 }
               }
+            },
+            "musterAgent": {
+              "type": "object",
+              "description": "Muster Agent OAuth client configuration (public client)",
+              "properties": {
+                "clientID": {
+                  "type": "string"
+                }
+              }
             }
           }
         },

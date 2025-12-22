@@ -176,6 +176,8 @@ oidc:
       clientID: ""
       clientSecret: ""
       redirectURI: ""
+    musterAgent:
+      clientID: ""
   extraStaticClients: []
   # Giant Swarm OIDC values to run DEX in the management clusters
   giantswarm:

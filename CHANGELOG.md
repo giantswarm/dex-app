@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Add muster as a public static client for muster OAuth authentication.
+- Add muster as a confidential static client for muster OAuth authentication (server-side OAuth proxy).
 - Auto-include muster in dex-k8s-authenticator trustedPeers for seamless token exchange.
 
 ## [2.1.4] - 2025-12-10

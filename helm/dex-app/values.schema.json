@@ -248,28 +248,57 @@
             "type": "object"
           }
         },
-        "securityPolicies": {
+        "securityPolicy": {
           "type": "object",
-          "description": "Security policies to be attached to the HTTPRoute",
-          "additionalProperties": {
-            "type": "object",
-            "properties": {
-              "name": {
-                "type": "string",
-                "description": "Override the security policy name"
-              },
-              "annotations": {
-                "type": "object",
-                "description": "Annotations for the SecurityPolicy"
-              },
-              "labels": {
-                "type": "object",
-                "description": "Labels for the SecurityPolicy"
-              },
-              "spec": {
-                "type": "object",
-                "description": "SecurityPolicy spec (e.g., basicAuth, jwt, oidc, cors)"
+          "description": "SecurityPolicy configuration for the HTTPRoute",
+          "properties": {
+            "enabled": {
+              "type": "boolean",
+              "description": "Enable SecurityPolicy creation",
+              "default": false
+            },
+            "annotations": {
+              "type": "object",
+              "description": "Annotations to be added to the SecurityPolicy"
+            },
+            "labels": {
+              "type": "object",
+              "description": "Labels to be added to the SecurityPolicy"
+            },
+            "basicAuth": {
+              "type": "object",
+              "description": "Basic authentication configuration",
+              "properties": {
+                "users": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string",
+                      "description": "Name of the secret containing basic auth users"
+                    }
+                  }
+                }
               }
+            },
+            "cors": {
+              "type": "object",
+              "description": "CORS configuration"
+            },
+            "jwt": {
+              "type": "object",
+              "description": "JWT authentication configuration"
+            },
+            "oidc": {
+              "type": "object",
+              "description": "OIDC authentication configuration"
+            },
+            "extAuth": {
+              "type": "object",
+              "description": "External authentication configuration"
+            },
+            "authorization": {
+              "type": "object",
+              "description": "Authorization configuration"
             }
           }
         }

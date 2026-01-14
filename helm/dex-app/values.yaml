@@ -173,9 +173,11 @@ route:
 
   # -- Parent references for the HTTPRoute.
   # These specify which Gateways the route should be attached to.
+  # Note: Use sectionName: https to attach to the HTTPS listener for TLS traffic.
   parentRefs: []
   # - name: giantswarm-default
   #   namespace: envoy-gateway-system
+  #   sectionName: https
 
   # -- Path matches for the route.
   matches:
@@ -189,15 +191,52 @@ route:
   # -- Additional custom rules that can be added to the route.
   additionalRules: []
 
-  # -- Security policies to be attached to the HTTPRoute.
-  # Each key becomes a SecurityPolicy resource targeting this route.
-  securityPolicies: {}
-  # basicAuth:
-  #   name: dex-basic-auth
-  #   spec:
-  #     basicAuth:
-  #       users:
-  #         name: basic-auth-secret
+  # -- SecurityPolicy configuration for the HTTPRoute.
+  # When enabled, creates a SecurityPolicy resource targeting this route.
+  securityPolicy:
+    # -- Enable SecurityPolicy creation.
+    enabled: false
+
+    # -- Annotations to be added to the SecurityPolicy.
+    annotations: {}
+
+    # -- Labels to be added to the SecurityPolicy.
+    labels: {}
+
+    # -- Basic authentication configuration.
+    # basicAuth:
+    #   users:
+    #     name: <secret_name>
+
+    # -- CORS configuration.
+    # cors:
+    #   allowOrigins:
+    #     - type: Exact
+    #       value: "https://example.com"
+
+    # -- JWT authentication configuration.
+    # jwt:
+    #   providers:
+    #     - name: example
+    #       issuer: "https://example.com"
+
+    # -- OIDC authentication configuration.
+    # oidc:
+    #   provider:
+    #     issuer: "https://example.com"
+
+    # -- External authentication configuration.
+    # extAuth:
+    #   http:
+    #     backendRef:
+    #       name: ext-auth-service
+    #       port: 9001
+
+    # -- Authorization configuration.
+    # authorization:
+    #   defaultAction: Deny
+    #   rules:
+    #     - action: Allow
 
 oidc:
   issuerAddress: ""

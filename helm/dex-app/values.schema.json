@@ -640,6 +640,36 @@
                   "type": "string"
                 }
               }
+            },
+            "mcpKubernetes": {
+              "type": "object",
+              "description": "MCP Kubernetes OAuth client configuration",
+              "properties": {
+                "clientID": {
+                  "type": "string"
+                },
+                "clientSecret": {
+                  "type": "string"
+                },
+                "redirectURI": {
+                  "type": "string"
+                }
+              }
+            },
+            "muster": {
+              "type": "object",
+              "description": "Muster OAuth client configuration (confidential client)",
+              "properties": {
+                "clientID": {
+                  "type": "string"
+                },
+                "clientSecret": {
+                  "type": "string"
+                },
+                "redirectURI": {
+                  "type": "string"
+                }
+              }
             }
           }
         },

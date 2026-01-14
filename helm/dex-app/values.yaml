@@ -225,6 +225,14 @@ oidc:
     dexK8SAuthenticator:
       clientAddress: ""
       clientSecret: "default-client-dex-authenticator-secret"
+    mcpKubernetes:
+      clientID: ""
+      clientSecret: ""
+      redirectURI: ""
+    muster:
+      clientID: ""
+      clientSecret: ""
+      redirectURI: ""
   extraStaticClients: []
   # Giant Swarm OIDC values to run DEX in the management clusters
   giantswarm:

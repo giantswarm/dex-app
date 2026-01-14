@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.1.5] - 2025-12-22
+
+### Added
+
+- Add muster as a confidential static client for muster OAuth authentication (server-side OAuth proxy).
+- Auto-include muster in dex-k8s-authenticator trustedPeers for seamless token exchange.
+
+## [2.1.4] - 2025-12-10
+
+### Added
+
+- Auto-include mcpKubernetes in dex-k8s-authenticator trustedPeers for seamless token exchange.
+
+## [2.1.3] - 2025-12-09
+
 ### Added
 
 - Add PodLogs for log collection.
@@ -627,7 +642,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add helm chart for dex.
 
 
-[Unreleased]: https://github.com/giantswarm/dex-app/compare/v2.1.2...HEAD
+[Unreleased]: https://github.com/giantswarm/dex-app/compare/v2.1.5...HEAD
+[2.1.5]: https://github.com/giantswarm/dex-app/compare/v2.1.4...v2.1.5
+[2.1.4]: https://github.com/giantswarm/dex-app/compare/v2.1.3...v2.1.4
+[2.1.3]: https://github.com/giantswarm/dex-app/compare/v2.1.2...v2.1.3
 [2.1.2]: https://github.com/giantswarm/dex-app/compare/v2.1.1...v2.1.2
 [2.1.1]: https://github.com/giantswarm/dex-app/compare/v2.1.0...v2.1.1
 [2.1.0]: https://github.com/giantswarm/dex-app/compare/v2.0.2...v2.1.0

@@ -1,0 +1,101 @@
+{{- if .Values.route.enabled -}}
+{{- $route := .Values.route }}
+{{- $svcPort := .Values.dex.service.ports.http.port | default 5556 }}
+{{- $host := "" }}
+{{- if eq (include "is-workload-cluster" .) "true" }}
+{{- $host = printf "dex.%s" .Values.baseDomain }}
+{{- else if .Values.isManagementCluster }}
+{{- $host = .Values.oidc.issuerAddress }}
+{{- else }}
+{{- $host = printf "dex.%s" (.Values.baseDomain | default "localhost") }}
+{{- end }}
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: {{ $route.kind | default "HTTPRoute" }}
+metadata:
+  name: {{ $route.name | default (include "dex.name" .) }}
+  namespace: {{ include "dex.namespace" . }}
+  labels:
+    {{- include "dex.labels" . | nindent 4 }}
+    {{- with $route.labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+  {{- with $route.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  {{- with $route.parentRefs }}
+  parentRefs:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  {{- if $route.hostnames }}
+  hostnames:
+    {{- tpl (toYaml $route.hostnames) $ | nindent 4 }}
+  {{- else }}
+  hostnames:
+    - {{ $host | quote }}
+  {{- end }}
+  rules:
+    {{- if $route.additionalRules }}
+    {{- tpl (toYaml $route.additionalRules) $ | nindent 4 }}
+    {{- end }}
+    - backendRefs:
+        - name: {{ include "dex.name" . }}
+          port: {{ $svcPort }}
+      {{- with $route.filters }}
+      filters:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with $route.matches }}
+      matches:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+{{- if and $route.securityPolicy $route.securityPolicy.enabled }}
+{{- $policy := $route.securityPolicy }}
+---
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: SecurityPolicy
+metadata:
+  name: {{ $route.name | default (include "dex.name" .) }}
+  namespace: {{ include "dex.namespace" . }}
+  labels:
+    {{- include "dex.labels" . | nindent 4 }}
+    {{- with $policy.labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+  {{- with $policy.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  targetRefs:
+    - group: gateway.networking.k8s.io
+      kind: {{ $route.kind | default "HTTPRoute" }}
+      name: {{ $route.name | default (include "dex.name" .) }}
+  {{- with $policy.basicAuth }}
+  basicAuth:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  {{- with $policy.cors }}
+  cors:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  {{- with $policy.jwt }}
+  jwt:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  {{- with $policy.oidc }}
+  oidc:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  {{- with $policy.extAuth }}
+  extAuth:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  {{- with $policy.authorization }}
+  authorization:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+{{- end }}
+{{- end }}

@@ -138,6 +138,173 @@
       },
       "additionalProperties": true
     },
+    "route": {
+      "type": "object",
+      "description": "Gateway API HTTPRoute configuration (alternative to ingress)",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "description": "Enable Gateway API HTTPRoute",
+          "default": false
+        },
+        "kind": {
+          "type": "string",
+          "description": "Set the route kind",
+          "enum": ["GRPCRoute", "HTTPRoute", "TCPRoute", "TLSRoute", "UDPRoute"],
+          "default": "HTTPRoute"
+        },
+        "name": {
+          "type": "string",
+          "description": "Override the route name (defaults to dex)"
+        },
+        "annotations": {
+          "type": "object",
+          "description": "Annotations to be added to the HTTPRoute"
+        },
+        "labels": {
+          "type": "object",
+          "description": "Labels to be added to the HTTPRoute"
+        },
+        "hostnames": {
+          "type": "array",
+          "description": "Hostnames for the route. If not specified, hostname is auto-determined based on cluster type",
+          "items": {
+            "type": "string"
+          }
+        },
+        "parentRefs": {
+          "type": "array",
+          "description": "Parent references for the HTTPRoute (Gateways to attach to)",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Name of the Gateway"
+              },
+              "namespace": {
+                "type": "string",
+                "description": "Namespace of the Gateway"
+              },
+              "sectionName": {
+                "type": "string",
+                "description": "Section name within the Gateway"
+              },
+              "port": {
+                "type": "integer",
+                "description": "Port on the Gateway"
+              }
+            },
+            "required": ["name"]
+          }
+        },
+        "matches": {
+          "type": "array",
+          "description": "Path matches for the route",
+          "items": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "enum": ["Exact", "PathPrefix", "RegularExpression"]
+                  },
+                  "value": {
+                    "type": "string"
+                  }
+                }
+              },
+              "headers": {
+                "type": "array",
+                "items": {
+                  "type": "object"
+                }
+              },
+              "queryParams": {
+                "type": "array",
+                "items": {
+                  "type": "object"
+                }
+              },
+              "method": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "filters": {
+          "type": "array",
+          "description": "Filters applied to requests matching this rule",
+          "items": {
+            "type": "object"
+          }
+        },
+        "additionalRules": {
+          "type": "array",
+          "description": "Additional custom rules for the route",
+          "items": {
+            "type": "object"
+          }
+        },
+        "securityPolicy": {
+          "type": "object",
+          "description": "SecurityPolicy configuration for the HTTPRoute",
+          "properties": {
+            "enabled": {
+              "type": "boolean",
+              "description": "Enable SecurityPolicy creation",
+              "default": false
+            },
+            "annotations": {
+              "type": "object",
+              "description": "Annotations to be added to the SecurityPolicy"
+            },
+            "labels": {
+              "type": "object",
+              "description": "Labels to be added to the SecurityPolicy"
+            },
+            "basicAuth": {
+              "type": "object",
+              "description": "Basic authentication configuration",
+              "properties": {
+                "users": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string",
+                      "description": "Name of the secret containing basic auth users"
+                    }
+                  }
+                }
+              }
+            },
+            "cors": {
+              "type": "object",
+              "description": "CORS configuration"
+            },
+            "jwt": {
+              "type": "object",
+              "description": "JWT authentication configuration"
+            },
+            "oidc": {
+              "type": "object",
+              "description": "OIDC authentication configuration"
+            },
+            "extAuth": {
+              "type": "object",
+              "description": "External authentication configuration"
+            },
+            "authorization": {
+              "type": "object",
+              "description": "Authorization configuration"
+            }
+          }
+        }
+      },
+      "additionalProperties": true
+    },
     "dex": {
       "type": "object",
       "description": "Dex configuration",

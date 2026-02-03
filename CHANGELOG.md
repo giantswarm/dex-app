@@ -32,6 +32,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Fix support for using a private CA in the ingresses
+- Increase `oidc.expiry.idTokens` from 30m to 720h (30 days) to match refresh token lifetime. This prevents token refresh which fails with GitHub connector due to upstream GitHub access tokens expiring after 8 hours.
 
 ## [2.1.2] - 2025-10-07
 

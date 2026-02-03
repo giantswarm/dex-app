@@ -242,7 +242,11 @@ oidc:
   issuerAddress: ""
   expiry:
     signingKeys: 6h
-    idTokens: 30m
+    # ID token lifetime set to match refresh token lifetime (30 days).
+    # This avoids triggering token refresh which fails with GitHub connector
+    # due to upstream GitHub access tokens expiring after 8 hours.
+    # Users will re-authenticate when the session expires instead of refreshing.
+    idTokens: 720h
     refreshTokens:
       reuseInterval: 3s
       validIfNotUsedFor: 720h

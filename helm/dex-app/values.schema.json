@@ -598,6 +598,7 @@
         },
         "expiry": {
           "type": "object",
+          "description": "Token expiry configuration",
           "properties": {
             "signingKeys": {
               "type": "string",
@@ -605,7 +606,29 @@
             },
             "idTokens": {
               "type": "string",
-              "description": "ID tokens expiry duration"
+              "description": "ID tokens expiry duration. Set to match refresh token lifetime to avoid token refresh which fails with GitHub connector. Default: 720h (30 days)",
+              "default": "720h"
+            },
+            "refreshTokens": {
+              "type": "object",
+              "description": "Refresh token configuration",
+              "properties": {
+                "reuseInterval": {
+                  "type": "string",
+                  "description": "Allow the same refresh token to be reused within this interval. Default: 3s",
+                  "default": "3s"
+                },
+                "validIfNotUsedFor": {
+                  "type": "string",
+                  "description": "Refresh token expires if not used within this duration. Default: 720h (30 days)",
+                  "default": "720h"
+                },
+                "absoluteLifetime": {
+                  "type": "string",
+                  "description": "Absolute lifetime of refresh tokens regardless of activity. Default: 720h (30 days)",
+                  "default": "720h"
+                }
+              }
             }
           }
         },

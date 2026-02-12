@@ -329,6 +329,10 @@ cluster:
     noProxy: ""
 
 global:
+  image:
+    # Propagated to subchart as .Values.global.image.tag
+    # Automatically synced from Chart.yaml appVersion via `make sync-image-tag`
+    tag: "2.2.0"
   podSecurityStandards:
     enforced: false
 

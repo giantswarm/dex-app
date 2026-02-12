@@ -1,0 +1,29 @@
+# DO NOT EDIT. Generated with:
+#
+#    devctl
+#
+#    https://github.com/giantswarm/devctl/blob/3790bcb9f57144eee85fc805c8f89c6c6ce294ab/pkg/gen/input/dependabot/internal/file/dependabot.yml.template
+#
+version: 2
+updates:
+  - package-ecosystem: docker
+    directory: "/"
+    schedule:
+      interval: weekly
+      time: "04:00"
+    open-pull-requests-limit: 10
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: weekly
+      time: "04:00"
+    open-pull-requests-limit: 10
+    ignore:
+      - dependency-name: zricethezav/gitleaks-action
+      - dependency-name: actions/setup-go
+  - package-ecosystem: pip
+    directory: "/"
+    schedule:
+      interval: weekly
+      time: "04:00"
+    open-pull-requests-limit: 10

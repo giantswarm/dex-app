@@ -387,13 +387,13 @@
             "image": {
               "type": "object",
               "properties": {
-                "registry": {
+                "repository": {
                   "type": "string",
-                  "description": "Container registry for dex image"
+                  "description": "Container image repository for dex"
                 },
-                "name": {
+                "tag": {
                   "type": "string",
-                  "description": "Dex image name"
+                  "description": "Container image tag for dex"
                 },
                 "pullPolicy": {
                   "type": "string",
@@ -401,7 +401,7 @@
                   "description": "Image pull policy"
                 }
               },
-              "required": ["registry", "name", "pullPolicy"]
+              "required": ["repository"]
             }
           },
           "required": ["image"]

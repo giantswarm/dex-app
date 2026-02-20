@@ -6,8 +6,7 @@ dex:
   replicaCount: 1
   dex:
     image:
-      registry: gsoci.azurecr.io
-      name: giantswarm/dex-app
+      repository: gsoci.azurecr.io/giantswarm/dex-app
       # tag defaults to Chart.AppVersion when empty.
       # Automatically synced from Chart.yaml appVersion via `make sync-image-tag`
       # Override only for testing with a specific image.
@@ -32,12 +31,12 @@ dex:
         - ALL
     seccompProfile:
       type: RuntimeDefault
-    # capabilities:
-    #   drop:
-    #   - ALL
-    # readOnlyRootFilesystem: true
-    # runAsNonRoot: true
-    # runAsUser: 1000
+      # capabilities:
+      #   drop:
+      #   - ALL
+      # readOnlyRootFilesystem: true
+      # runAsNonRoot: true
+      # runAsUser: 1000
   serviceMonitor:
     # -- Enable Prometheus ServiceMonitor.
     # See the [documentation](https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/design.md#servicemonitor) and the [API reference](https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/api.md#servicemonitor) for details.
@@ -96,19 +95,21 @@ dex:
     requests:
       cpu: 100m
       memory: 50Mi
-    # We usually recommend not to specify default resources and to leave this as a conscious
-    # choice for the user. This also increases chances charts run on environments with little
-    # resources, such as Minikube. If you do want to specify resources, uncomment the following
-    # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
-    # limits:
-    #   cpu: 100m
-    #   memory: 128Mi
-    # requests:
-    #   cpu: 100m
-    #   memory: 128Mi
+      # We usually recommend not to specify default resources and to leave this as a conscious
+      # choice for the user. This also increases chances charts run on environments with little
+      # resources, such as Minikube. If you do want to specify resources, uncomment the following
+      # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+      # limits:
+      #   cpu: 100m
+      #   memory: 128Mi
+      # requests:
+      #   cpu: 100m
+      #   memory: 128Mi
   extraVolumes: []
   extraVolumeMounts: []
   logoURI: https://s.giantswarm.io/brand/1/logo.svg
+  image:
+    tag: 2.2.0
 client:
   image:
     registry: gsoci.azurecr.io
@@ -177,36 +178,36 @@ route:
     # basicAuth:
     #   users:
     #     name: <secret_name>
+# -- CORS configuration.
+# cors:
+#   allowOrigins:
+#     - type: Exact
+#       value: "https://example.com"
 
-    # -- CORS configuration.
-    # cors:
-    #   allowOrigins:
-    #     - type: Exact
-    #       value: "https://example.com"
+# -- JWT authentication configuration.
+# jwt:
+#   providers:
+#     - name: example
+#       issuer: "https://example.com"
 
-    # -- JWT authentication configuration.
-    # jwt:
-    #   providers:
-    #     - name: example
-    #       issuer: "https://example.com"
+# -- OIDC authentication configuration.
+# oidc:
+#   provider:
+#     issuer: "https://example.com"
 
-    # -- OIDC authentication configuration.
-    # oidc:
-    #   provider:
-    #     issuer: "https://example.com"
+# -- External authentication configuration.
+# extAuth:
+#   http:
+#     backendRef:
+#       name: ext-auth-service
+#       port: 9001
 
-    # -- External authentication configuration.
-    # extAuth:
-    #   http:
-    #     backendRef:
-    #       name: ext-auth-service
-    #       port: 9001
+# -- Authorization configuration.
+# authorization:
+#   defaultAction: Deny
+#   rules:
+#     - action: Allow
 
-    # -- Authorization configuration.
-    # authorization:
-    #   defaultAction: Deny
-    #   rules:
-    #     - action: Allow
 oidc:
   issuerAddress: ""
   expiry:

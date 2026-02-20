@@ -11,7 +11,7 @@ index 607cafd..cf29ca5 100644
    namespace: {{ include "dex.namespace" . }}
    labels:
      {{- include "dex.labels" . | nindent 4 }}
-@@ -57,12 +57,8 @@ spec:
+@@ -57,12 +57,12 @@ spec:
          - name: {{ .Chart.Name }}
            securityContext:
              {{- toYaml .Values.securityContext | nindent 12 }}

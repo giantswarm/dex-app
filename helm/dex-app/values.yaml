@@ -4,26 +4,23 @@ dex:
   # Declare variables to be passed into your templates.
   # -- Number of replicas (pods) to launch.
   replicaCount: 1
-
   dex:
     image:
       registry: gsoci.azurecr.io
       name: giantswarm/dex-app
       # tag defaults to Chart.AppVersion when empty.
+      # Automatically synced from Chart.yaml appVersion via `make sync-image-tag`
       # Override only for testing with a specific image.
-      tag: ""
+      tag: "2.2.0"
       pullPolicy: IfNotPresent
-
   configSecret:
     # -- Enable creating a secret from the values passed to `config`.
     # If set to false, name must point to an existing secret.
     create: false
-
     # -- The name of the secret to mount as configuration in the pod.
     # If not set and create is true, a name is generated using the fullname template.
     # Must point to secret that contains at least a `config.yaml` key.
     name: "dex"
-
   securityContext:
     runAsNonRoot: true
     runAsUser: 1000
@@ -41,48 +38,36 @@ dex:
     # readOnlyRootFilesystem: true
     # runAsNonRoot: true
     # runAsUser: 1000
-
   serviceMonitor:
     # -- Enable Prometheus ServiceMonitor.
     # See the [documentation](https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/design.md#servicemonitor) and the [API reference](https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/api.md#servicemonitor) for details.
     enabled: true
-
     # -- Namespace where the ServiceMonitor resource should be deployed.
     # @default -- Release namespace.
     namespace: ""
-
     # -- (duration) Prometheus scrape interval.
     interval: ""
-
     # -- (duration) Prometheus scrape timeout.
     scrapeTimeout: ""
-
     # -- Labels to be added to the ServiceMonitor.
     ## ref: https://github.com/coreos/prometheus-operator/blob/master/Documentation/api.md#prometheusspec
     labels: {}
-
     # -- Annotations to be added to the ServiceMonitor.
     ## ref: https://github.com/coreos/prometheus-operator/blob/master/Documentation/api.md#prometheusspec
     annotations: {}
-
     # -- HTTP scheme to use for scraping.
     # Can be used with `tlsConfig` for example if using istio mTLS.
     scheme: ""
-
     # -- HTTP path to scrape for metrics.
     path: /metrics
-
     # -- TLS configuration to use when scraping the endpoint.
     # For example if using istio mTLS.
     ## Of type: https://github.com/coreos/prometheus-operator/blob/master/Documentation/api.md#tlsconfig
     tlsConfig: {}
-
     # -- Prometheus scrape bearerTokenFile
     bearerTokenFile: ""
-
     # -- HonorLabels chooses the metric's labels on collisions with target labels.
     honorLabels: false
-
     # -- Prometheus scrape metric relabel configs
     # to apply to samples before ingestion.
     ## [Metric Relabeling](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#metric_relabel_configs)
@@ -101,7 +86,6 @@ dex:
     #   targetLabel: nodename
     #   replacement: $1
     #   action: replace
-
   # -- Container resource [requests and limits](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/).
   # See the [API reference](https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/pod-v1/#resources) for details.
   # @default -- No requests or limits.
@@ -122,18 +106,15 @@ dex:
     # requests:
     #   cpu: 100m
     #   memory: 128Mi
-
   extraVolumes: []
   extraVolumeMounts: []
   logoURI: https://s.giantswarm.io/brand/1/logo.svg
-
 client:
   image:
     registry: gsoci.azurecr.io
     name: giantswarm/dex-k8s-authenticator
     tag: 1.4.0
     pullPolicy: IfNotPresent
-
 ingress:
   # -- Enable [ingress](https://kubernetes.io/docs/concepts/services-networking/ingress/).
   enabled: true
@@ -147,32 +128,25 @@ ingress:
   tls:
     # -- Configure the cert-manager cluster issuer.
     clusterIssuer: "letsencrypt-giantswarm"
-
 # -- Gateway API HTTPRoute configuration (alternative to ingress).
 # When enabled, creates an HTTPRoute resource for the Gateway API.
 # This is an alternative to the traditional Ingress resource.
 route:
   # -- Enable Gateway API HTTPRoute.
   enabled: false
-
   # -- Set the route kind.
   # Valid options are GRPCRoute, HTTPRoute, TCPRoute, TLSRoute, UDPRoute.
   kind: HTTPRoute
-
   # -- Override the route name (defaults to dex).
   name: ""
-
   # -- Annotations to be added to the HTTPRoute.
   annotations: {}
-
   # -- Labels to be added to the HTTPRoute.
   labels: {}
-
   # -- Hostnames for the route.
   # If not specified, the hostname is automatically determined based on cluster type
   # (workload vs management) and baseDomain/oidc.issuerAddress.
   hostnames: []
-
   # -- Parent references for the HTTPRoute.
   # These specify which Gateways the route should be attached to.
   # Note: Use sectionName: https to attach to the HTTPS listener for TLS traffic.
@@ -186,25 +160,19 @@ route:
     - path:
         type: PathPrefix
         value: /
-
   # -- Filters define the filters that are applied to requests that match this rule.
   filters: []
-
   # -- Additional custom rules that can be added to the route.
   additionalRules: []
-
   # -- SecurityPolicy configuration for the HTTPRoute.
   # When enabled, creates a SecurityPolicy resource targeting this route.
   securityPolicy:
     # -- Enable SecurityPolicy creation.
     enabled: false
-
     # -- Annotations to be added to the SecurityPolicy.
     annotations: {}
-
     # -- Labels to be added to the SecurityPolicy.
     labels: {}
-
     # -- Basic authentication configuration.
     # basicAuth:
     #   users:
@@ -239,7 +207,6 @@ route:
     #   defaultAction: Deny
     #   rules:
     #     - action: Allow
-
 oidc:
   issuerAddress: ""
   expiry:
@@ -288,7 +255,6 @@ oidc:
     connectorName: ""
     connectorConfig: ""
     connectors: []
-
 # Note that the public address in Giant Swarm management cluster configurations already includes the port
 services:
   kubernetes:
@@ -306,49 +272,34 @@ services:
     address: ""
   backstage:
     address: []
-
 registry:
   domain: gsoci.azurecr.io
-
 # Giant Swarm properties for management clusters
 isManagementCluster: false
 managementCluster:
   name: ""
-
 # Giant Swarm properties for workload clusters
 isWorkloadCluster: false
-
 # Enable the deployment of the dex k8s authenticator together with dex
 # Please note that this app is deprecated and will be removed in the future
 deployDexK8SAuthenticator: false
-
 cluster:
   proxy:
     http: ""
     https: ""
     noProxy: ""
-
 global:
-  image:
-    # Propagated to subchart as .Values.global.image.tag
-    # Automatically synced from Chart.yaml appVersion via `make sync-image-tag`
-    tag: "2.2.0"
   podSecurityStandards:
     enforced: false
-
 monitoring:
   podLogs:
     # Enable log collection for monitoring.
     enabled: true
-
     # Tenant to use for monitoring
     tenant: giantswarm
-
     # Optional additional annotations.
     annotations: {}
-
     # Optional additional labels.
     labels: {}
-
     # List of relabeling rules for logs.
     relabelings: []

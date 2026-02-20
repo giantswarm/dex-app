@@ -1,7 +1,7 @@
 name: Sync image tag from Chart.yaml
 
 # Runs when Chart.yaml is modified (e.g. by the release PR workflow)
-# and syncs global.image.tag in values.yaml to match appVersion.
+# and syncs dex.image.tag in values.yaml to match appVersion.
 on:
   push:
     branches:
@@ -38,6 +38,6 @@ jobs:
             echo "No changes to commit"
           else
             git add helm/dex-app/values.yaml
-            git commit -m "Sync global.image.tag from Chart.yaml appVersion"
+            git commit -m "Sync dex.image.tag from Chart.yaml appVersion"
             git push
           fi

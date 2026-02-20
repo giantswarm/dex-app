@@ -150,7 +150,13 @@
         "kind": {
           "type": "string",
           "description": "Set the route kind",
-          "enum": ["GRPCRoute", "HTTPRoute", "TCPRoute", "TLSRoute", "UDPRoute"],
+          "enum": [
+            "GRPCRoute",
+            "HTTPRoute",
+            "TCPRoute",
+            "TLSRoute",
+            "UDPRoute"
+          ],
           "default": "HTTPRoute"
         },
         "name": {
@@ -195,7 +201,9 @@
                 "description": "Port on the Gateway"
               }
             },
-            "required": ["name"]
+            "required": [
+              "name"
+            ]
           }
         },
         "matches": {
@@ -209,7 +217,11 @@
                 "properties": {
                   "type": {
                     "type": "string",
-                    "enum": ["Exact", "PathPrefix", "RegularExpression"]
+                    "enum": [
+                      "Exact",
+                      "PathPrefix",
+                      "RegularExpression"
+                    ]
                   },
                   "value": {
                     "type": "string"
@@ -346,7 +358,9 @@
                       "description": "HTTP service port number"
                     }
                   },
-                  "required": ["port"]
+                  "required": [
+                    "port"
+                  ]
                 }
               }
             }
@@ -372,14 +386,25 @@
                 },
                 "pullPolicy": {
                   "type": "string",
-                  "enum": ["Always", "Never", "IfNotPresent"],
+                  "enum": [
+                    "Always",
+                    "Never",
+                    "IfNotPresent"
+                  ],
                   "description": "Image pull policy"
                 }
               },
-              "required": ["registry", "name", "tag", "pullPolicy"]
+              "required": [
+                "registry",
+                "name",
+                "tag",
+                "pullPolicy"
+              ]
             }
           },
-          "required": ["image"]
+          "required": [
+            "image"
+          ]
         },
         "dex": {
           "type": "object",
@@ -387,24 +412,34 @@
             "image": {
               "type": "object",
               "properties": {
-                "repository": {
+                "registry": {
                   "type": "string",
-                  "description": "Container image repository for dex"
+                  "description": "Container registry for dex image"
                 },
-                "tag": {
+                "name": {
                   "type": "string",
-                  "description": "Container image tag for dex"
+                  "description": "Dex image name"
                 },
                 "pullPolicy": {
                   "type": "string",
-                  "enum": ["Always", "Never", "IfNotPresent"],
+                  "enum": [
+                    "Always",
+                    "Never",
+                    "IfNotPresent"
+                  ],
                   "description": "Image pull policy"
                 }
               },
-              "required": ["repository"]
+              "required": [
+                "registry",
+                "name",
+                "pullPolicy"
+              ]
             }
           },
-          "required": ["image"]
+          "required": [
+            "image"
+          ]
         },
         "configSecret": {
           "type": "object",
@@ -418,7 +453,9 @@
               "description": "The name of the secret to mount as configuration in the pod"
             }
           },
-          "required": ["create"]
+          "required": [
+            "create"
+          ]
         },
         "securityContext": {
           "type": "object",
@@ -515,7 +552,9 @@
               "description": "Relabel configs to apply to samples before ingestion"
             }
           },
-          "required": ["enabled"]
+          "required": [
+            "enabled"
+          ]
         },
         "resources": {
           "type": "object",
@@ -586,7 +625,9 @@
           }
         }
       },
-      "required": ["replicaCount"]
+      "required": [
+        "replicaCount"
+      ]
     },
     "oidc": {
       "type": "object",
@@ -747,7 +788,9 @@
               "type": "array"
             }
           },
-          "required": ["enabled"]
+          "required": [
+            "enabled"
+          ]
         }
       }
     },
@@ -831,7 +874,10 @@
       "description": "Whether this is a management cluster"
     },
     "managementCluster": {
-      "type": ["object", "string"],
+      "type": [
+        "object",
+        "string"
+      ],
       "properties": {
         "name": {
           "type": "string",

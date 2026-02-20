@@ -21,6 +21,12 @@ index 607cafd..cf29ca5 100644
 -          image: "{{ tpl .Values.image.repository . }}:{{ tpl .Values.image.tag . | default (printf "v%s" .Chart.AppVersion) }}"
 -          {{- end }}
 -          imagePullPolicy: {{ .Values.image.pullPolicy }}
++          {{- if .Values.dex.image.digest }}
++          image: "{{ .Values.dex.image.registry }}/{{ .Values.dex.image.name }}@{{ .Values.dex.image.digest }}"
++          {{- else }}
++          image: "{{ .Values.dex.image.registry }}/{{ .Values.dex.image.name }}:{{ .Values.dex.image.tag | default (printf "v%s" .Chart.AppVersion) }}"
++          {{- end }}
++          imagePullPolicy: {{ .Values.dex.image.pullPolicy }}
            args:
              - dex
              - serve

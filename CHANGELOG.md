@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- Update `dex` to `v2.43.1-gs2`. Fixes redundant group name prefixing on token refresh that caused intermittent permission denied errors for users authenticating via Dex (Azure AD / GitHub). Groups like `giantswarm-ad:giantswarm-admins` were appearing as `giantswarm-ad:giantswarm-ad:giantswarm-admins`, which didn't match ClusterRoleBindings.
+- Update `dex` to `v2.43.1-gs3`. Fixes redundant group name prefixing on token refresh that caused intermittent permission denied errors for users authenticating via Dex (Azure AD / GitHub). Groups like `giantswarm-ad:giantswarm-admins` were appearing as `giantswarm-ad:giantswarm-ad:giantswarm-admins`, which didn't match ClusterRoleBindings.
 
 ## [2.2.0] - 2026-01-21
 

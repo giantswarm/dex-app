@@ -406,39 +406,35 @@
             "image"
           ]
         },
-        "dex": {
+        "image": {
           "type": "object",
           "properties": {
-            "image": {
-              "type": "object",
-              "properties": {
-                "registry": {
-                  "type": "string",
-                  "description": "Container registry for dex image"
-                },
-                "name": {
-                  "type": "string",
-                  "description": "Dex image name"
-                },
-                "pullPolicy": {
-                  "type": "string",
-                  "enum": [
-                    "Always",
-                    "Never",
-                    "IfNotPresent"
-                  ],
-                  "description": "Image pull policy"
-                }
-              },
-              "required": [
-                "registry",
-                "name",
-                "pullPolicy"
-              ]
+            "registry": {
+              "type": "string",
+              "description": "Dex image registry"
+            },
+            "repository": {
+              "type": "string",
+              "description": "Dex image repository"
+            },
+            "tag": {
+              "type": "string",
+              "description": "Dex image tag"
+            },
+            "pullPolicy": {
+              "type": "string",
+              "enum": [
+                "Always",
+                "Never",
+                "IfNotPresent"
+              ],
+              "description": "Image pull policy"
             }
           },
           "required": [
-            "image"
+            "repository",
+            "tag",
+            "pullPolicy"
           ]
         },
         "configSecret": {

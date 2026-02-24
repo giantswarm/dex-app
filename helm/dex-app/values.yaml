@@ -1,18 +1,15 @@
 dex:
   # Default values for dex.
   # This is a YAML-formatted file.
-  # Declare variables to be passed into your templates.
-  # -- Number of replicas (pods) to launch.
   replicaCount: 1
-  dex:
-    image:
-      registry: gsoci.azurecr.io
-      name: giantswarm/dex-app
-      # tag defaults to Chart.AppVersion when empty.
-      # Automatically synced from Chart.yaml appVersion via `make sync-image-tag`
-      # Override only for testing with a specific image.
-      tag: "2.2.0"
-      pullPolicy: IfNotPresent
+  image:
+    registry: gsoci.azurecr.io
+    repository: giantswarm/dex-app
+    # tag defaults to Chart.AppVersion when empty.
+    # Automatically synced from Chart.yaml appVersion via `make sync-image-tag`
+    # Override only for testing with a specific image.
+    tag: "2.2.0"
+    pullPolicy: IfNotPresent
   configSecret:
     # -- Enable creating a secret from the values passed to `config`.
     # If set to false, name must point to an existing secret.
@@ -109,8 +106,7 @@ dex:
   extraVolumes: []
   extraVolumeMounts: []
   logoURI: https://s.giantswarm.io/brand/1/logo.svg
-  image:
-    tag: 2.2.0
+
 client:
   image:
     registry: gsoci.azurecr.io

@@ -1,5 +1,5 @@
 diff --git a/vendor/dex/templates/deployment.yaml b/helm/dex-app/charts/dex/templates/deployment.yaml
-index 607cafd..cf29ca5 100644
+index 607cafd..763c6a3 100644
 --- a/vendor/dex/templates/deployment.yaml
 +++ b/helm/dex-app/charts/dex/templates/deployment.yaml
 @@ -1,7 +1,7 @@
@@ -11,26 +11,37 @@ index 607cafd..cf29ca5 100644
    namespace: {{ include "dex.namespace" . }}
    labels:
      {{- include "dex.labels" . | nindent 4 }}
-@@ -57,12 +57,12 @@ spec:
+@@ -57,10 +57,27 @@ spec:
          - name: {{ .Chart.Name }}
            securityContext:
              {{- toYaml .Values.securityContext | nindent 12 }}
--          {{- if .Values.image.digest }}
--          image: "{{ tpl .Values.image.repository . }}@{{ tpl .Values.image.digest . }}"
--          {{- else }}
--          image: "{{ tpl .Values.image.repository . }}:{{ tpl .Values.image.tag . | default (printf "v%s" .Chart.AppVersion) }}"
--          {{- end }}
--          imagePullPolicy: {{ .Values.image.pullPolicy }}
-+          {{- if .Values.dex.image.digest }}
-+          image: "{{ .Values.dex.image.registry }}/{{ .Values.dex.image.name }}@{{ .Values.dex.image.digest }}"
-+          {{- else }}
-+          image: "{{ .Values.dex.image.registry }}/{{ .Values.dex.image.name }}:{{ .Values.dex.image.tag | default (printf "v%s" .Chart.AppVersion) }}"
++          {{- $registry := .Values.image.registry | default "" -}}
++          {{- if .Values.global }}
++            {{- if .Values.global.image }}
++              {{- $registry = .Values.global.image.registry | default $registry -}}
++            {{- end }}
 +          {{- end }}
-+          imagePullPolicy: {{ .Values.dex.image.pullPolicy }}
++          {{- $repository := .Values.image.repository -}}
++          {{- $imagePrefix := "" -}}
++          {{- if $registry -}}
++            {{- $imagePrefix = printf "%s/" $registry -}}
++          {{- end -}}
+           {{- if .Values.image.digest }}
+-          image: "{{ tpl .Values.image.repository . }}@{{ tpl .Values.image.digest . }}"
++          image: "{{ $imagePrefix }}{{ $repository }}@{{ .Values.image.digest }}"
+           {{- else }}
+-          image: "{{ tpl .Values.image.repository . }}:{{ tpl .Values.image.tag . | default (printf "v%s" .Chart.AppVersion) }}"
++          {{- $tag := .Values.image.tag | default (printf "v%s" .Chart.AppVersion) -}}
++          {{- if .Values.global }}
++            {{- if .Values.global.image }}
++              {{- $tag = .Values.global.image.tag | default $tag -}}
++            {{- end }}
++          {{- end }}
++          image: "{{ $imagePrefix }}{{ $repository }}:{{ $tag }}"
+           {{- end }}
+           imagePullPolicy: {{ .Values.image.pullPolicy }}
            args:
-             - dex
-             - serve
-@@ -122,6 +118,8 @@ spec:
+@@ -122,6 +139,8 @@ spec:
              - name: config
                mountPath: /etc/dex
                readOnly: true
@@ -39,7 +50,7 @@ index 607cafd..cf29ca5 100644
            {{- with .Values.volumeMounts }}
              {{- toYaml . | nindent 12 }}
            {{- end }}
-@@ -129,6 +127,8 @@ spec:
+@@ -129,6 +148,8 @@ spec:
          - name: config
            secret:
              secretName: {{ include "dex.configSecretName" . }}

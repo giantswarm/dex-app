@@ -57,27 +57,10 @@ spec:
         - name: {{ .Chart.Name }}
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
-          {{- $registry := .Values.image.registry | default "" -}}
-          {{- if .Values.global }}
-            {{- if .Values.global.image }}
-              {{- $registry = .Values.global.image.registry | default $registry -}}
-            {{- end }}
-          {{- end }}
-          {{- $repository := .Values.image.repository -}}
-          {{- $imagePrefix := "" -}}
-          {{- if $registry -}}
-            {{- $imagePrefix = printf "%s/" $registry -}}
-          {{- end -}}
           {{- if .Values.image.digest }}
-          image: "{{ $imagePrefix }}{{ $repository }}@{{ .Values.image.digest }}"
+          image: "{{ tpl .Values.image.repository . }}@{{ tpl .Values.image.digest . }}"
           {{- else }}
-          {{- $tag := .Values.image.tag | default (printf "v%s" .Chart.AppVersion) -}}
-          {{- if .Values.global }}
-            {{- if .Values.global.image }}
-              {{- $tag = .Values.global.image.tag | default $tag -}}
-            {{- end }}
-          {{- end }}
-          image: "{{ $imagePrefix }}{{ $repository }}:{{ $tag }}"
+          image: "{{ tpl .Values.image.repository . }}:{{ tpl .Values.image.tag . | default (printf "v%s" .Chart.AppVersion) }}"
           {{- end }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           args:

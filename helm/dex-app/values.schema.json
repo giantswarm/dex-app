@@ -409,10 +409,6 @@
         "image": {
           "type": "object",
           "properties": {
-            "registry": {
-              "type": "string",
-              "description": "Dex image registry"
-            },
             "repository": {
               "type": "string",
               "description": "Dex image repository"

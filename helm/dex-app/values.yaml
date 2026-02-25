@@ -3,8 +3,7 @@ dex:
   # This is a YAML-formatted file.
   replicaCount: 1
   image:
-    registry: gsoci.azurecr.io
-    repository: giantswarm/dex-app
+    repository: gsoci.azurecr.io/giantswarm/dex-app
     # tag defaults to Chart.AppVersion when empty.
     # Automatically synced from Chart.yaml appVersion via `make sync-image-tag`
     # Override only for testing with a specific image.

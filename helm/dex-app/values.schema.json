@@ -406,41 +406,6 @@
             "image"
           ]
         },
-        "image": {
-          "type": "object",
-          "properties": {
-            "registry": {
-              "type": "string",
-              "description": "Dex image registry"
-            },
-            "name": {
-              "type": "string",
-              "description": "Dex image name"
-            },
-            "repository": {
-              "type": "string",
-              "description": "Dex image repository (dynamically evaluated)"
-            },
-            "tag": {
-              "type": "string",
-              "description": "Dex image tag"
-            },
-            "pullPolicy": {
-              "type": "string",
-              "enum": [
-                "Always",
-                "Never",
-                "IfNotPresent"
-              ],
-              "description": "Image pull policy"
-            }
-          },
-          "required": [
-            "repository",
-            "tag",
-            "pullPolicy"
-          ]
-        },
         "configSecret": {
           "type": "object",
           "properties": {
@@ -623,6 +588,41 @@
               "description": "Additional egress rules for network policy"
             }
           }
+        },
+        "dex": {
+          "type": "object",
+          "properties": {
+            "image": {
+              "type": "object",
+              "properties": {
+                "registry": {
+                  "type": "string",
+                  "description": "Dex image registry"
+                },
+                "name": {
+                  "type": "string",
+                  "description": "Dex image name"
+                },
+                "pullPolicy": {
+                  "type": "string",
+                  "enum": [
+                    "Always",
+                    "Never",
+                    "IfNotPresent"
+                  ],
+                  "description": "Image pull policy"
+                }
+              },
+              "required": [
+                "registry",
+                "name",
+                "pullPolicy"
+              ]
+            }
+          },
+          "required": [
+            "image"
+          ]
         }
       },
       "required": [

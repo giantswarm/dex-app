@@ -16,6 +16,7 @@ vendir sync
 # find vendor/ -type f -exec sed -i 's/[[:space:]]*$//' {} \;
 
 # Patches
+./sync/patches/deployment/patch.sh
 ./sync/patches/helpers/patch.sh
 ./sync/patches/hpa/patch.sh
 ./sync/patches/networkpolicy/patch.sh

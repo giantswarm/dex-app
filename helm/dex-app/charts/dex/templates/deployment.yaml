@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "dex.fullname" . }}
+  name: {{ include "dex.name" . }}
   namespace: {{ include "dex.namespace" . }}
   labels:
     {{- include "dex.labels" . | nindent 4 }}
@@ -57,12 +57,8 @@ spec:
         - name: {{ .Chart.Name }}
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
-          {{- if .Values.image.digest }}
-          image: "{{ tpl .Values.image.repository . }}@{{ tpl .Values.image.digest . }}"
-          {{- else }}
-          image: "{{ tpl .Values.image.repository . }}:{{ tpl .Values.image.tag . | default (printf "v%s" .Chart.AppVersion) }}"
-          {{- end }}
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          image: "{{ .Values.dex.image.registry }}/{{ .Values.dex.image.name }}:{{ .Values.dex.image.tag }}"
+          imagePullPolicy: {{ .Values.dex.image.pullPolicy }}
           args:
             - dex
             - serve
@@ -122,6 +118,8 @@ spec:
             - name: config
               mountPath: /etc/dex
               readOnly: true
+            - name: tmp-volume
+              mountPath: /tmp
           {{- with .Values.volumeMounts }}
             {{- toYaml . | nindent 12 }}
           {{- end }}
@@ -129,6 +127,8 @@ spec:
         - name: config
           secret:
             secretName: {{ include "dex.configSecretName" . }}
+        - name: tmp-volume
+          emptyDir: {}
       {{- with .Values.volumes }}
         {{- toYaml . | nindent 8 }}
       {{- end }}

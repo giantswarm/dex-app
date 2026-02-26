@@ -3,7 +3,10 @@ dex:
   # This is a YAML-formatted file.
   replicaCount: 1
   image:
-    repository: gsoci.azurecr.io/giantswarm/dex-app
+    registry: gsoci.azurecr.io
+    name: giantswarm/dex-app
+    # repository uses tpl evaluation in the upstream subchart to dynamically construct the image
+    repository: '{{ $globalRegistry := "" }}{{ if .Values.global }}{{ if .Values.global.image }}{{ $globalRegistry = .Values.global.image.registry }}{{ end }}{{ end }}{{ default .Values.image.registry $globalRegistry }}/{{ .Values.image.name }}'
     # tag defaults to Chart.AppVersion when empty.
     # Automatically synced from Chart.yaml appVersion via `make sync-image-tag`
     # Override only for testing with a specific image.
@@ -105,7 +108,6 @@ dex:
   extraVolumes: []
   extraVolumeMounts: []
   logoURI: https://s.giantswarm.io/brand/1/logo.svg
-
 client:
   image:
     registry: gsoci.azurecr.io

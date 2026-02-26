@@ -409,9 +409,17 @@
         "image": {
           "type": "object",
           "properties": {
+            "registry": {
+              "type": "string",
+              "description": "Dex image registry"
+            },
+            "name": {
+              "type": "string",
+              "description": "Dex image name"
+            },
             "repository": {
               "type": "string",
-              "description": "Dex image repository"
+              "description": "Dex image repository (dynamically evaluated)"
             },
             "tag": {
               "type": "string",

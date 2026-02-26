@@ -1,0 +1,7 @@
+dex:
+  image:
+    registry: gsoci.azurecr.io
+    name: giantswarm/dex-app
+    # repository uses tpl evaluation in the upstream subchart to dynamically construct the image
+    repository: '{{ $globalRegistry := "" }}{{ if .Values.global }}{{ if .Values.global.image }}{{ $globalRegistry = .Values.global.image.registry }}{{ end }}{{ end }}{{ default .Values.image.registry $globalRegistry }}/{{ .Values.image.name }}'
+    tag: "2.2.0"

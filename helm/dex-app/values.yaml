@@ -2,6 +2,7 @@ dex:
   # Default values for dex.
   # This is a YAML-formatted file.
   replicaCount: 1
+  fullnameOverride: "dex"
   image:
     registry: gsoci.azurecr.io
     name: giantswarm/dex-app
@@ -95,7 +96,7 @@ dex:
     requests:
       cpu: 100m
       memory: 50Mi
-      # We usually recommend not to specify default resources and to leave this as a conscious
+    # We usually recommend not to specify default resources and to leave this as a conscious
       # choice for the user. This also increases chances charts run on environments with little
       # resources, such as Minikube. If you do want to specify resources, uncomment the following
       # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
@@ -105,6 +106,12 @@ dex:
       # requests:
       #   cpu: 100m
       #   memory: 128Mi
+  volumes:
+    - name: tmp-volume
+      emptyDir: {}
+  volumeMounts:
+    - name: tmp-volume
+      mountPath: /tmp
   extraVolumes: []
   extraVolumeMounts: []
   logoURI: https://s.giantswarm.io/brand/1/logo.svg

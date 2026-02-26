@@ -2,5 +2,16 @@
   "extends": [
     // Base config - https://github.com/giantswarm/renovate-presets/blob/main/default.json5
     "github>giantswarm/renovate-presets:default.json5",
+    // Go specific config - https://github.com/giantswarm/renovate-presets/blob/main/lang-go.json5
+    "github>giantswarm/renovate-presets:lang-go.json5",
+  ],
+  // Track the GS dex fork base image in the Dockerfile.
+  // This is a forked repo so we use a custom versioning regex to match tags like v2.43.1-gs2.
+  "packageRules": [
+    {
+      "matchDatasources": ["docker"],
+      "matchPackageNames": ["gsoci.azurecr.io/giantswarm/dex"],
+      "versioning": "regex:^v?(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)(-gs(?<build>\\d+))?$",
+    },
   ],
 }

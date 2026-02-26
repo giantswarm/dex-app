@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.3.0] - 2026-02-12
+
+### Fixed
+
+- Update `dex` to `v2.43.1-gs3`. Fixes redundant group name prefixing on token refresh that caused intermittent permission denied errors for users authenticating via Azure AD and certain other Dex connectors.
+
 ## [2.2.0] - 2026-01-21
 
 ## [2.1.5] - 2025-12-22

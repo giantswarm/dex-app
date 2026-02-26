@@ -1,6 +1,0 @@
-dex:
-  image:
-    registry: gsoci.azurecr.io
-    name: giantswarm/dex-app
-    tag: "2.2.0"
-    repository: '{{ .Values.image.registry }}/{{ .Values.image.name }}'

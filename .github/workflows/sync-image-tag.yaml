@@ -1,0 +1,43 @@
+name: Sync image tag from Chart.yaml
+
+# Runs when Chart.yaml is modified (e.g. by the release PR workflow)
+# and syncs dex.image.tag in values.yaml to match appVersion.
+on:
+  push:
+    branches:
+      - 'main#release#*'
+      - 'master#release#*'
+      - 'release#*'
+    paths:
+      - 'helm/dex-app/Chart.yaml'
+
+jobs:
+  sync:
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.TAYLORBOT_GITHUB_ACTION }}
+
+      - name: Install yq
+        run: |
+          sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/download/v4.40.5/yq_linux_amd64
+          sudo chmod +x /usr/local/bin/yq
+
+      - name: Sync image tag
+        run: make sync-image-tag APPLICATION=helm/dex-app
+
+      - name: Commit if changed
+        run: |
+          git config --local user.email "dev@giantswarm.io"
+          git config --local user.name "taylorbot"
+          if git diff --quiet; then
+            echo "No changes to commit"
+          else
+            git add helm/dex-app/values.yaml
+            git commit -m "Sync dex.image.tag from Chart.yaml appVersion"
+            git push
+          fi

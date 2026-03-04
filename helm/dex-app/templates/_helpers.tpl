@@ -68,7 +68,7 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{- if .Values.commonLabels}}
 {{ toYaml .Values.commonLabels }}
 {{- end }}
-application.giantswarm.io/team: {{ index .Chart.Annotations "application.giantswarm.io/team" | quote }}
+application.giantswarm.io/team: {{ index .Chart.Annotations "io.giantswarm.application.team" | quote }}
 giantswarm.io/service-type: "managed"
 {{- end }}
 
@@ -226,7 +226,7 @@ Labels that should be added on each resource
 {{- define "labels" -}}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 giantswarm.io/service-type: "managed"
-application.giantswarm.io/team: {{ index .Chart.Annotations "application.giantswarm.io/team" | quote }}
+application.giantswarm.io/team: {{ index .Chart.Annotations "io.giantswarm.application.team" | quote }}
 {{- if eq (default "helm" .Values.creator) "helm" }}
 helm.sh/chart: {{ include "chartName" . }}
 {{- end -}}
@@ -264,6 +264,6 @@ helm.sh/chart: {{ include "dex.chart" . }}
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
-application.giantswarm.io/team: {{ index .Chart.Annotations "application.giantswarm.io/team" | quote }}
+application.giantswarm.io/team: {{ index .Chart.Annotations "io.giantswarm.application.team" | quote }}
 giantswarm.io/service-type: "managed"
 {{- end -}}

@@ -6,7 +6,7 @@ index cf0950b..30ab6c6 100644
  {{- if .Values.commonLabels}}
  {{ toYaml .Values.commonLabels }}
  {{- end }}
-+application.giantswarm.io/team: {{ index .Chart.Annotations "application.giantswarm.io/team" | quote }}
++application.giantswarm.io/team: {{ index .Chart.Annotations "io.giantswarm.application.team" | quote }}
 +giantswarm.io/service-type: "managed"
  {{- end }}
  

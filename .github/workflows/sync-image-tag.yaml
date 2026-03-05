@@ -1,11 +1,15 @@
 name: Sync image tag from Chart.yaml
 
-# Runs when a release tag is created (after push-to-registries has pushed the image),
-# and syncs dex.image.tag in values.yaml to match the released appVersion.
+# Runs when Chart.yaml is modified (e.g. by the release PR workflow)
+# and syncs dex.image.tag in values.yaml to match appVersion.
 on:
   push:
-    tags:
-      - 'v*'
+    branches:
+      - 'main#release#*'
+      - 'master#release#*'
+      - 'release#*'
+    paths:
+      - 'helm/dex-app/Chart.yaml'
 
 jobs:
   sync:

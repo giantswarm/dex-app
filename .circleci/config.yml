@@ -36,6 +36,24 @@ workflows:
             ignore:
             - main
             - master
+        post-steps:
+          - run:
+              name: Create test values with dev image tag
+              command: |
+                mkdir -p build
+                cp tests/test-values.yaml build/test-values-dev.yaml
+                if [ -z "${CIRCLE_TAG}" ]; then
+                  LAST_TAG=$(git tag --sort=-version:refname | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' | head -1 | sed 's/^v//')
+                  if [ -n "${LAST_TAG}" ] && [ -n "${CIRCLE_SHA1}" ]; then
+                    DEV_TAG="${LAST_TAG}-${CIRCLE_SHA1}"
+                    printf '\ndex:\n  dex:\n    image:\n      tag: "%s"\n' "${DEV_TAG}" >> build/test-values-dev.yaml
+                    echo "dev image tag set to ${DEV_TAG}"
+                  fi
+                fi
+          - persist_to_workspace:
+              root: build
+              paths:
+                - test-values-dev.yaml
 
       # make it available to customers (only tags)
     - architect/push-to-app-catalog:
@@ -84,6 +102,7 @@ workflows:
         - push-to-control-plane-app-catalog
         app-test-suite_version: v0.4.1
         app-test-suite_container_tag: 0.4.1
+        additional_app-test-suite_flags: "--app-tests-app-config-file build/test-values-dev.yaml"
 
     - architect/push-to-app-collection:
         context: architect

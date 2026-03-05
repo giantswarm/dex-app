@@ -16,6 +16,15 @@ workflows:
             ignore:
             - main
             - master
+        post-steps:
+          - run:
+              name: Push with clean appVersion tag on release branches
+              command: |
+                if [[ "${CIRCLE_BRANCH}" == *"release"* ]]; then
+                  APP_VERSION=$(grep '^appVersion:' helm/dex-app/Chart.yaml | sed 's/.*appVersion: *"//;s/".*//')
+                  docker build -t gsoci.azurecr.io/giantswarm/dex-app:${APP_VERSION} .
+                  docker push gsoci.azurecr.io/giantswarm/dex-app:${APP_VERSION}
+                fi
 
     - architect/push-to-app-catalog:
         name: push-to-control-plane-app-catalog

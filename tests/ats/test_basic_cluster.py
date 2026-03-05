@@ -55,7 +55,7 @@ def app_deployment(kube_cluster: Cluster) -> List[pykube.Deployment]:
         Deployment,
         ["dex"],
         "default",
-        lambda d: int(d.obj["status"]["readyReplicas"]) > 0,
+        lambda d: int(d.obj["status"].get("readyReplicas", 0)) > 0,
         timeout,
         False,
     )
@@ -69,4 +69,4 @@ def app_deployment(kube_cluster: Cluster) -> List[pykube.Deployment]:
 @pytest.mark.flaky(reruns=5, reruns_delay=10)
 def test_pods_available(kube_cluster: Cluster, app_deployment: List[pykube.Deployment]):
     for d in app_deployment:
-        assert int(d.obj["status"]["readyReplicas"]) > 0
+        assert int(d.obj["status"].get("readyReplicas", 0)) > 0

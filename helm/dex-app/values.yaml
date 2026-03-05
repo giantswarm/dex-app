@@ -8,7 +8,7 @@ dex:
       name: giantswarm/dex-app
       # Automatically synced from Chart.yaml appVersion via `make sync-image-tag`
       # Override only for testing with a specific image.
-      tag: "2.2.0"
+      tag: "2.2.1"
       pullPolicy: IfNotPresent
   configSecret:
     # -- Enable creating a secret from the values passed to `config`.
@@ -93,16 +93,16 @@ dex:
     requests:
       cpu: 100m
       memory: 50Mi
-    # We usually recommend not to specify default resources and to leave this as a conscious
-    # choice for the user. This also increases chances charts run on environments with little
-    # resources, such as Minikube. If you do want to specify resources, uncomment the following
-    # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
-    # limits:
-    #   cpu: 100m
-    #   memory: 128Mi
-    # requests:
-    #   cpu: 100m
-    #   memory: 128Mi
+      # We usually recommend not to specify default resources and to leave this as a conscious
+      # choice for the user. This also increases chances charts run on environments with little
+      # resources, such as Minikube. If you do want to specify resources, uncomment the following
+      # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+      # limits:
+      #   cpu: 100m
+      #   memory: 128Mi
+      # requests:
+      #   cpu: 100m
+      #   memory: 128Mi
   extraVolumes: []
   extraVolumeMounts: []
   logoURI: https://s.giantswarm.io/brand/1/logo.svg

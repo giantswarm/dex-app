@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.2.1] - 2026-03-05
+
+### Added
+
+- Add `io.giantswarm.application.audience` and `io.giantswarm.application.managed` annotations to `Chart.yaml` to make the app visible to customers in Backstage.
+
+### Fixed
+
+- Update `dex` to `v2.43.1-gs3`. Fixes redundant group name prefixing on token refresh that caused intermittent permission denied errors for users authenticating via Azure AD and certain other Dex connectors.
+
 ## [2.3.0] - 2026-02-12
 
 ### Fixed
@@ -14,6 +24,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update `dex` to `v2.43.1-gs3`. Fixes redundant group name prefixing on token refresh that caused intermittent permission denied errors for users authenticating via Azure AD and certain other Dex connectors.
 
 ## [2.2.0] - 2026-01-21
+
+### Added
+
+- Add Gateway API HTTPRoute support as an alternative to Ingress for exposing dex. HTTPRoute is disabled by default to maintain backwards compatibility.
 
 ## [2.1.5] - 2025-12-22
 
@@ -650,7 +664,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add helm chart for dex.
 
 
-[Unreleased]: https://github.com/giantswarm/dex-app/compare/v2.2.0...HEAD
+[Unreleased]: https://github.com/giantswarm/dex-app/compare/v2.2.1...HEAD
+[2.2.1]: https://github.com/giantswarm/dex-app/compare/v2.2.0...v2.2.1
 [2.2.0]: https://github.com/giantswarm/dex-app/compare/v2.1.5...v2.2.0
 [2.1.5]: https://github.com/giantswarm/dex-app/compare/v2.1.4...v2.1.5
 [2.1.4]: https://github.com/giantswarm/dex-app/compare/v2.1.3...v2.1.4

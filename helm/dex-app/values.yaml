@@ -287,6 +287,8 @@ cluster:
 global:
   podSecurityStandards:
     enforced: false
+logger:
+  level: INFO
 monitoring:
   podLogs:
     # Enable log collection for monitoring.

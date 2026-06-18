@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- CI: push the release image to gsoci only and mirror to Aliyun out-of-band via `sync-china-registry`, so a slow cross-Pacific Aliyun push can no longer time out and block the chart catalog publish.
+
 ## [2.2.2] - 2026-06-18
 
 ### Changed

@@ -8,6 +8,9 @@ workflows:
     - architect/push-to-registries:
         context: architect
         name: push-to-registries
+        # dex base image is amd64-only; without a go-build job architect v9 would
+        # otherwise fall back to linux/amd64,linux/arm64 and fail on the arm64 base.
+        platforms: linux/amd64
         filters:
             # Trigger the job also on git tag.
           tags:

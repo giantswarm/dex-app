@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Make log level configurable in Helm values.
 
+### Fixed
+
+- Update `dex` to `v2.43.1-gs4`. Fixes the OIDC connector dropping its `rootCAs`-aware HTTP client when `providerDiscoveryOverrides` is set, which caused RFC 8693 token-exchange subject-token verification to fetch JWKS over the system trust store and fail with `x509: certificate signed by unknown authority` for connectors whose issuer is served by a privately-trusted CA.
+
 ### Removed
 
 - Remove `push-to-app-collection` jobs from `.circleci/config.yml`.

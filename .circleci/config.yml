@@ -29,6 +29,9 @@ workflows:
         executor: app-build-suite
         persist_chart_archive: true
         push_to_oci_registry: true
+        # Attach the workspace so the post-step below can read `.build_version`
+        # (the canonical image tag persisted by push-to-registries).
+        attach_workspace: true
         requires:
         - push-to-registries
         filters:

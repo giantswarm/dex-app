@@ -41,17 +41,23 @@ workflows:
             - master
         post-steps:
           - run:
-              name: Create test values with dev image tag
+              name: Create test values with built image tag
               command: |
                 mkdir -p build
                 cp tests/test-values.yaml build/test-values-dev.yaml
-                if [ -z "${CIRCLE_TAG}" ]; then
-                  LAST_TAG=$(git tag --sort=-version:refname | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' | head -1 | sed 's/^v//')
-                  if [ -n "${LAST_TAG}" ] && [ -n "${CIRCLE_SHA1}" ]; then
-                    DEV_TAG="${LAST_TAG}-${CIRCLE_SHA1}"
-                    printf '\ndex:\n  dex:\n    image:\n      tag: "%s"\n' "${DEV_TAG}" >> build/test-values-dev.yaml
-                    echo "dev image tag set to ${DEV_TAG}"
-                  fi
+                # `.build_version` is written by architect's image-prepare-tag step in
+                # push-to-registries (the canonical `gitsemver get` tag, including the
+                # timestamped `-dev.<branch>.<date>.<time>` suffix for branch builds) and
+                # persisted to the workspace. It is the exact tag push-to-registries
+                # published, so the ATS deploys the image that was just built. Recomputing
+                # it as "<last-tag>-<sha>" broke when architect v9 changed the dev-tag
+                # format, leaving the ATS pulling a tag that is never pushed.
+                if [ -f .build_version ]; then
+                  DEV_TAG="$(cat .build_version)"
+                  printf '\ndex:\n  dex:\n    image:\n      tag: "%s"\n' "${DEV_TAG}" >> build/test-values-dev.yaml
+                  echo "test image tag set to ${DEV_TAG}"
+                else
+                  echo "WARNING: .build_version not found; using the chart's default image tag"
                 fi
           - persist_to_workspace:
               root: build

@@ -1,6 +1,6 @@
 version: 2.1
 orbs:
-  architect: giantswarm/architect@9.0.0
+  architect: giantswarm/architect@9.4.1
 
 workflows:
   build:
@@ -8,8 +8,30 @@ workflows:
     - architect/push-to-registries:
         context: architect
         name: push-to-registries
+        # dex base image is amd64-only; without a go-build job architect v9 would
+        # otherwise fall back to linux/amd64,linux/arm64 and fail on the arm64 base.
+        platforms: linux/amd64
+        # Push only to gsoci here; the gsoci -> Aliyun mirror is handled
+        # out-of-band by sync-china-registry below so the cross-Pacific push
+        # cannot time out and block the chart catalog publish.
+        split-china-push: true
         filters:
             # Trigger the job also on git tag.
+          tags:
+            only: /^v.*/
+          branches:
+            ignore:
+            - main
+            - master
+
+    # Mirror gsoci -> Aliyun via the in-China giantswarm/galaxy-runner. Runs out
+    # of band; an Aliyun mirror failure does NOT block the chart catalog publish.
+    - architect/sync-china-registry:
+        context: architect
+        name: sync-china-registry
+        requires:
+        - push-to-registries
+        filters:
           tags:
             only: /^v.*/
           branches:
@@ -26,6 +48,9 @@ workflows:
         executor: app-build-suite
         persist_chart_archive: true
         push_to_oci_registry: true
+        # Attach the workspace so the post-step below can read `.build_version`
+        # (the canonical image tag persisted by push-to-registries).
+        attach_workspace: true
         requires:
         - push-to-registries
         filters:
@@ -38,17 +63,23 @@ workflows:
             - master
         post-steps:
           - run:
-              name: Create test values with dev image tag
+              name: Create test values with built image tag
               command: |
                 mkdir -p build
                 cp tests/test-values.yaml build/test-values-dev.yaml
-                if [ -z "${CIRCLE_TAG}" ]; then
-                  LAST_TAG=$(git tag --sort=-version:refname | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' | head -1 | sed 's/^v//')
-                  if [ -n "${LAST_TAG}" ] && [ -n "${CIRCLE_SHA1}" ]; then
-                    DEV_TAG="${LAST_TAG}-${CIRCLE_SHA1}"
-                    printf '\ndex:\n  dex:\n    image:\n      tag: "%s"\n' "${DEV_TAG}" >> build/test-values-dev.yaml
-                    echo "dev image tag set to ${DEV_TAG}"
-                  fi
+                # `.build_version` is written by architect's image-prepare-tag step in
+                # push-to-registries (the canonical `gitsemver get` tag, including the
+                # timestamped `-dev.<branch>.<date>.<time>` suffix for branch builds) and
+                # persisted to the workspace. It is the exact tag push-to-registries
+                # published, so the ATS deploys the image that was just built. Recomputing
+                # it as "<last-tag>-<sha>" broke when architect v9 changed the dev-tag
+                # format, leaving the ATS pulling a tag that is never pushed.
+                if [ -f .build_version ]; then
+                  DEV_TAG="$(cat .build_version)"
+                  printf '\ndex:\n  dex:\n    image:\n      tag: "%s"\n' "${DEV_TAG}" >> build/test-values-dev.yaml
+                  echo "test image tag set to ${DEV_TAG}"
+                else
+                  echo "WARNING: .build_version not found; using the chart's default image tag"
                 fi
           - persist_to_workspace:
               root: build

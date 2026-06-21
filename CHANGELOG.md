@@ -9,7 +9,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- CI: push the release image to gsoci only and mirror to Aliyun out-of-band via `sync-china-registry`, so a slow cross-Pacific Aliyun push can no longer time out and block the chart catalog publish.
+
+## [2.2.2] - 2026-06-18
+
+### Changed
+
 - Make log level configurable in Helm values.
+
+### Fixed
+
+- Update `dex` to `v2.43.1-gs4`. Fixes the OIDC connector dropping its `rootCAs`-aware HTTP client when `providerDiscoveryOverrides` is set, which caused RFC 8693 token-exchange subject-token verification to fetch JWKS over the system trust store and fail with `x509: certificate signed by unknown authority` for connectors whose issuer is served by a privately-trusted CA.
 
 ### Removed
 
@@ -672,7 +682,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add helm chart for dex.
 
 
-[Unreleased]: https://github.com/giantswarm/dex-app/compare/v2.2.1...HEAD
+[Unreleased]: https://github.com/giantswarm/dex-app/compare/v2.2.2...HEAD
+[2.2.2]: https://github.com/giantswarm/dex-app/compare/v2.2.1...v2.2.2
 [2.2.1]: https://github.com/giantswarm/dex-app/compare/v2.2.0...v2.2.1
 [2.2.0]: https://github.com/giantswarm/dex-app/compare/v2.1.5...v2.2.0
 [2.1.5]: https://github.com/giantswarm/dex-app/compare/v2.1.4...v2.1.5

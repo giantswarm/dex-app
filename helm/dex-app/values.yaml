@@ -8,7 +8,7 @@ dex:
       name: giantswarm/dex-app
       # Automatically synced from Chart.yaml appVersion via `make sync-image-tag`
       # Override only for testing with a specific image.
-      tag: "2.2.1"
+      tag: "2.2.2"
       pullPolicy: IfNotPresent
   configSecret:
     # -- Enable creating a secret from the values passed to `config`.

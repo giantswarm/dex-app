@@ -1,4 +1,4 @@
-FROM gsoci.azurecr.io/giantswarm/dex:v2.43.1-gs4
+FROM gsoci.azurecr.io/giantswarm/dex:v2.43.2
 
 ENV DEX_FRONTEND_DIR=/srv/dex/web
 

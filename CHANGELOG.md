@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.2.3] - 2026-07-14
+
 ### Changed
 
 - CI: push the release image to gsoci only and mirror to Aliyun out-of-band via `sync-china-registry`, so a slow cross-Pacific Aliyun push can no longer time out and block the chart catalog publish.
@@ -686,7 +688,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add helm chart for dex.
 
 
-[Unreleased]: https://github.com/giantswarm/dex-app/compare/v2.2.2...HEAD
+[Unreleased]: https://github.com/giantswarm/dex-app/compare/v2.2.3...HEAD
+[2.2.3]: https://github.com/giantswarm/dex-app/compare/v2.2.2...v2.2.3
 [2.2.2]: https://github.com/giantswarm/dex-app/compare/v2.2.1...v2.2.2
 [2.2.1]: https://github.com/giantswarm/dex-app/compare/v2.2.0...v2.2.1
 [2.2.0]: https://github.com/giantswarm/dex-app/compare/v2.1.5...v2.2.0

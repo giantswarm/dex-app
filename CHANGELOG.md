@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - CI: push the release image to gsoci only and mirror to Aliyun out-of-band via `sync-china-registry`, so a slow cross-Pacific Aliyun push can no longer time out and block the chart catalog publish.
 
+### Fixed
+
+- Update `dex` to `v2.43.2`. Fixes forced re-login after ~8h for GitHub App-backed connectors (GitHub App user-to-server tokens expire after 8 hours); the connector now persists GitHub's refresh token and renews the upstream user access token on refresh. Cherry-pick of upstream [dexidp/dex#4845](https://github.com/dexidp/dex/pull/4845).
+
 ## [2.2.2] - 2026-06-18
 
 ### Changed

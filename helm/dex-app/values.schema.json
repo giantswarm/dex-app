@@ -637,6 +637,20 @@
           "type": "string",
           "description": "OIDC issuer address"
         },
+        "responseTypes": {
+          "type": "array",
+          "description": "OAuth2 response types dex accepts. 'token' and 'id_token' enable the implicit flow, which is considered insecure.",
+          "items": {
+            "type": "string",
+            "enum": [
+              "code",
+              "token",
+              "id_token"
+            ]
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
         "expiry": {
           "type": "object",
           "properties": {

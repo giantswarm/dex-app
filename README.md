@@ -206,6 +206,27 @@ cluster:
     noProxy: "kubernetes-api-ip-range" # comma-separated list of hostnames and IP ranges, whose traffic should not go through the proxy. # Kubernetes API IP range needs to be defined here in order for Dex to work correctly
 ```
 
+### OAuth2 response types
+
+Dex only accepts the response types listed in `oidc.responseTypes`:
+
+```yaml
+oidc:
+  responseTypes:
+    - "code"
+    - "token"
+    - "id_token"
+```
+
+Default values include: `code`, `token` and `id_token`.
+A future release will drop `token` and `id_token` from the default. 
+
+`token` and `id_token` enable the OAuth2 implicit flow. 
+The implicit flow is considered insecure and using it is highly discouraged.
+If a client of yours genuinely needs the implicit or hybrid flow, set this value explicitly to keep them.
+
+Note that this list is also what dex publishes as `response_types_supported` in its OIDC discovery document, so clients that pick a flow from provider metadata will follow it.
+
 ### Static clients
 
 In addition to a few pre-defined static clients Dex app supports the possibility to define custom static clients as well.

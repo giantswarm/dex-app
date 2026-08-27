@@ -205,6 +205,14 @@ route:
 #     - action: Allow
 oidc:
   issuerAddress: ""
+  # -- OAuth2 response types dex will accept. `token` and `id_token` enable the
+  # implicit flow, which is considered insecure and is not needed by any client
+  # we ship. Add them back only if a client genuinely requires the implicit or
+  # hybrid flow.
+  responseTypes:
+    - "code"
+    - "token"
+    - "id_token"
   expiry:
     signingKeys: 6h
     idTokens: 30m

@@ -10,6 +10,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Make `oauth2.responseTypes` configurable via `oidc.responseTypes`.
+### Fixed
+
+- Ignore illegal characters in the generated label.
 
 ## [2.2.3] - 2026-07-14
 

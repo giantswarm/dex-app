@@ -211,8 +211,6 @@ oidc:
   # hybrid flow.
   responseTypes:
     - "code"
-    - "token"
-    - "id_token"
   expiry:
     signingKeys: 6h
     idTokens: 30m

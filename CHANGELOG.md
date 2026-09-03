@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.0.0] - 2026-09-03
+
 ### Changed
 
 - **Breaking:** Default `oidc.responseTypes` to `["code"]` only, disabling the insecure OAuth2 implicit flow by default. Any client relying on the implicit or hybrid flow without setting `oidc.responseTypes` explicitly will stop working. Set `oidc.responseTypes` explicitly to `["code", "token", "id_token"]` to keep them.
@@ -702,7 +704,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add helm chart for dex.
 
 
-[Unreleased]: https://github.com/giantswarm/dex-app/compare/v2.3.0...HEAD
+[Unreleased]: https://github.com/giantswarm/dex-app/compare/v3.0.0...HEAD
+[3.0.0]: https://github.com/giantswarm/dex-app/compare/v2.3.0...v3.0.0
 [2.3.0]: https://github.com/giantswarm/dex-app/compare/v2.2.3...v2.3.0
 [2.2.3]: https://github.com/giantswarm/dex-app/compare/v2.2.2...v2.2.3
 [2.2.2]: https://github.com/giantswarm/dex-app/compare/v2.2.1...v2.2.2

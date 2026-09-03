@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Default `oidc.responseTypes` to `["code"]` only, disabling the insecure OAuth2 implicit flow by default. Any client relying on the implicit or hybrid flow without setting `oidc.responseTypes` explicitly will stop working. Set `oidc.responseTypes` explicitly to `["code", "token", "id_token"]` to keep them.
 
+### Changed
+
+- CI: bump `architect` orb from `9.4.1` to `10.1.2`.
+
 ## [2.3.0] - 2026-09-01
 
 ### Added

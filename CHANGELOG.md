@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.0.0] - 2026-09-03
+
 ## [3.0.0] - 2025-10-16
 
 ### Changed
@@ -625,6 +627,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 [Unreleased]: https://github.com/giantswarm/dex-app/compare/v3.0.0...HEAD
+[3.0.0]: https://github.com/giantswarm/dex-app/compare/v3.0.0...v3.0.0
 [3.0.0]: https://github.com/giantswarm/dex-app/compare/v2.1.2...v3.0.0
 [2.1.2]: https://github.com/giantswarm/dex-app/compare/v2.1.1...v2.1.2
 [2.1.1]: https://github.com/giantswarm/dex-app/compare/v2.1.0...v2.1.1

@@ -228,7 +228,7 @@ Note that this list is also what dex publishes as `response_types_supported` in 
 
 In addition to a few pre-defined static clients Dex app supports the possibility to define custom static clients as well.
 They need to be defined as an array of object in a specific property of the configuration yaml file called `extraStaticClients`.
-The structure of each custom static client object is exactly the same as in upstream Dex:
+The structure of each custom static client object is exactly the same as in upstream Dex, plus `secretRef`:
 
 ```yaml
 extraStaticClients:
@@ -244,16 +244,23 @@ extraStaticClients:
   redirectURIs:
   - "https://example.com/redirect"
   name: "client-name-2"
+- id: "client-id-3"
+  secretRef:
+    name: "dex-client-client-id-3"
+    key: "secret"
+  redirectURIs:
+  - "https://example.com/redirect"
+  name: "client-name-3"
 ```
 
 **Notes:**
 
 - `id` and `idEnv` properties are mutually exclusive
-- `secret` and `secretEnv` properties are mutually exclusive
+- `secret`, `secretEnv` and `secretRef` properties are mutually exclusive; a client that is not `public` needs exactly one of them, otherwise the chart fails to render naming the client
 - Required properties:
   - `name`
   - `id` or `idEnv`
-  - `secret` or `secretEnv`
+  - `secret`, `secretEnv` or `secretRef` (unless `public: true`)
 
 Extra static clients can also be configured as trusted peers of the pre-defined static clients:
 
@@ -287,6 +294,34 @@ staticClients:
   public: true
 ```
 Duplicities are prevented in case an ID of any additional trusted peer equals an automatically pre-populated trusted peer ID.
+
+#### Client secrets from a Secret
+
+A client secret does not have to be written into the values: `secretRef: {name, key}` in an extra static client, or `clientSecretRef: {name, key}` next to `clientID` in a pre-defined one (`gitopsui`, `muster`, `mcpKubernetes`, `dexK8SAuthenticator`), names a key of a Secret in dex's namespace. The chart sets the environment variable `DEX_CLIENT_SECRET_<ID>` on the dex container from that key (`<ID>` is the client id in upper case with every character other than a letter or a digit replaced by `_`) and writes the client into the dex configuration with `secretEnv: DEX_CLIENT_SECRET_<ID>`, which dex reads when it starts. Whoever declares the client creates the Secret, so a client is added by a new Secret and a plaintext list entry, without touching the values that carry the other clients' secrets.
+
+```yaml
+oidc:
+  staticClients:
+    muster:
+      clientID: muster
+      clientSecretRef:
+        name: dex-client-muster
+        key: secret
+      redirectURI: https://muster.example.com/callback
+  extraStaticClients:
+  - id: platform-manager
+    name: Platform manager
+    secretRef:
+      name: dex-client-platform-manager
+      key: secret
+    redirectURIs:
+    - https://platform-manager.example.com/callback
+```
+
+- Exactly one of the inline secret and the reference per client; both, or neither on a client that is not public, fails the render naming the client. `dexK8SAuthenticator.clientSecret` has a chart default, so its `clientSecretRef` goes together with `clientSecret: ""`.
+- `secretRef` needs a literal `id` (not `idEnv`), and two client ids must not map to the same variable name.
+- A referenced Secret or key that does not exist keeps the dex pod from starting (`CreateContainerConfigError`) instead of running the client with an empty secret.
+- dex reads the environment at start-up: a rotated referenced Secret takes effect on the next roll of the dex Deployment (for example `kubectl -n <namespace> rollout restart deployment dex`).
 
 ## Update Process
 

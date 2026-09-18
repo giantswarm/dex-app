@@ -86,6 +86,13 @@ spec:
             - name: {{ $key }}
               value: {{ $value | quote }}
             {{- end }}
+            {{- range .clientSecretEnv }}
+            - name: {{ .env }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .name }}
+                  key: {{ .key }}
+            {{- end }}
           {{- with .Values.envVars }}
             {{- toYaml . | nindent 12 }}
           {{- end }}

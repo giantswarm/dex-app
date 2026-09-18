@@ -678,6 +678,9 @@
                 },
                 "redirectURI": {
                   "type": "string"
+                },
+                "clientSecretRef": {
+                  "$ref": "#/definitions/staticClientSecretRef"
                 }
               }
             },
@@ -722,6 +725,9 @@
                 },
                 "clientSecret": {
                   "type": "string"
+                },
+                "clientSecretRef": {
+                  "$ref": "#/definitions/staticClientSecretRef"
                 }
               }
             },
@@ -737,6 +743,9 @@
                 },
                 "redirectURI": {
                   "type": "string"
+                },
+                "clientSecretRef": {
+                  "$ref": "#/definitions/staticClientSecretRef"
                 }
               }
             },
@@ -752,6 +761,9 @@
                 },
                 "redirectURI": {
                   "type": "string"
+                },
+                "clientSecretRef": {
+                  "$ref": "#/definitions/staticClientSecretRef"
                 }
               }
             }
@@ -975,5 +987,24 @@
       }
     }
   },
-  "additionalProperties": true
+  "additionalProperties": true,
+  "definitions": {
+    "staticClientSecretRef": {
+      "type": "object",
+      "description": "Reference to the key of a Secret in dex's namespace that holds the client secret; exactly one of this and the inline secret per client",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "key": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "key"
+      ],
+      "additionalProperties": false
+    }
+  }
 }

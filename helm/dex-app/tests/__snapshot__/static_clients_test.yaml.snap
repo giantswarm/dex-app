@@ -1,0 +1,99 @@
+renders the configuration and the container environment of inline clients unchanged (golden):
+  1: |
+    |-
+      web:
+        http: 0.0.0.0:5556
+      telemetry:
+        http: 0.0.0.0:5558
+      storage:
+        type: kubernetes
+        config:
+          inCluster: true
+      logger:
+        level: INFO
+      oauth2:
+        responseTypes: ["code"]
+        alwaysShowLoginScreen: false
+        skipApprovalScreen: true
+      enablePasswordDB: false
+      oidcGroupsPrefix: true
+      frontend:
+        logoURL: https://s.giantswarm.io/brand/1/logo.svg
+      issuer: https://dex.example.test
+      expiry:
+        signingKeys: "6h"
+        idTokens: "30m"
+        refreshTokens:
+          reuseInterval: "3s"
+          validIfNotUsedFor: "720h"
+          absoluteLifetime: "720h"
+      staticClients:
+      - id: gitopsui
+        secret: gitopsui-secret
+        name: gitopsui
+        redirectURIs:
+        - https://gitops.example.test/oauth2/callback
+        - http://localhost:9001/oauth2/callback
+      - id: grafana
+        public: true
+        redirectURIs:
+        - https://grafana.example.test/login/generic_oauth
+        name: grafana
+      - id: zQiFLUnrTFQwrybYzeY53hWWfhOKWRAU
+        public: true
+        name: gscliauth
+      - id: muster
+        secret: muster-secret
+        name: muster
+        redirectURIs:
+        - https://muster.example.test/callback
+      - id: happa
+        public: true
+        redirectURIs:
+        - https://happa.example.test/oauth/callback
+        - http://localhost:7000
+        name: happa
+      - id: mcp-kubernetes
+        secret: mcp-kubernetes-secret
+        name: MCP Kubernetes
+        redirectURIs:
+        - https://mcp.example.test/callback
+      - id: dex-k8s-authenticator
+        redirectURIs:
+        - https://login.example.test/admin/callback
+        name: dex-k8s-authenticator
+        secret: default-client-dex-authenticator-secret
+        trustedPeers:
+        - extra-confidential
+        - happa
+        - zQiFLUnrTFQwrybYzeY53hWWfhOKWRAU
+        - mcp-kubernetes
+        - muster
+      - id: extra-confidential
+        name: Extra confidential
+        redirectURIs:
+        - https://extra.example.test/callback
+        secret: extra-confidential-secret
+      - id: extra-public
+        name: Extra public
+        public: true
+      - idEnv: EXTRA_CLIENT_ID
+        name: Extra from the environment
+        redirectURIs:
+        - https://env.example.test/callback
+        secretEnv: EXTRA_CLIENT_SECRET
+      connectors:
+      - type: github
+        id: giantswarm
+        name: GitHub for Giant Swarm staff
+        config:
+          clientID: github-client-id
+          clientSecret: github-client-secret
+          loadAllGroups: false
+          redirectURI: https://dex.example.test/callback
+          orgs:
+          - name: giantswarm
+            teams:
+            - team
+  2: |
+    null

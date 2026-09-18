@@ -1,0 +1,14 @@
+{{/*
+The dex Deployment is the vendored dex subchart's template, rendered here rather
+than in the subchart so that its pod template carries the checksum of the dex
+configuration this chart renders in templates/secret-gs.yaml. A subchart cannot
+see its parent's values; from here, a configuration change rolls the pod in the
+same helm upgrade that writes the secret, with or without a forced upgrade.
+*/}}
+{{- $dex := index .Subcharts "dex" -}}
+{{- include "dex.deployment" (dict
+      "Values" $dex.Values
+      "Chart" $dex.Chart
+      "Release" .Release
+      "Capabilities" .Capabilities
+      "configChecksum" (include (print $.Template.BasePath "/secret-gs.yaml") . | sha256sum)) }}

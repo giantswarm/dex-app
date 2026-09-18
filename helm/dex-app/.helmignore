@@ -19,3 +19,5 @@
 .project
 .idea/
 *.tmproj
+# Chart unit tests (helm unittest)
+tests/

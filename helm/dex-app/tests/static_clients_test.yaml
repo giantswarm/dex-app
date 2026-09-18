@@ -204,3 +204,98 @@ tests:
       - template: templates/secret-gs.yaml
         failedTemplate:
           errorPattern: 'static client "a.b": another client''s id also maps to the variable DEX_CLIENT_SECRET_A_B'
+
+  - it: renders mcpCapi and mcpPrometheus from an inline clientSecret and lists them as trusted peers of dex-k8s-authenticator
+    set:
+      oidc.issuerAddress: dex.example.test
+      isManagementCluster: true
+      oidc.staticClients.mcpCapi:
+        clientID: mcp-capi
+        clientSecret: mcp-capi-secret
+        redirectURI: https://mcp-capi.example.test/oauth/callback
+      oidc.staticClients.mcpPrometheus:
+        clientID: mcp-prometheus
+        clientSecret: mcp-prometheus-secret
+        redirectURI: https://mcp-prometheus.example.test/oauth/callback
+    asserts:
+      - template: templates/secret-gs.yaml
+        matchRegex:
+          path: stringData["config.yaml"]
+          pattern: "- id: mcp-capi\n  secret: mcp-capi-secret\n  name: MCP CAPI\n  redirectURIs:\n  - https://mcp-capi.example.test/oauth/callback\n"
+      - template: templates/secret-gs.yaml
+        matchRegex:
+          path: stringData["config.yaml"]
+          pattern: "- id: mcp-prometheus\n  secret: mcp-prometheus-secret\n  name: MCP Prometheus\n  redirectURIs:\n  - https://mcp-prometheus.example.test/oauth/callback\n"
+      - template: templates/secret-gs.yaml
+        matchRegex:
+          path: stringData["config.yaml"]
+          pattern: "name: dex-k8s-authenticator\n  secret: default-client-dex-authenticator-secret\n  trustedPeers:\n(  - .*\n)*  - mcp-capi\n  - mcp-prometheus\n"
+
+  - it: sets the environment variable of a referenced mcpPrometheus client and names it in the configuration
+    set:
+      oidc.issuerAddress: dex.example.test
+      oidc.staticClients.mcpPrometheus:
+        clientID: mcp-prometheus
+        clientSecretRef:
+          name: dex-client-mcp-prometheus
+          key: secret
+        redirectURI: https://mcp-prometheus.example.test/oauth/callback
+    asserts:
+      - template: templates/deployment.yaml
+        contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: DEX_CLIENT_SECRET_MCP_PROMETHEUS
+            valueFrom:
+              secretKeyRef:
+                name: dex-client-mcp-prometheus
+                key: secret
+      - template: templates/secret-gs.yaml
+        matchRegex:
+          path: stringData["config.yaml"]
+          pattern: "- id: mcp-prometheus\n  secretEnv: DEX_CLIENT_SECRET_MCP_PROMETHEUS\n  name: MCP Prometheus\n"
+
+  - it: sets the environment variable of a referenced mcpCapi client and names it in the configuration
+    set:
+      oidc.issuerAddress: dex.example.test
+      oidc.staticClients.mcpCapi:
+        clientID: mcp-capi
+        clientSecretRef:
+          name: dex-client-mcp-capi
+          key: secret
+        redirectURI: https://mcp-capi.example.test/oauth/callback
+    asserts:
+      - template: templates/deployment.yaml
+        contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: DEX_CLIENT_SECRET_MCP_CAPI
+            valueFrom:
+              secretKeyRef:
+                name: dex-client-mcp-capi
+                key: secret
+      - template: templates/secret-gs.yaml
+        matchRegex:
+          path: stringData["config.yaml"]
+          pattern: "- id: mcp-capi\n  secretEnv: DEX_CLIENT_SECRET_MCP_CAPI\n  name: MCP CAPI\n"
+
+  - it: fails naming the client when mcpPrometheus sets both clientSecret and clientSecretRef
+    set:
+      oidc.staticClients.mcpPrometheus:
+        clientID: mcp-prometheus
+        clientSecret: inline-secret
+        clientSecretRef:
+          name: dex-client-mcp-prometheus
+          key: secret
+    asserts:
+      - template: templates/secret-gs.yaml
+        failedTemplate:
+          errorPattern: 'static client "mcp-prometheus" sets more than one of oidc.staticClients.mcpPrometheus.clientSecret and .clientSecretRef'
+
+  - it: fails naming the client when mcpCapi with a clientID sets neither
+    set:
+      oidc.staticClients.mcpCapi.clientID: mcp-capi
+    asserts:
+      - template: templates/secret-gs.yaml
+        failedTemplate:
+          errorPattern: 'static client "mcp-capi" sets none of oidc.staticClients.mcpCapi.clientSecret and .clientSecretRef'

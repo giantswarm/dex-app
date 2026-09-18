@@ -235,7 +235,15 @@ oidc:
     dexK8SAuthenticator:
       clientAddress: ""
       clientSecret: "default-client-dex-authenticator-secret"
+    mcpCapi:
+      clientID: ""
+      clientSecret: ""
+      redirectURI: ""
     mcpKubernetes:
+      clientID: ""
+      clientSecret: ""
+      redirectURI: ""
+    mcpPrometheus:
       clientID: ""
       clientSecret: ""
       redirectURI: ""

@@ -282,7 +282,7 @@ Duplicities are prevented in case an ID of any additional trusted peer equals an
 
 #### Client secrets from a Secret
 
-A client secret does not have to be written into the values: `secretRef: {name, key}` in an extra static client, or `clientSecretRef: {name, key}` next to `clientID` in a pre-defined one (`gitopsui`, `muster`, `mcpKubernetes`, `dexK8SAuthenticator`), names a key of a Secret in dex's namespace. The chart sets the environment variable `DEX_CLIENT_SECRET_<ID>` on the dex container from that key (`<ID>` is the client id in upper case with every character other than a letter or a digit replaced by `_`) and writes the client into the dex configuration with `secretEnv: DEX_CLIENT_SECRET_<ID>`, which dex reads when it starts. Whoever declares the client creates the Secret, so a client is added by a new Secret and a plaintext list entry, without touching the values that carry the other clients' secrets.
+A client secret does not have to be written into the values: `secretRef: {name, key}` in an extra static client, or `clientSecretRef: {name, key}` next to `clientID` in a pre-defined one (`gitopsui`, `muster`, `mcpKubernetes`, `mcpCapi`, `mcpPrometheus`, `dexK8SAuthenticator`), names a key of a Secret in dex's namespace. The chart sets the environment variable `DEX_CLIENT_SECRET_<ID>` on the dex container from that key (`<ID>` is the client id in upper case with every character other than a letter or a digit replaced by `_`) and writes the client into the dex configuration with `secretEnv: DEX_CLIENT_SECRET_<ID>`, which dex reads when it starts. Whoever declares the client creates the Secret, so a client is added by a new Secret and a plaintext list entry, without touching the values that carry the other clients' secrets.
 
 ```yaml
 oidc:

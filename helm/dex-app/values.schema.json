@@ -731,9 +731,45 @@
                 }
               }
             },
+            "mcpCapi": {
+              "type": "object",
+              "description": "MCP CAPI OAuth client configuration",
+              "properties": {
+                "clientID": {
+                  "type": "string"
+                },
+                "clientSecret": {
+                  "type": "string"
+                },
+                "redirectURI": {
+                  "type": "string"
+                },
+                "clientSecretRef": {
+                  "$ref": "#/definitions/staticClientSecretRef"
+                }
+              }
+            },
             "mcpKubernetes": {
               "type": "object",
               "description": "MCP Kubernetes OAuth client configuration",
+              "properties": {
+                "clientID": {
+                  "type": "string"
+                },
+                "clientSecret": {
+                  "type": "string"
+                },
+                "redirectURI": {
+                  "type": "string"
+                },
+                "clientSecretRef": {
+                  "$ref": "#/definitions/staticClientSecretRef"
+                }
+              }
+            },
+            "mcpPrometheus": {
+              "type": "object",
+              "description": "MCP Prometheus OAuth client configuration",
               "properties": {
                 "clientID": {
                   "type": "string"

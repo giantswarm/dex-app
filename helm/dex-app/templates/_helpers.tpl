@@ -268,7 +268,7 @@ fail as well: the variable would carry only one of the two secrets.
 {{- define "dex.staticClients.secretRefs" -}}
 {{- $clients := .Values.oidc.staticClients -}}
 {{- $refs := "" -}}
-{{- range $name, $client := (dict "gitopsui" $clients.gitopsui "muster" $clients.muster "mcpKubernetes" $clients.mcpKubernetes) -}}
+{{- range $name, $client := (dict "gitopsui" $clients.gitopsui "muster" $clients.muster "mcpKubernetes" $clients.mcpKubernetes "mcpCapi" $clients.mcpCapi "mcpPrometheus" $clients.mcpPrometheus) -}}
   {{- if $client.clientID -}}
     {{- $refs = print $refs (include "dex.staticClient.secretRef" (dict "id" $client.clientID "secret" $client.clientSecret "secretRef" $client.clientSecretRef "fields" (printf "oidc.staticClients.%s.clientSecret and .clientSecretRef" $name))) -}}
   {{- end -}}

@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Built-in static clients `mcpCapi` and `mcpPrometheus` (`oidc.staticClients.mcpCapi`, `oidc.staticClients.mcpPrometheus`) with the shape and rules of `mcpKubernetes`: `clientID`, `redirectURI`, `trustedPeers`, and exactly one of `clientSecret` and `clientSecretRef: {name, key}`; both are trusted peers of `dex-k8s-authenticator`. Values under these keys were accepted by the schema and ignored by the templates before: an installation that carries them gets the two clients with this version, and one that carries a `clientID` without a secret fails the render naming the client. Installations without them render unchanged.
+
 ## [3.1.0] - 2026-09-18
 
 ### Added

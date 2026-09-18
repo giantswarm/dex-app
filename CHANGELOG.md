@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.2.0] - 2026-09-18
+
 ### Added
 
 - Built-in static clients `mcpCapi` and `mcpPrometheus` (`oidc.staticClients.mcpCapi`, `oidc.staticClients.mcpPrometheus`) with the shape and rules of `mcpKubernetes`: `clientID`, `redirectURI`, `trustedPeers`, and exactly one of `clientSecret` and `clientSecretRef: {name, key}`; both are trusted peers of `dex-k8s-authenticator`. Values under these keys were accepted by the schema and ignored by the templates before: an installation that carries them gets the two clients with this version, and one that carries a `clientID` without a secret fails the render naming the client. Installations without them render unchanged.
@@ -724,7 +726,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add helm chart for dex.
 
 
-[Unreleased]: https://github.com/giantswarm/dex-app/compare/v3.1.0...HEAD
+[Unreleased]: https://github.com/giantswarm/dex-app/compare/v3.2.0...HEAD
+[3.2.0]: https://github.com/giantswarm/dex-app/compare/v3.1.0...v3.2.0
 [3.1.0]: https://github.com/giantswarm/dex-app/compare/v3.0.1...v3.1.0
 [3.0.1]: https://github.com/giantswarm/dex-app/compare/v3.0.0...v3.0.1
 [3.0.0]: https://github.com/giantswarm/dex-app/compare/v2.3.0...v3.0.0

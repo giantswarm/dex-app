@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Static clients read their secret from a Kubernetes Secret: `secretRef: {name, key}` in an `extraStaticClients` entry, `clientSecretRef: {name, key}` in the pre-defined clients (`gitopsui`, `muster`, `mcpKubernetes`, `dexK8SAuthenticator`), in place of the inline secret. The chart sets `DEX_CLIENT_SECRET_<ID>` on the dex container from the referenced key and names it in the client's `secretEnv`, so a client is added by a new Secret and a plaintext list entry. Exactly one of the inline secret and the reference per client: both, or neither on a client that is not public, fails the render naming the client. Inline clients render unchanged.
+
+### Changed
+
+- A pre-defined static client with a `clientID` but no secret (`gitopsui`, `muster`, `mcpKubernetes`) fails the render naming the client instead of being left out of the configuration silently.
+
 ## [3.0.1] - 2026-09-18
 
 ### Fixed

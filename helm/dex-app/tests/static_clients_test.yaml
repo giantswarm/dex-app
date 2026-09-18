@@ -1,0 +1,206 @@
+suite: static client secrets
+templates:
+  - templates/secret-gs.yaml
+  - templates/deployment.yaml
+  - charts/dex/templates/deployment.yaml
+tests:
+  - it: renders the configuration and the container environment of inline clients unchanged (golden)
+    values:
+      - ./values/inline-static-clients.yaml
+    asserts:
+      - template: templates/secret-gs.yaml
+        matchSnapshot:
+          path: stringData["config.yaml"]
+      - template: templates/deployment.yaml
+        matchSnapshot:
+          path: spec.template.spec.containers[0].env
+
+  - it: sets the environment variable of a referenced extra client and names it in the configuration
+    set:
+      oidc.issuerAddress: dex.example.test
+      oidc.extraStaticClients:
+        - id: platform-manager
+          name: Platform manager
+          secretRef:
+            name: dex-client-platform-manager
+            key: secret
+          redirectURIs:
+            - https://platform-manager.example.test/callback
+    asserts:
+      - template: templates/deployment.yaml
+        contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: DEX_CLIENT_SECRET_PLATFORM_MANAGER
+            valueFrom:
+              secretKeyRef:
+                name: dex-client-platform-manager
+                key: secret
+      - template: templates/secret-gs.yaml
+        matchRegex:
+          path: stringData["config.yaml"]
+          pattern: "- id: platform-manager\n(  .*\n)*  secretEnv: DEX_CLIENT_SECRET_PLATFORM_MANAGER\n"
+      - template: templates/secret-gs.yaml
+        notMatchRegex:
+          path: stringData["config.yaml"]
+          pattern: secretRef
+
+  - it: sets the environment variable of a referenced pre-defined client and names it in the configuration
+    set:
+      oidc.issuerAddress: dex.example.test
+      oidc.staticClients.muster:
+        clientID: muster
+        clientSecretRef:
+          name: dex-client-muster
+          key: client-secret
+        redirectURI: https://muster.example.test/callback
+    asserts:
+      - template: templates/deployment.yaml
+        contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: DEX_CLIENT_SECRET_MUSTER
+            valueFrom:
+              secretKeyRef:
+                name: dex-client-muster
+                key: client-secret
+      - template: templates/secret-gs.yaml
+        matchRegex:
+          path: stringData["config.yaml"]
+          pattern: "- id: muster\n  secretEnv: DEX_CLIENT_SECRET_MUSTER\n  name: muster\n"
+
+  - it: references the dex-k8s-authenticator secret once the chart default is cleared
+    set:
+      oidc.issuerAddress: dex.example.test
+      isManagementCluster: true
+      oidc.staticClients.dexK8SAuthenticator:
+        clientSecret: ""
+        clientSecretRef:
+          name: dex-client-dex-k8s-authenticator
+          key: secret
+    asserts:
+      - template: templates/deployment.yaml
+        contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: DEX_CLIENT_SECRET_DEX_K8S_AUTHENTICATOR
+            valueFrom:
+              secretKeyRef:
+                name: dex-client-dex-k8s-authenticator
+                key: secret
+      - template: templates/secret-gs.yaml
+        matchRegex:
+          path: stringData["config.yaml"]
+          pattern: "name: dex-k8s-authenticator\n  secretEnv: DEX_CLIENT_SECRET_DEX_K8S_AUTHENTICATOR\n"
+
+  - it: renders a public extra client without any secret
+    set:
+      oidc.issuerAddress: dex.example.test
+      oidc.extraStaticClients:
+        - id: public-client
+          name: Public client
+          public: true
+    asserts:
+      - template: templates/secret-gs.yaml
+        matchRegex:
+          path: stringData["config.yaml"]
+          pattern: "- id: public-client\n  name: Public client\n  public: true\n"
+
+  - it: fails naming the client when an extra client sets both secret and secretRef
+    set:
+      oidc.extraStaticClients:
+        - id: both-forms
+          name: Both forms
+          secret: inline-secret
+          secretRef:
+            name: dex-client-both-forms
+            key: secret
+    asserts:
+      - template: templates/secret-gs.yaml
+        failedTemplate:
+          errorPattern: 'static client "both-forms" sets more than one of secret, secretEnv and secretRef'
+
+  - it: fails naming the client when a confidential extra client sets no secret at all
+    set:
+      oidc.extraStaticClients:
+        - id: no-secret
+          name: No secret
+    asserts:
+      - template: templates/secret-gs.yaml
+        failedTemplate:
+          errorPattern: 'static client "no-secret" sets none of secret, secretEnv and secretRef'
+
+  - it: fails naming the client when a pre-defined client sets both clientSecret and clientSecretRef
+    set:
+      oidc.staticClients.muster:
+        clientID: muster
+        clientSecret: inline-secret
+        clientSecretRef:
+          name: dex-client-muster
+          key: secret
+    asserts:
+      - template: templates/secret-gs.yaml
+        failedTemplate:
+          errorPattern: 'static client "muster" sets more than one of oidc.staticClients.muster.clientSecret and .clientSecretRef'
+
+  - it: fails naming the client when a pre-defined client with a clientID sets neither
+    set:
+      oidc.staticClients.mcpKubernetes.clientID: mcp-kubernetes
+    asserts:
+      - template: templates/secret-gs.yaml
+        failedTemplate:
+          errorPattern: 'static client "mcp-kubernetes" sets none of oidc.staticClients.mcpKubernetes.clientSecret and .clientSecretRef'
+
+  - it: fails when the dex-k8s-authenticator reference is set on top of the chart default
+    set:
+      isManagementCluster: true
+      oidc.staticClients.dexK8SAuthenticator.clientSecretRef:
+        name: dex-client-dex-k8s-authenticator
+        key: secret
+    asserts:
+      - template: templates/secret-gs.yaml
+        failedTemplate:
+          errorPattern: 'static client "dex-k8s-authenticator" sets more than one of oidc.staticClients.dexK8SAuthenticator.clientSecret \(a chart default; set it to "" to use the reference\)'
+
+  - it: fails when a reference comes with idEnv instead of a literal id
+    set:
+      oidc.extraStaticClients:
+        - idEnv: CLIENT_ID
+          name: From the environment
+          secretRef:
+            name: dex-client
+            key: secret
+    asserts:
+      - template: templates/secret-gs.yaml
+        failedTemplate:
+          errorPattern: 'extra static client "From the environment": secretRef needs a literal id, not idEnv'
+
+  - it: fails when a reference lacks the key
+    set:
+      oidc.extraStaticClients:
+        - id: half-reference
+          name: Half reference
+          secretRef:
+            name: dex-client-half-reference
+    asserts:
+      - template: templates/secret-gs.yaml
+        failedTemplate:
+          errorPattern: 'static client "half-reference": the secret reference needs name and key'
+
+  - it: fails when two client ids map to the same environment variable
+    set:
+      oidc.extraStaticClients:
+        - id: a-b
+          name: A dash B
+          secretRef:
+            name: dex-client-a-b
+            key: secret
+        - id: a.b
+          name: A dot B
+          secretRef:
+            name: dex-client-a-dot-b
+            key: secret
+    asserts:
+      - template: templates/secret-gs.yaml
+        failedTemplate:
+          errorPattern: 'static client "a.b": another client''s id also maps to the variable DEX_CLIENT_SECRET_A_B'

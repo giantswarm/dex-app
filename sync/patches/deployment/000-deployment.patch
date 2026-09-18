@@ -1,5 +1,5 @@
 diff --git a/vendor/dex/templates/deployment.yaml b/helm/dex-app/charts/dex/templates/deployment.yaml
-index 607cafd..c27e605 100644
+index 607cafd..8981830 100644
 --- a/vendor/dex/templates/deployment.yaml
 +++ b/helm/dex-app/charts/dex/templates/deployment.yaml
 @@ -1,7 +1,15 @@
@@ -45,7 +45,21 @@ index 607cafd..c27e605 100644
            args:
              - dex
              - serve
-@@ -122,6 +124,8 @@ spec:
+@@ -84,6 +86,13 @@ spec:
+             - name: {{ $key }}
+               value: {{ $value | quote }}
+             {{- end }}
++            {{- range .clientSecretEnv }}
++            - name: {{ .env }}
++              valueFrom:
++                secretKeyRef:
++                  name: {{ .name }}
++                  key: {{ .key }}
++            {{- end }}
+           {{- with .Values.envVars }}
+             {{- toYaml . | nindent 12 }}
+           {{- end }}
+@@ -122,6 +131,8 @@ spec:
              - name: config
                mountPath: /etc/dex
                readOnly: true
@@ -54,7 +68,7 @@ index 607cafd..c27e605 100644
            {{- with .Values.volumeMounts }}
              {{- toYaml . | nindent 12 }}
            {{- end }}
-@@ -129,6 +133,8 @@ spec:
+@@ -129,6 +140,8 @@ spec:
          - name: config
            secret:
              secretName: {{ include "dex.configSecretName" . }}
@@ -63,7 +77,7 @@ index 607cafd..c27e605 100644
        {{- with .Values.volumes }}
          {{- toYaml . | nindent 8 }}
        {{- end }}
-@@ -148,3 +154,4 @@ spec:
+@@ -148,3 +161,4 @@ spec:
        tolerations:
          {{- toYaml . | nindent 8 }}
        {{- end }}

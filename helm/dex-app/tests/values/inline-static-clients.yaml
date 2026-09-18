@@ -1,0 +1,49 @@
+# Every static client form that existed before secret references: the rendered
+# configuration and the container's environment for this file are a golden.
+isManagementCluster: true
+oidc:
+  issuerAddress: dex.example.test
+  giantswarm:
+    connectorConfig:
+      clientID: github-client-id
+      clientSecret: github-client-secret
+      team: team
+  staticClients:
+    gitopsui:
+      clientID: gitopsui
+      clientSecret: gitopsui-secret
+      redirectURI: https://gitops.example.test/oauth2/callback
+    grafana:
+      clientID: grafana
+      redirectURI: https://grafana.example.test/login/generic_oauth
+    happa:
+      clientID: happa
+      redirectURI: https://happa.example.test/oauth/callback
+    dexK8SAuthenticator:
+      clientAddress: login.example.test
+      trustedPeers:
+      - extra-confidential
+    mcpKubernetes:
+      clientID: mcp-kubernetes
+      clientSecret: mcp-kubernetes-secret
+      redirectURI: https://mcp.example.test/callback
+    muster:
+      clientID: muster
+      clientSecret: muster-secret
+      redirectURI: https://muster.example.test/callback
+  extraStaticClients:
+  - id: extra-confidential
+    name: Extra confidential
+    secret: extra-confidential-secret
+    redirectURIs:
+    - https://extra.example.test/callback
+    trustedPeerOf:
+    - gitopsui
+  - id: extra-public
+    name: Extra public
+    public: true
+  - idEnv: EXTRA_CLIENT_ID
+    secretEnv: EXTRA_CLIENT_SECRET
+    name: Extra from the environment
+    redirectURIs:
+    - https://env.example.test/callback

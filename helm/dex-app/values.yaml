@@ -243,6 +243,10 @@ oidc:
       clientID: ""
       clientSecret: ""
       redirectURI: ""
+  # A static client's secret is either inline (`clientSecret` above, `secret` in an
+  # extra client) or a reference to a key of a Secret in dex's namespace
+  # (`clientSecretRef: {name, key}` above, `secretRef: {name, key}` in an extra
+  # client); exactly one of the two per client. See the README, "Static clients".
   extraStaticClients: []
   # Giant Swarm OIDC values to run DEX in the management clusters
   giantswarm:

@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.1.0] - 2026-09-18
+
 ### Added
 
 - Static clients read their secret from a Kubernetes Secret: `secretRef: {name, key}` in an `extraStaticClients` entry, `clientSecretRef: {name, key}` in the pre-defined clients (`gitopsui`, `muster`, `mcpKubernetes`, `dexK8SAuthenticator`), in place of the inline secret. The chart sets `DEX_CLIENT_SECRET_<ID>` on the dex container from the referenced key and names it in the client's `secretEnv`, so a client is added by a new Secret and a plaintext list entry. Exactly one of the inline secret and the reference per client: both, or neither on a client that is not public, fails the render naming the client. Inline clients render unchanged.
@@ -718,7 +720,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add helm chart for dex.
 
 
-[Unreleased]: https://github.com/giantswarm/dex-app/compare/v3.0.1...HEAD
+[Unreleased]: https://github.com/giantswarm/dex-app/compare/v3.1.0...HEAD
+[3.1.0]: https://github.com/giantswarm/dex-app/compare/v3.0.1...v3.1.0
 [3.0.1]: https://github.com/giantswarm/dex-app/compare/v3.0.0...v3.0.1
 [3.0.0]: https://github.com/giantswarm/dex-app/compare/v2.3.0...v3.0.0
 [2.3.0]: https://github.com/giantswarm/dex-app/compare/v2.2.3...v2.3.0

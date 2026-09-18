@@ -1,3 +1,11 @@
+{{/*
+The Deployment is a named template rendered by the parent chart
+(templates/deployment.yaml), which passes the checksum of the dex configuration
+it renders as `configChecksum`. A subchart cannot see its parent's values, so
+the pod template's `checksum/config` annotation has to be set from there: it is
+what rolls the pod in the same helm upgrade that writes the configuration.
+*/}}
+{{- define "dex.deployment" -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -30,9 +38,7 @@ spec:
       {{- with .Values.podAnnotations }}
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{ if .Values.configSecret.create }}
-        checksum/config: {{ include (print $.Template.BasePath "/secret.yaml") . | sha256sum }}
-      {{- end }}
+        checksum/config: {{ .configChecksum }}
       labels:
         {{- include "dex.selectorLabels" . | nindent 8 }}
         {{- with .Values.podLabels }}
@@ -148,3 +154,4 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+{{- end -}}

@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.0.1] - 2026-09-18
+
 ### Fixed
 
 - Roll dex on a configuration change: the pod template carries a `checksum/config` annotation with the hash of the rendered dex configuration, so every change to it produces a new ReplicaSet in the same helm upgrade that writes the secret. The Deployment is rendered by the parent chart from the subchart's template to compute the checksum; its output is unchanged apart from the annotation. Before, the pod kept the configuration it had loaded at startup until something else restarted it.
@@ -708,7 +710,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add helm chart for dex.
 
 
-[Unreleased]: https://github.com/giantswarm/dex-app/compare/v3.0.0...HEAD
+[Unreleased]: https://github.com/giantswarm/dex-app/compare/v3.0.1...HEAD
+[3.0.1]: https://github.com/giantswarm/dex-app/compare/v3.0.0...v3.0.1
 [3.0.0]: https://github.com/giantswarm/dex-app/compare/v2.3.0...v3.0.0
 [2.3.0]: https://github.com/giantswarm/dex-app/compare/v2.2.3...v2.3.0
 [2.2.3]: https://github.com/giantswarm/dex-app/compare/v2.2.2...v2.2.3

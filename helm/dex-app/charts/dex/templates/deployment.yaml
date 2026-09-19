@@ -1,15 +1,7 @@
-{{/*
-The Deployment is a named template rendered by the parent chart
-(templates/deployment.yaml), which passes the checksum of the dex configuration
-it renders as `configChecksum`. A subchart cannot see its parent's values, so
-the pod template's `checksum/config` annotation has to be set from there: it is
-what rolls the pod in the same helm upgrade that writes the configuration.
-*/}}
-{{- define "dex.deployment" -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "dex.name" . }}
+  name: {{ include "dex.fullname" . }}
   namespace: {{ include "dex.namespace" . }}
   labels:
     {{- include "dex.labels" . | nindent 4 }}
@@ -38,7 +30,9 @@ spec:
       {{- with .Values.podAnnotations }}
         {{- toYaml . | nindent 8 }}
       {{- end }}
-        checksum/config: {{ .configChecksum }}
+      {{ if .Values.configSecret.create }}
+        checksum/config: {{ include (print $.Template.BasePath "/secret.yaml") . | sha256sum }}
+      {{- end }}
       labels:
         {{- include "dex.selectorLabels" . | nindent 8 }}
         {{- with .Values.podLabels }}
@@ -63,8 +57,12 @@ spec:
         - name: {{ .Chart.Name }}
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
-          image: "{{ .Values.dex.image.registry }}/{{ .Values.dex.image.name }}:{{ .Values.dex.image.tag }}"
-          imagePullPolicy: {{ .Values.dex.image.pullPolicy }}
+          {{- if .Values.image.digest }}
+          image: "{{ tpl .Values.image.repository . }}@{{ tpl .Values.image.digest . }}"
+          {{- else }}
+          image: "{{ tpl .Values.image.repository . }}:{{ tpl .Values.image.tag . | default (printf "v%s" .Chart.AppVersion) }}"
+          {{- end }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
           args:
             - dex
             - serve
@@ -85,13 +83,6 @@ spec:
             {{- range $key, $value := .Values.env }}
             - name: {{ $key }}
               value: {{ $value | quote }}
-            {{- end }}
-            {{- range .clientSecretEnv }}
-            - name: {{ .env }}
-              valueFrom:
-                secretKeyRef:
-                  name: {{ .name }}
-                  key: {{ .key }}
             {{- end }}
           {{- with .Values.envVars }}
             {{- toYaml . | nindent 12 }}
@@ -131,8 +122,6 @@ spec:
             - name: config
               mountPath: /etc/dex
               readOnly: true
-            - name: tmp-volume
-              mountPath: /tmp
           {{- with .Values.volumeMounts }}
             {{- toYaml . | nindent 12 }}
           {{- end }}
@@ -140,8 +129,6 @@ spec:
         - name: config
           secret:
             secretName: {{ include "dex.configSecretName" . }}
-        - name: tmp-volume
-          emptyDir: {}
       {{- with .Values.volumes }}
         {{- toYaml . | nindent 8 }}
       {{- end }}
@@ -161,4 +148,3 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-{{- end -}}

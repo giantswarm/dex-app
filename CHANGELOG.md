@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- A pre-defined static client (`gitopsui`, `muster`, `mcpKubernetes`, `mcpCapi`, `mcpPrometheus`) with a `clientID` and neither `clientSecret` nor `clientSecretRef` is left out of the dex configuration again, as before v3.1.0, and named in the release notes, instead of failing the render: values shared by several installations can declare a client whose secret only some of them carry. Both sources on one client still fail the render naming the client; `dex-k8s-authenticator` and extra static clients that are not public still need exactly one. Clients with a secret render unchanged.
+
 ## [3.2.0] - 2026-09-18
 
 ### Added

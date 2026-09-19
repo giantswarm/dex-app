@@ -303,7 +303,7 @@ oidc:
     - https://platform-manager.example.com/callback
 ```
 
-- Exactly one of the inline secret and the reference per client; both, or neither on a client that is not public, fails the render naming the client. `dexK8SAuthenticator.clientSecret` has a chart default, so its `clientSecretRef` goes together with `clientSecret: ""`.
+- At most one of the inline secret and the reference per client; both fails the render naming the client. A pre-defined client (`gitopsui`, `muster`, `mcpKubernetes`, `mcpCapi`, `mcpPrometheus`) with a `clientID` and neither is left out of the configuration and named in the release notes (`helm get notes`), so values shared by several installations can declare a client whose secret only some of them carry. An extra static client that is not `public` needs one; so does `dexK8SAuthenticator`, whose `clientSecret` has a chart default: its `clientSecretRef` goes together with `clientSecret: ""`.
 - `secretRef` needs a literal `id` (not `idEnv`), and two client ids must not map to the same variable name.
 - A referenced Secret or key that does not exist keeps the dex pod from starting (`CreateContainerConfigError`) instead of running the client with an empty secret.
 - dex reads the environment at start-up: a rotated referenced Secret takes effect on the next roll of the dex Deployment (for example `kubectl -n <namespace> rollout restart deployment dex`).

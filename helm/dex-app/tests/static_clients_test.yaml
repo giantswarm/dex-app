@@ -2,6 +2,7 @@ suite: static client secrets
 templates:
   - templates/secret-gs.yaml
   - templates/deployment.yaml
+  - templates/NOTES.txt
   - charts/dex/templates/deployment.yaml
 tests:
   - it: renders the configuration and the container environment of inline clients unchanged (golden)
@@ -143,13 +144,49 @@ tests:
         failedTemplate:
           errorPattern: 'static client "muster" sets more than one of oidc.staticClients.muster.clientSecret and .clientSecretRef'
 
-  - it: fails naming the client when a pre-defined client with a clientID sets neither
+  - it: leaves out a pre-defined client whose clientID is set without a secret source and names it in the notes
+    values:
+      - ./values/inline-static-clients.yaml
     set:
-      oidc.staticClients.mcpKubernetes.clientID: mcp-kubernetes
+      oidc.staticClients.gitopsui.clientSecret: ""
+      oidc.staticClients.mcpCapi.clientID: mcp-capi
+      oidc.staticClients.mcpCapi.redirectURI: https://mcp-capi.example.test/oauth/callback
+    asserts:
+      - template: templates/secret-gs.yaml
+        notMatchRegex:
+          path: stringData["config.yaml"]
+          pattern: "id: (gitopsui|mcp-capi)\n"
+      - template: templates/secret-gs.yaml
+        matchRegex:
+          path: stringData["config.yaml"]
+          pattern: "staticClients:\n- id: grafana\n"
+      - template: templates/secret-gs.yaml
+        matchRegex:
+          path: stringData["config.yaml"]
+          pattern: "- id: muster\n  secret: muster-secret\n"
+      - template: templates/deployment.yaml
+        isNullOrEmpty:
+          path: spec.template.spec.containers[0].env
+      - template: templates/NOTES.txt
+        matchRegexRaw:
+          pattern: "left out of the dex configuration.*\n.*\n  - oidc.staticClients.gitopsui \\(clientID gitopsui\\)\n  - oidc.staticClients.mcpCapi \\(clientID mcp-capi\\)\n"
+
+  - it: prints no notes while every declared client has a secret source
+    values:
+      - ./values/inline-static-clients.yaml
+    asserts:
+      - template: templates/NOTES.txt
+        equalRaw:
+          value: ""
+
+  - it: fails when dex-k8s-authenticator has neither the chart default nor a reference
+    set:
+      isManagementCluster: true
+      oidc.staticClients.dexK8SAuthenticator.clientSecret: ""
     asserts:
       - template: templates/secret-gs.yaml
         failedTemplate:
-          errorPattern: 'static client "mcp-kubernetes" sets none of oidc.staticClients.mcpKubernetes.clientSecret and .clientSecretRef'
+          errorPattern: 'static client "dex-k8s-authenticator" sets none of oidc.staticClients.dexK8SAuthenticator.clientSecret'
 
   - it: fails when the dex-k8s-authenticator reference is set on top of the chart default
     set:
@@ -292,10 +329,21 @@ tests:
         failedTemplate:
           errorPattern: 'static client "mcp-prometheus" sets more than one of oidc.staticClients.mcpPrometheus.clientSecret and .clientSecretRef'
 
-  - it: fails naming the client when mcpCapi with a clientID sets neither
+  - it: leaves out mcpCapi and mcpPrometheus declared without a secret source and keeps them as trusted peers of dex-k8s-authenticator
     set:
+      oidc.issuerAddress: dex.example.test
+      isManagementCluster: true
       oidc.staticClients.mcpCapi.clientID: mcp-capi
+      oidc.staticClients.mcpPrometheus.clientID: mcp-prometheus
     asserts:
       - template: templates/secret-gs.yaml
-        failedTemplate:
-          errorPattern: 'static client "mcp-capi" sets none of oidc.staticClients.mcpCapi.clientSecret and .clientSecretRef'
+        notMatchRegex:
+          path: stringData["config.yaml"]
+          pattern: "id: mcp-"
+      - template: templates/secret-gs.yaml
+        matchRegex:
+          path: stringData["config.yaml"]
+          pattern: "name: dex-k8s-authenticator\n  secret: default-client-dex-authenticator-secret\n  trustedPeers:\n(  - .*\n)*  - mcp-capi\n  - mcp-prometheus\n"
+      - template: templates/NOTES.txt
+        matchRegexRaw:
+          pattern: "  - oidc.staticClients.mcpCapi \\(clientID mcp-capi\\)\n  - oidc.staticClients.mcpPrometheus \\(clientID mcp-prometheus\\)\n"

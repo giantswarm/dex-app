@@ -1,0 +1,7 @@
+{{- with (include "dex.staticClients.withoutSecret" . | fromYamlArray) }}
+Static clients left out of the dex configuration: their clientID is set without a
+secret source. Set clientSecret or clientSecretRef: {name, key} where the client runs.
+{{- range . }}
+  - oidc.staticClients.{{ .key }} (clientID {{ .id }})
+{{- end }}
+{{- end }}

@@ -216,7 +216,8 @@ DEX_CLIENT_SECRET_{{ regexReplaceAll "[^A-Za-z0-9]" . "_" | upper }}
 
 {{/*
 The secret line of a pre-defined static client: `secret: <inline value>` or,
-for a client declared with `clientSecretRef`, `secretEnv: <variable>`.
+for a client declared with `clientSecretRef`, `secretEnv: <variable>`. The
+reference takes precedence: an inline `clientSecret` next to it is ignored.
 Takes a dict with `id` (the client id) and `client` (the client's values).
 */}}
 {{- define "dex.staticClient.secretField" -}}
@@ -238,10 +239,10 @@ gitopsui mcpCapi mcpKubernetes mcpPrometheus muster
 
 {{/*
 Whether a pre-defined static client has a secret source, clientSecret or
-clientSecretRef (both at once fails in dex.staticClients.secretRefs). A client
-with a clientID and neither is left out of the configuration, as it was before
-v3.1.0, and named in NOTES.txt. Takes the client's values; prints "true" or
-nothing.
+clientSecretRef (both at once: the reference is used, the inline value ignored).
+A client with a clientID and neither is left out of the configuration, as it
+was before v3.1.0, and named in NOTES.txt. Takes the client's values; prints
+"true" or nothing.
 */}}
 {{- define "dex.staticClient.hasSecret" -}}
 {{- if or .clientSecret .clientSecretRef }}true{{ end -}}
@@ -255,6 +256,21 @@ without a secret source — as a YAML list of {key, id} for NOTES.txt.
 {{- range $name := (include "dex.staticClients.confidential" . | splitList " ") -}}
 {{- $client := index $.Values.oidc.staticClients $name -}}
 {{- if and $client.clientID (not (include "dex.staticClient.hasSecret" $client)) }}
+- key: {{ $name }}
+  id: {{ $client.clientID | quote }}
+{{- end -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
+The pre-defined static clients whose inline clientSecret is ignored — set next
+to a clientSecretRef, which takes precedence — as a YAML list of {key, id} for
+NOTES.txt, so the dead value gets deleted from the values that carry it.
+*/}}
+{{- define "dex.staticClients.withIgnoredInlineSecret" -}}
+{{- range $name := (include "dex.staticClients.confidential" . | splitList " ") -}}
+{{- $client := index $.Values.oidc.staticClients $name -}}
+{{- if and $client.clientID $client.clientSecret $client.clientSecretRef }}
 - key: {{ $name }}
   id: {{ $client.clientID | quote }}
 {{- end -}}
@@ -295,12 +311,13 @@ otherwise. Takes a dict with `id`, `secret`, `secretEnv`, `secretRef`, `public`,
 Every static client whose secret is a reference to a Kubernetes Secret, as a
 YAML list of {id, env, name, key}: the Deployment sets one environment variable
 per item from the referenced key and the dex configuration names that variable
-in `secretEnv`. Every static client is validated on the way — at most one of
-the inline value and the reference; a pre-defined client with neither is left
-out (dex.staticClient.hasSecret), dex-k8s-authenticator and a confidential extra
-client need one — so rendering either template fails naming the client. Two ids
-that map to the same variable name fail as well: the variable would carry only
-one of the two secrets.
+in `secretEnv`. Every static client is validated on the way: a pre-defined
+client uses the reference when it has one (an inline value next to it is
+ignored and named in NOTES.txt) and is left out with neither
+(dex.staticClient.hasSecret); dex-k8s-authenticator and a confidential extra
+client need exactly one of the inline value and the reference, so rendering
+either template fails naming the client. Two ids that map to the same variable
+name fail as well: the variable would carry only one of the two secrets.
 */}}
 {{- define "dex.staticClients.secretRefs" -}}
 {{- $clients := .Values.oidc.staticClients -}}
@@ -308,7 +325,9 @@ one of the two secrets.
 {{- range $name := (include "dex.staticClients.confidential" . | splitList " ") -}}
   {{- $client := index $clients $name -}}
   {{- if $client.clientID -}}
-    {{- $refs = print $refs (include "dex.staticClient.secretRef" (dict "id" $client.clientID "secret" $client.clientSecret "secretRef" $client.clientSecretRef "optional" true "fields" (printf "oidc.staticClients.%s.clientSecret and .clientSecretRef" $name))) -}}
+    {{- $inline := $client.clientSecret -}}
+    {{- if $client.clientSecretRef }}{{ $inline = "" }}{{ end -}}
+    {{- $refs = print $refs (include "dex.staticClient.secretRef" (dict "id" $client.clientID "secret" $inline "secretRef" $client.clientSecretRef "optional" true "fields" (printf "oidc.staticClients.%s.clientSecret and .clientSecretRef" $name))) -}}
   {{- end -}}
 {{- end -}}
 {{- if or .Values.isManagementCluster (eq (include "is-workload-cluster" .) "true") -}}

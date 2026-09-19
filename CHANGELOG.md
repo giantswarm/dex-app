@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- A pre-defined static client (`gitopsui`, `muster`, `mcpKubernetes`, `mcpCapi`, `mcpPrometheus`) with both `clientSecret` and `clientSecretRef` uses the reference and ignores the inline value instead of failing the render: a client moves from an inline secret to a referenced Secret by adding the reference where the plaintext values live, even while the encrypted values still carry the old inline secret. The release notes (`helm get notes`) name such a client until the inline value is deleted. A client with neither is left out as in 3.2.1; `dex-k8s-authenticator` and extra static clients that are not public still need exactly one source.
+
 ## [3.2.1] - 2026-09-19
 
 ### Fixed

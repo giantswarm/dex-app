@@ -254,10 +254,11 @@ oidc:
   # A static client's secret is either inline (`clientSecret` above, `secret` in an
   # extra client) or a reference to a key of a Secret in dex's namespace
   # (`clientSecretRef: {name, key}` above, `secretRef: {name, key}` in an extra
-  # client); at most one of the two per client. A pre-defined client above with a
-  # `clientID` and neither is left out of the configuration and named in the
-  # release notes; `dexK8SAuthenticator` and an extra client that is not public
-  # need one. See the README, "Static clients".
+  # client). A pre-defined client above with both uses the reference and ignores
+  # the inline value; with a `clientID` and neither it is left out of the
+  # configuration; both cases are named in the release notes. `dexK8SAuthenticator`
+  # and an extra client that is not public need exactly one. See the README,
+  # "Static clients".
   extraStaticClients: []
   # Giant Swarm OIDC values to run DEX in the management clusters
   giantswarm:

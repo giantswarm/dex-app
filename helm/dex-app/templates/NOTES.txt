@@ -5,3 +5,12 @@ secret source. Set clientSecret or clientSecretRef: {name, key} where the client
   - oidc.staticClients.{{ .key }} (clientID {{ .id }})
 {{- end }}
 {{- end }}
+{{- with (include "dex.staticClients.withIgnoredInlineSecret" . | fromYamlArray) }}
+
+Static clients whose inline clientSecret is ignored: clientSecretRef takes precedence
+and the client reads its secret from the referenced Secret. Delete the clientSecret
+from the values that carry it.
+{{- range . }}
+  - oidc.staticClients.{{ .key }} (clientID {{ .id }})
+{{- end }}
+{{- end }}

@@ -131,18 +131,41 @@ tests:
         failedTemplate:
           errorPattern: 'static client "no-secret" sets none of secret, secretEnv and secretRef'
 
-  - it: fails naming the client when a pre-defined client sets both clientSecret and clientSecretRef
+  - it: uses the reference and ignores the inline clientSecret when a pre-defined client sets both, and names it in the notes
+    values:
+      - ./values/inline-static-clients.yaml
     set:
-      oidc.staticClients.muster:
-        clientID: muster
-        clientSecret: inline-secret
-        clientSecretRef:
-          name: dex-client-muster
-          key: secret
+      oidc.staticClients.muster.clientSecretRef:
+        name: dex-client-muster
+        key: secret
     asserts:
+      - template: templates/deployment.yaml
+        equal:
+          path: spec.template.spec.containers[0].env
+          value:
+            - name: DEX_CLIENT_SECRET_MUSTER
+              valueFrom:
+                secretKeyRef:
+                  name: dex-client-muster
+                  key: secret
       - template: templates/secret-gs.yaml
-        failedTemplate:
-          errorPattern: 'static client "muster" sets more than one of oidc.staticClients.muster.clientSecret and .clientSecretRef'
+        matchRegex:
+          path: stringData["config.yaml"]
+          pattern: "- id: muster\n  secretEnv: DEX_CLIENT_SECRET_MUSTER\n  name: muster\n"
+      - template: templates/secret-gs.yaml
+        notMatchRegex:
+          path: stringData["config.yaml"]
+          pattern: muster-secret
+      - template: templates/secret-gs.yaml
+        matchRegex:
+          path: stringData["config.yaml"]
+          pattern: "- id: gitopsui\n  secret: gitopsui-secret\n"
+      - template: templates/NOTES.txt
+        matchRegexRaw:
+          pattern: "Static clients whose inline clientSecret is ignored: clientSecretRef takes precedence\nand the client reads its secret from the referenced Secret. Delete the clientSecret\nfrom the values that carry it.\n  - oidc.staticClients.muster \\(clientID muster\\)\n"
+      - template: templates/NOTES.txt
+        notMatchRegexRaw:
+          pattern: left out
 
   - it: leaves out a pre-defined client whose clientID is set without a secret source and names it in the notes
     values:
@@ -316,18 +339,38 @@ tests:
           path: stringData["config.yaml"]
           pattern: "- id: mcp-capi\n  secretEnv: DEX_CLIENT_SECRET_MCP_CAPI\n  name: MCP CAPI\n"
 
-  - it: fails naming the client when mcpPrometheus sets both clientSecret and clientSecretRef
+  - it: uses the reference and ignores the inline clientSecret of mcpPrometheus, and lists it in the notes after a client without a secret source
     set:
+      oidc.issuerAddress: dex.example.test
+      oidc.staticClients.mcpCapi.clientID: mcp-capi
       oidc.staticClients.mcpPrometheus:
         clientID: mcp-prometheus
         clientSecret: inline-secret
         clientSecretRef:
           name: dex-client-mcp-prometheus
           key: secret
+        redirectURI: https://mcp-prometheus.example.test/oauth/callback
     asserts:
+      - template: templates/deployment.yaml
+        contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: DEX_CLIENT_SECRET_MCP_PROMETHEUS
+            valueFrom:
+              secretKeyRef:
+                name: dex-client-mcp-prometheus
+                key: secret
       - template: templates/secret-gs.yaml
-        failedTemplate:
-          errorPattern: 'static client "mcp-prometheus" sets more than one of oidc.staticClients.mcpPrometheus.clientSecret and .clientSecretRef'
+        matchRegex:
+          path: stringData["config.yaml"]
+          pattern: "- id: mcp-prometheus\n  secretEnv: DEX_CLIENT_SECRET_MCP_PROMETHEUS\n  name: MCP Prometheus\n"
+      - template: templates/secret-gs.yaml
+        notMatchRegex:
+          path: stringData["config.yaml"]
+          pattern: inline-secret
+      - template: templates/NOTES.txt
+        matchRegexRaw:
+          pattern: "left out of the dex configuration.*\n.*\n  - oidc.staticClients.mcpCapi \\(clientID mcp-capi\\)\n\nStatic clients whose inline clientSecret is ignored.*\n.*\n.*\n  - oidc.staticClients.mcpPrometheus \\(clientID mcp-prometheus\\)\n"
 
   - it: leaves out mcpCapi and mcpPrometheus declared without a secret source and keeps them as trusted peers of dex-k8s-authenticator
     set:

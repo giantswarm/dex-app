@@ -25,3 +25,126 @@ tests:
       - matchRegex:
           path: spec.template.metadata.annotations["checksum/config"]
           pattern: ^[0-9a-f]{64}$
+
+  - it: projects the referenced client Secrets and restarts dex from the liveness probe when one changes
+    template: templates/deployment.yaml
+    set:
+      oidc.issuerAddress: dex.example.test
+      oidc.staticClients.mcpPrometheus:
+        clientID: mcp-prometheus
+        clientSecretRef:
+          name: dex-client-mcp-prometheus
+          key: secret
+        redirectURI: https://mcp-prometheus.example.test/oauth/callback
+      oidc.extraStaticClients:
+        - id: platform-manager
+          name: Platform manager
+          secretRef:
+            name: dex-client-platform-manager
+            key: client-secret
+          redirectURIs:
+            - https://platform-manager.example.test/callback
+    asserts:
+      - contains:
+          path: spec.template.spec.volumes
+          content:
+            name: client-secrets
+            projected:
+              sources:
+                - secret:
+                    name: dex-client-mcp-prometheus
+                    items:
+                      - key: secret
+                        path: DEX_CLIENT_SECRET_MCP_PROMETHEUS
+                - secret:
+                    name: dex-client-platform-manager
+                    items:
+                      - key: client-secret
+                        path: DEX_CLIENT_SECRET_PLATFORM_MANAGER
+      - contains:
+          path: spec.template.spec.containers[0].volumeMounts
+          content:
+            name: client-secrets
+            mountPath: /etc/dex-client-secrets
+            readOnly: true
+      - notExists:
+          path: spec.template.spec.containers[0].livenessProbe.httpGet
+      - equal:
+          path: spec.template.spec.containers[0].livenessProbe.timeoutSeconds
+          value: 5
+      - equal:
+          path: spec.template.spec.containers[0].livenessProbe.exec.command[0]
+          value: sh
+      - equal:
+          path: spec.template.spec.containers[0].livenessProbe.exec.command[1]
+          value: -ec
+      - matchRegex:
+          path: spec.template.spec.containers[0].livenessProbe.exec.command[2]
+          pattern: "^wget -q -T 2 -O /dev/null http://127.0.0.1:5558/healthz/live\n"
+      - matchRegex:
+          path: spec.template.spec.containers[0].livenessProbe.exec.command[2]
+          pattern: "\ncd /etc/dex-client-secrets\nfor name in DEX_CLIENT_SECRET_MCP_PROMETHEUS DEX_CLIENT_SECRET_PLATFORM_MANAGER; do\n  \\[ \"\\$\\(cat \"\\$name\"\\)\" = \"\\$\\(printenv \"\\$name\"\\)\" \\] && continue\n"
+      - matchRegex:
+          path: spec.template.spec.containers[0].livenessProbe.exec.command[2]
+          pattern: "\n  exit 1\ndone\n$"
+      - equal:
+          path: spec.template.spec.containers[0].readinessProbe.httpGet.path
+          value: /healthz/ready
+
+  - it: projects two clients that reference different keys of the same Secret as two files
+    template: templates/deployment.yaml
+    set:
+      oidc.issuerAddress: dex.example.test
+      oidc.extraStaticClients:
+        - id: reader
+          name: Reader
+          secretRef:
+            name: dex-clients
+            key: reader
+        - id: writer
+          name: Writer
+          secretRef:
+            name: dex-clients
+            key: writer
+    asserts:
+      - equal:
+          path: spec.template.spec.volumes[2].projected.sources
+          value:
+            - secret:
+                name: dex-clients
+                items:
+                  - key: reader
+                    path: DEX_CLIENT_SECRET_READER
+            - secret:
+                name: dex-clients
+                items:
+                  - key: writer
+                    path: DEX_CLIENT_SECRET_WRITER
+      - matchRegex:
+          path: spec.template.spec.containers[0].livenessProbe.exec.command[2]
+          pattern: "for name in DEX_CLIENT_SECRET_READER DEX_CLIENT_SECRET_WRITER; do\n"
+
+  - it: keeps the upstream liveness probe and no client-secrets volume while every client secret is inline
+    template: templates/deployment.yaml
+    values:
+      - ./values/inline-static-clients.yaml
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].livenessProbe
+          value:
+            httpGet:
+              path: /healthz/live
+              port: telemetry
+      - notContains:
+          path: spec.template.spec.volumes
+          content:
+            name: client-secrets
+          any: true
+      - notContains:
+          path: spec.template.spec.containers[0].volumeMounts
+          content:
+            name: client-secrets
+          any: true
+      - lengthEqual:
+          path: spec.template.spec.volumes
+          count: 2

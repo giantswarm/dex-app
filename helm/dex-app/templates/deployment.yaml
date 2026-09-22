@@ -7,7 +7,10 @@ same helm upgrade that writes the secret, with or without a forced upgrade.
 
 `clientSecretEnv` lists the static clients whose secret is a Secret reference;
 the subchart template sets one environment variable per item, read by dex at
-start-up through the `secretEnv` of the client in the configuration.
+start-up through the `secretEnv` of the client in the configuration, projects
+the referenced Secrets as files and compares the two in the liveness probe, so
+a rotated client secret restarts the container (the `dex.clientSecrets.*`
+helpers in _helpers.tpl).
 */}}
 {{- $dex := index .Subcharts "dex" -}}
 {{- include "dex.deployment" (dict

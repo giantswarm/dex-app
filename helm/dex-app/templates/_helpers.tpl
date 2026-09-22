@@ -350,6 +350,67 @@ name fail as well: the variable would carry only one of the two secrets.
 {{- end -}}
 
 {{/*
+The referenced client Secrets as a projected volume for the dex container: one
+file per referenced static client, named like the client's environment
+variable and holding the referenced key's current value. The kubelet rewrites
+the files after the Secret changes; the environment variable keeps the value
+dex started from, so the two differ exactly when a client secret has been
+rotated (dex.clientSecrets.livenessProbe). Takes the list of
+dex.staticClients.secretRefs.
+*/}}
+{{- define "dex.clientSecrets.volume" -}}
+- name: client-secrets
+  projected:
+    sources:
+    {{- range . }}
+    - secret:
+        name: {{ .name | quote }}
+        items:
+        - key: {{ .key | quote }}
+          path: {{ .env }}
+    {{- end }}
+{{- end -}}
+
+{{- define "dex.clientSecrets.mountPath" -}}
+/etc/dex-client-secrets
+{{- end -}}
+
+{{- define "dex.clientSecrets.volumeMount" -}}
+- name: client-secrets
+  mountPath: {{ include "dex.clientSecrets.mountPath" . }}
+  readOnly: true
+{{- end -}}
+
+{{/*
+The liveness probe of the dex container while static clients reference
+Secrets: the upstream /healthz/live check, then one comparison per referenced
+client of the Secret's current value (its projected file) with the value dex
+started from (the environment variable of the same name). A rotated client
+secret fails the probe naming the client's variable, the kubelet restarts the
+container, the environment is resolved from the Secret again and dex starts
+with the new secret: a rotation reaches dex within about a minute (the
+kubelet's volume refresh, then three failed probes) without a roll of the
+Deployment or a controller watching the Secrets. Dex itself reads a client
+secret only at start-up, from `secret` or `secretEnv`. Takes the list of
+dex.staticClients.secretRefs.
+*/}}
+{{- define "dex.clientSecrets.livenessProbe" -}}
+exec:
+  command:
+    - sh
+    - -ec
+    - |
+      wget -q -T 2 -O /dev/null http://127.0.0.1:5558/healthz/live
+      cd {{ include "dex.clientSecrets.mountPath" . }}
+      for name in{{ range . }} {{ .env }}{{ end }}; do
+        [ "$(cat "$name")" = "$(printenv "$name")" ] && continue
+        echo "the referenced Secret behind $name changed: restarting dex to load it"
+        exit 1
+      done
+timeoutSeconds: 5
+{{- end -}}
+
+{{/*
 Checks if any services in addition to Kubernetes are defined in values
 */}}
 {{- define "is-any-service-listed" -}}

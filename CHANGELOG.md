@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Dex restarts when a referenced client Secret changes: the referenced Secrets (`clientSecretRef` on a pre-defined client, `secretRef` on an extra client) are projected into the dex container as files, one per client, and the liveness probe compares each file with the environment variable dex started from; a rotated value fails the probe naming the client's variable, the kubelet restarts the container and dex loads the new secret, about a minute after the Secret changed and without any other change. Before, dex kept the value it read at start-up until something else restarted it, and the client's flows failed with `invalid_client` in between. Installations without referenced clients render unchanged; the `checksum/config` roll on a configuration change is unchanged.
+
 ## [3.2.2] - 2026-09-19
 
 ### Fixed

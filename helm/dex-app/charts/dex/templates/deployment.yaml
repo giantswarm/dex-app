@@ -4,6 +4,10 @@ The Deployment is a named template rendered by the parent chart
 it renders as `configChecksum`. A subchart cannot see its parent's values, so
 the pod template's `checksum/config` annotation has to be set from there: it is
 what rolls the pod in the same helm upgrade that writes the configuration.
+`clientSecretEnv` lists the static clients whose secret is a referenced Secret:
+one environment variable each, the Secrets projected as files and the liveness
+probe that restarts the container when a file no longer matches its variable
+(the parent's `dex.clientSecrets.*` helpers).
 */}}
 {{- define "dex.deployment" -}}
 apiVersion: apps/v1
@@ -118,9 +122,13 @@ spec:
               containerPort: 5558
               protocol: TCP
           livenessProbe:
+            {{- if .clientSecretEnv }}
+            {{- include "dex.clientSecrets.livenessProbe" .clientSecretEnv | nindent 12 }}
+            {{- else }}
             httpGet:
               path: /healthz/live
               port: telemetry
+            {{- end }}
           readinessProbe:
             httpGet:
               path: /healthz/ready
@@ -133,6 +141,9 @@ spec:
               readOnly: true
             - name: tmp-volume
               mountPath: /tmp
+            {{- with .clientSecretEnv }}
+            {{- include "dex.clientSecrets.volumeMount" . | nindent 12 }}
+            {{- end }}
           {{- with .Values.volumeMounts }}
             {{- toYaml . | nindent 12 }}
           {{- end }}
@@ -142,6 +153,9 @@ spec:
             secretName: {{ include "dex.configSecretName" . }}
         - name: tmp-volume
           emptyDir: {}
+        {{- with .clientSecretEnv }}
+        {{- include "dex.clientSecrets.volume" . | nindent 8 }}
+        {{- end }}
       {{- with .Values.volumes }}
         {{- toYaml . | nindent 8 }}
       {{- end }}

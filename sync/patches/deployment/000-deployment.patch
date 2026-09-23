@@ -1,14 +1,18 @@
 diff --git a/vendor/dex/templates/deployment.yaml b/helm/dex-app/charts/dex/templates/deployment.yaml
-index 607cafd..8981830 100644
+index 607cafd..e4dd7a3 100644
 --- a/vendor/dex/templates/deployment.yaml
 +++ b/helm/dex-app/charts/dex/templates/deployment.yaml
-@@ -1,7 +1,15 @@
+@@ -1,7 +1,19 @@
 +{{/*
 +The Deployment is a named template rendered by the parent chart
 +(templates/deployment.yaml), which passes the checksum of the dex configuration
 +it renders as `configChecksum`. A subchart cannot see its parent's values, so
 +the pod template's `checksum/config` annotation has to be set from there: it is
 +what rolls the pod in the same helm upgrade that writes the configuration.
++`clientSecretEnv` lists the static clients whose secret is a referenced Secret:
++one environment variable each, the Secrets projected as files and the liveness
++probe that restarts the container when a file no longer matches its variable
++(the parent's `dex.clientSecrets.*` helpers).
 +*/}}
 +{{- define "dex.deployment" -}}
  apiVersion: apps/v1
@@ -19,7 +23,7 @@ index 607cafd..8981830 100644
    namespace: {{ include "dex.namespace" . }}
    labels:
      {{- include "dex.labels" . | nindent 4 }}
-@@ -30,9 +38,7 @@ spec:
+@@ -30,9 +42,7 @@ spec:
        {{- with .Values.podAnnotations }}
          {{- toYaml . | nindent 8 }}
        {{- end }}
@@ -30,7 +34,7 @@ index 607cafd..8981830 100644
        labels:
          {{- include "dex.selectorLabels" . | nindent 8 }}
          {{- with .Values.podLabels }}
-@@ -57,12 +63,8 @@ spec:
+@@ -57,12 +67,8 @@ spec:
          - name: {{ .Chart.Name }}
            securityContext:
              {{- toYaml .Values.securityContext | nindent 12 }}
@@ -45,7 +49,7 @@ index 607cafd..8981830 100644
            args:
              - dex
              - serve
-@@ -84,6 +86,13 @@ spec:
+@@ -84,6 +90,13 @@ spec:
              - name: {{ $key }}
                value: {{ $value | quote }}
              {{- end }}
@@ -59,25 +63,45 @@ index 607cafd..8981830 100644
            {{- with .Values.envVars }}
              {{- toYaml . | nindent 12 }}
            {{- end }}
-@@ -122,6 +131,8 @@ spec:
+@@ -109,9 +122,13 @@ spec:
+               containerPort: 5558
+               protocol: TCP
+           livenessProbe:
++            {{- if .clientSecretEnv }}
++            {{- include "dex.clientSecrets.livenessProbe" .clientSecretEnv | nindent 12 }}
++            {{- else }}
+             httpGet:
+               path: /healthz/live
+               port: telemetry
++            {{- end }}
+           readinessProbe:
+             httpGet:
+               path: /healthz/ready
+@@ -122,6 +139,11 @@ spec:
              - name: config
                mountPath: /etc/dex
                readOnly: true
 +            - name: tmp-volume
 +              mountPath: /tmp
++            {{- with .clientSecretEnv }}
++            {{- include "dex.clientSecrets.volumeMount" . | nindent 12 }}
++            {{- end }}
            {{- with .Values.volumeMounts }}
              {{- toYaml . | nindent 12 }}
            {{- end }}
-@@ -129,6 +140,8 @@ spec:
+@@ -129,6 +151,11 @@ spec:
          - name: config
            secret:
              secretName: {{ include "dex.configSecretName" . }}
 +        - name: tmp-volume
 +          emptyDir: {}
++        {{- with .clientSecretEnv }}
++        {{- include "dex.clientSecrets.volume" . | nindent 8 }}
++        {{- end }}
        {{- with .Values.volumes }}
          {{- toYaml . | nindent 8 }}
        {{- end }}
-@@ -148,3 +161,4 @@ spec:
+@@ -148,3 +175,4 @@ spec:
        tolerations:
          {{- toYaml . | nindent 8 }}
        {{- end }}

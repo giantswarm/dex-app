@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- The PodDisruptionBudget selects the dex pods by their selector labels only. It carried the chart and version labels, which change with every release, so after an upgrade it selected no pod and protected nothing. It is `maxUnavailable: 1` instead of `minAvailable: 50%`: with a single replica, 50% rounded up to one pod and would refuse every eviction, holding a node drain until its timeout.
+
 ## [3.2.4] - 2026-09-25
 
 ### Fixed

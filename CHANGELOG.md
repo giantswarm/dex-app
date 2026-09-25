@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.2.5] - 2026-09-25
+
 ### Fixed
 
 - The PodDisruptionBudget selects the dex pods by their selector labels only. It carried the chart and version labels, which change with every release, so after an upgrade it selected no pod and protected nothing. It is `maxUnavailable: 1` instead of `minAvailable: 50%`: with a single replica, 50% rounded up to one pod and would refuse every eviction, holding a node drain until its timeout.
@@ -754,7 +756,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add helm chart for dex.
 
 
-[Unreleased]: https://github.com/giantswarm/dex-app/compare/v3.2.4...HEAD
+[Unreleased]: https://github.com/giantswarm/dex-app/compare/v3.2.5...HEAD
+[3.2.5]: https://github.com/giantswarm/dex-app/compare/v3.2.4...v3.2.5
 [3.2.4]: https://github.com/giantswarm/dex-app/compare/v3.2.3...v3.2.4
 [3.2.3]: https://github.com/giantswarm/dex-app/compare/v3.2.2...v3.2.3
 [3.2.2]: https://github.com/giantswarm/dex-app/compare/v3.2.1...v3.2.2

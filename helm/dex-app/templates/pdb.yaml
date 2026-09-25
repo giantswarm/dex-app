@@ -3,9 +3,16 @@ apiVersion: policy/v1
 kind: PodDisruptionBudget
 metadata:
   name: {{ include "resource.dex.name" . }}
+  labels:
+    {{- include "dex.labels.common" . | nindent 4 }}
 spec:
-  minAvailable: 50%
+  # One pod at a time: with a single replica a node drain evicts it and goes
+  # on, where a minAvailable budget would refuse every eviction and hold the
+  # drain until its timeout; with more replicas the rest keep serving.
+  maxUnavailable: 1
   selector:
+    # The selector labels only: the version and chart labels change with
+    # every release and would leave the budget selecting no pod.
     matchLabels:
-      {{- include "dex.labels.common" . | nindent 6 }}
+      {{- include "dex.labels.selector" . | nindent 6 }}
 {{- end }}

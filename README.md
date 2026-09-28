@@ -214,13 +214,16 @@ Dex only accepts the response types listed in `oidc.responseTypes`:
 oidc:
   responseTypes:
     - "code"
+    - "token"
+    - "id_token"
 ```
 
-The default is `code` only (authorization code flow).
+Default values on the 2.x line include: `code`, `token` and `id_token`.
+From 3.0.0 the default is `code` only (authorization code flow).
 
 `token` and `id_token` enable the OAuth2 implicit flow.
 The implicit flow is considered insecure and using it is highly discouraged.
-If a client of yours genuinely needs the implicit or hybrid flow, set this value explicitly to add them back.
+If a client of yours genuinely needs the implicit or hybrid flow, set this value explicitly to keep them.
 
 Note that this list is also what dex publishes as `response_types_supported` in its OIDC discovery document, so clients that pick a flow from provider metadata will follow it.
 

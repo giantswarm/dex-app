@@ -7,68 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Fixed
-
-- The `helm.sh/chart` label is valid for long chart versions: the 63-character cut trims the whole trailing run of `-`, `.` and `_`.
-
-## [3.2.5] - 2026-09-25
-
-### Fixed
-
-- The PodDisruptionBudget selects the dex pods by their selector labels only. It carried the chart and version labels, which change with every release, so after an upgrade it selected no pod and protected nothing. It is `maxUnavailable: 1` instead of `minAvailable: 50%`: with a single replica, 50% rounded up to one pod and would refuse every eviction, holding a node drain until its timeout.
-
-## [3.2.4] - 2026-09-25
-
-### Fixed
-
-- Update `dex` to `v2.43.3`. Token exchanges and logins through an OIDC connector no longer hang while the upstream issuer's signing keys (JWKS) cannot be fetched: the key fetch is bounded to 5 seconds, and such a token exchange answers `503 server_error` instead of `401 access_denied`, with the keys URL and the failure in Dex's log. A subject token that does not verify still gets `401 access_denied`. See [giantswarm/dex#80](https://github.com/giantswarm/dex/issues/80).
-
-## [3.2.3] - 2026-09-23
-
-### Fixed
-
-- Dex restarts when a referenced client Secret changes: the referenced Secrets (`clientSecretRef` on a pre-defined client, `secretRef` on an extra client) are projected into the dex container as files, one per client, and the liveness probe compares each file with the environment variable dex started from; a rotated value fails the probe naming the client's variable, the kubelet restarts the container and dex loads the new secret, about a minute after the Secret changed and without any other change. Before, dex kept the value it read at start-up until something else restarted it, and the client's flows failed with `invalid_client` in between. Installations without referenced clients render unchanged; the `checksum/config` roll on a configuration change is unchanged.
-
-## [3.2.2] - 2026-09-19
-
-### Fixed
-
-- A pre-defined static client (`gitopsui`, `muster`, `mcpKubernetes`, `mcpCapi`, `mcpPrometheus`) with both `clientSecret` and `clientSecretRef` uses the reference and ignores the inline value instead of failing the render: a client moves from an inline secret to a referenced Secret by adding the reference where the plaintext values live, even while the encrypted values still carry the old inline secret. The release notes (`helm get notes`) name such a client until the inline value is deleted. A client with neither is left out as in 3.2.1; `dex-k8s-authenticator` and extra static clients that are not public still need exactly one source.
-
-## [3.2.1] - 2026-09-19
-
-### Fixed
-
-- A pre-defined static client (`gitopsui`, `muster`, `mcpKubernetes`, `mcpCapi`, `mcpPrometheus`) with a `clientID` and neither `clientSecret` nor `clientSecretRef` is left out of the dex configuration again, as before v3.1.0, and named in the release notes, instead of failing the render: values shared by several installations can declare a client whose secret only some of them carry. Both sources on one client still fail the render naming the client; `dex-k8s-authenticator` and extra static clients that are not public still need exactly one. Clients with a secret render unchanged.
-
-## [3.2.0] - 2026-09-18
-
 ### Added
 
-- Built-in static clients `mcpCapi` and `mcpPrometheus` (`oidc.staticClients.mcpCapi`, `oidc.staticClients.mcpPrometheus`) with the shape and rules of `mcpKubernetes`: `clientID`, `redirectURI`, `trustedPeers`, and exactly one of `clientSecret` and `clientSecretRef: {name, key}`; both are trusted peers of `dex-k8s-authenticator`. Values under these keys were accepted by the schema and ignored by the templates before: an installation that carries them gets the two clients with this version, and one that carries a `clientID` without a secret fails the render naming the client. Installations without them render unchanged.
-
-## [3.1.0] - 2026-09-18
-
-### Added
-
-- Static clients read their secret from a Kubernetes Secret: `secretRef: {name, key}` in an `extraStaticClients` entry, `clientSecretRef: {name, key}` in the pre-defined clients (`gitopsui`, `muster`, `mcpKubernetes`, `dexK8SAuthenticator`), in place of the inline secret. The chart sets `DEX_CLIENT_SECRET_<ID>` on the dex container from the referenced key and names it in the client's `secretEnv`, so a client is added by a new Secret and a plaintext list entry. Exactly one of the inline secret and the reference per client: both, or neither on a client that is not public, fails the render naming the client. Inline clients render unchanged.
-
-### Changed
-
-- A pre-defined static client with a `clientID` but no secret (`gitopsui`, `muster`, `mcpKubernetes`) fails the render naming the client instead of being left out of the configuration silently.
-
-## [3.0.1] - 2026-09-18
-
-### Fixed
-
-- Roll dex on a configuration change: the pod template carries a `checksum/config` annotation with the hash of the rendered dex configuration, so every change to it produces a new ReplicaSet in the same helm upgrade that writes the secret. The Deployment is rendered by the parent chart from the subchart's template to compute the checksum; its output is unchanged apart from the annotation. Before, the pod kept the configuration it had loaded at startup until something else restarted it.
-
-## [3.0.0] - 2026-09-03
-
-### Changed
-
-- **Breaking:** Default `oidc.responseTypes` to `["code"]` only, disabling the insecure OAuth2 implicit flow by default. Any client relying on the implicit or hybrid flow without setting `oidc.responseTypes` explicitly will stop working. Set `oidc.responseTypes` explicitly to `["code", "token", "id_token"]` to keep them.
-- CI: bump `architect` orb from `9.4.1` to `10.1.2`.
+- The 2.x line carries the 3.x features up to 3.2.5, with the 2.x default `oidc.responseTypes: ["code", "token", "id_token"]` kept, so an installation gets them without the 3.0.0 breaking change:
+  - Dex rolls on a configuration change (`checksum/config` on the pod template), and restarts when a referenced client Secret changes.
+  - Static clients read their secret from a Kubernetes Secret: `secretRef: {name, key}` on an `extraStaticClients` entry, `clientSecretRef: {name, key}` on the pre-defined clients. A pre-defined client with both uses the reference; one with neither is left out and named in the release notes.
+  - Built-in static clients `mcpCapi` and `mcpPrometheus`.
+  - Dex `v2.43.3`: the upstream issuer's key fetch is bounded to 5 seconds.
+  - The PodDisruptionBudget selects the dex pods by their selector labels, `maxUnavailable: 1`.
+  - The `helm.sh/chart` label is valid for long chart versions.
 
 ## [2.3.0] - 2026-09-01
 
@@ -760,16 +707,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add helm chart for dex.
 
 
-[Unreleased]: https://github.com/giantswarm/dex-app/compare/v3.2.5...HEAD
-[3.2.5]: https://github.com/giantswarm/dex-app/compare/v3.2.4...v3.2.5
-[3.2.4]: https://github.com/giantswarm/dex-app/compare/v3.2.3...v3.2.4
-[3.2.3]: https://github.com/giantswarm/dex-app/compare/v3.2.2...v3.2.3
-[3.2.2]: https://github.com/giantswarm/dex-app/compare/v3.2.1...v3.2.2
-[3.2.1]: https://github.com/giantswarm/dex-app/compare/v3.2.0...v3.2.1
-[3.2.0]: https://github.com/giantswarm/dex-app/compare/v3.1.0...v3.2.0
-[3.1.0]: https://github.com/giantswarm/dex-app/compare/v3.0.1...v3.1.0
-[3.0.1]: https://github.com/giantswarm/dex-app/compare/v3.0.0...v3.0.1
-[3.0.0]: https://github.com/giantswarm/dex-app/compare/v2.3.0...v3.0.0
+[Unreleased]: https://github.com/giantswarm/dex-app/compare/v2.3.0...HEAD
 [2.3.0]: https://github.com/giantswarm/dex-app/compare/v2.2.3...v2.3.0
 [2.2.3]: https://github.com/giantswarm/dex-app/compare/v2.2.2...v2.2.3
 [2.2.2]: https://github.com/giantswarm/dex-app/compare/v2.2.1...v2.2.2

@@ -8,7 +8,7 @@ dex:
       name: giantswarm/dex-app
       # Automatically synced from Chart.yaml appVersion via `make sync-image-tag`
       # Override only for testing with a specific image.
-      tag: "3.2.5"
+      tag: "2.3.0"
       pullPolicy: IfNotPresent
   configSecret:
     # -- Enable creating a secret from the values passed to `config`.
@@ -207,10 +207,11 @@ oidc:
   issuerAddress: ""
   # -- OAuth2 response types dex will accept. `token` and `id_token` enable the
   # implicit flow, which is considered insecure and is not needed by any client
-  # we ship. Add them back only if a client genuinely requires the implicit or
-  # hybrid flow.
+  # we ship. The 2.x line keeps them in the default; 3.0.0 drops them.
   responseTypes:
     - "code"
+    - "token"
+    - "id_token"
   expiry:
     signingKeys: 6h
     idTokens: 30m

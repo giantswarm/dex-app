@@ -12,7 +12,7 @@ renders the configuration and the container environment of inline clients unchan
       logger:
         level: INFO
       oauth2:
-        responseTypes: ["code"]
+        responseTypes: ["code","token","id_token"]
         alwaysShowLoginScreen: false
         skipApprovalScreen: true
       enablePasswordDB: false

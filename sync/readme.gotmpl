@@ -213,7 +213,7 @@ cluster:
 
 In addition to a few pre-defined static clients Dex app supports the possibility to define custom static clients as well.
 They need to be defined as an array of object in a specific property of the configuration yaml file called `extraStaticClients`.
-The structure of each custom static client object is exactly the same as in upstream Dex:
+The structure of each custom static client object is exactly the same as in upstream Dex, plus `secretRef`:
 
 ```yaml
 extraStaticClients:
@@ -229,16 +229,23 @@ extraStaticClients:
   redirectURIs:
   - "https://example.com/redirect"
   name: "client-name-2"
+- id: "client-id-3"
+  secretRef:
+    name: "dex-client-client-id-3"
+    key: "secret"
+  redirectURIs:
+  - "https://example.com/redirect"
+  name: "client-name-3"
 ```
 
 **Notes:**
 
 - `id` and `idEnv` properties are mutually exclusive
-- `secret` and `secretEnv` properties are mutually exclusive
+- `secret`, `secretEnv` and `secretRef` properties are mutually exclusive; a client that is not `public` needs exactly one of them, otherwise the chart fails to render naming the client
 - Required properties:
   - `name`
   - `id` or `idEnv`
-  - `secret` or `secretEnv`
+  - `secret`, `secretEnv` or `secretRef` (unless `public: true`)
 
 Extra static clients can also be configured as trusted peers of the pre-defined static clients:
 
@@ -272,6 +279,34 @@ staticClients:
   public: true
 ```
 Duplicities are prevented in case an ID of any additional trusted peer equals an automatically pre-populated trusted peer ID.
+
+#### Client secrets from a Secret
+
+A client secret does not have to be written into the values: `secretRef: {name, key}` in an extra static client, or `clientSecretRef: {name, key}` next to `clientID` in a pre-defined one (`gitopsui`, `muster`, `mcpKubernetes`, `mcpCapi`, `mcpPrometheus`, `dexK8SAuthenticator`), names a key of a Secret in dex's namespace. The chart sets the environment variable `DEX_CLIENT_SECRET_<ID>` on the dex container from that key (`<ID>` is the client id in upper case with every character other than a letter or a digit replaced by `_`) and writes the client into the dex configuration with `secretEnv: DEX_CLIENT_SECRET_<ID>`, which dex reads when it starts. Whoever declares the client creates the Secret, so a client is added by a new Secret and a plaintext list entry, without touching the values that carry the other clients' secrets.
+
+```yaml
+oidc:
+  staticClients:
+    muster:
+      clientID: muster
+      clientSecretRef:
+        name: dex-client-muster
+        key: secret
+      redirectURI: https://muster.example.com/callback
+  extraStaticClients:
+  - id: platform-manager
+    name: Platform manager
+    secretRef:
+      name: dex-client-platform-manager
+      key: secret
+    redirectURIs:
+    - https://platform-manager.example.com/callback
+```
+
+- A pre-defined client (`gitopsui`, `muster`, `mcpKubernetes`, `mcpCapi`, `mcpPrometheus`) with both `clientSecret` and `clientSecretRef` uses the reference and ignores the inline value, so a client moves from an inline secret to a referenced Secret by adding the reference where the plaintext values live, even while the encrypted values still carry the old inline secret; the release notes (`helm get notes`) name the client until the inline value is deleted. One with a `clientID` and neither is left out of the configuration and named in the release notes, so values shared by several installations can declare a client whose secret only some of them carry. An extra static client that is not `public` needs exactly one of the inline secret and the reference; so does `dexK8SAuthenticator`, whose `clientSecret` has a chart default: its `clientSecretRef` goes together with `clientSecret: ""`. Both on one of those fails the render naming the client.
+- `secretRef` needs a literal `id` (not `idEnv`), and two client ids must not map to the same variable name.
+- A referenced Secret or key that does not exist keeps the dex pod from starting (the projected volume and the environment variable both name it) instead of running the client with an empty secret.
+- A rotated referenced Secret reaches dex without any other change: dex reads the environment only at start-up, so the chart also projects every referenced Secret into the container as a file named like the client's variable (under `/etc/dex-client-secrets`) and the liveness probe, after the upstream `/healthz/live` check, compares each file with the variable. The kubelet rewrites the files about a minute after the Secret changed, the probe fails naming the variable (`the referenced Secret behind DEX_CLIENT_SECRET_<ID> changed: restarting dex to load it` in the pod's events), the container restarts and dex starts with the new secret. This is a container restart, not a roll of the Deployment: the restart count grows by one and a single-replica dex is unavailable for the seconds the restart takes. Clients with an inline secret change through the configuration and its `checksum/config` roll as before.
 
 ## Update Process
 

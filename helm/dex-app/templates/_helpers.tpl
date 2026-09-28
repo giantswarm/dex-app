@@ -52,7 +52,7 @@ If release name contains chart name it will be used as a full name.
 Create chart name and version as used by the chart label.
 */}}
 {{- define "dex.chart" -}}
-{{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" | trimSuffix "." | trimSuffix "_" -}}
+{{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimAll "-._" -}}
 {{- end -}}
 
 {{/*
@@ -188,16 +188,226 @@ Gather and print trusted peers of a static client from various sources
 {{- end -}}
 
 {{/*
-Clean up and print extra static clients
+Clean up and print extra static clients. A client declaring its secret as a
+reference (`secretRef: {name, key}`) is printed with `secretEnv` naming the
+variable the Deployment sets from that Secret; dex reads it at start-up.
 */}}
 {{- define "print-clean-extra-static-clients" -}}
   {{- if . }}
     {{- $extraStaticClients := list nil -}}
     {{- range . -}}
-      {{- $extraStaticClients = append $extraStaticClients (omit . "trustedPeerOf") -}}
+      {{- $client := omit . "trustedPeerOf" -}}
+      {{- if .secretRef -}}
+        {{- $client = set (omit $client "secretRef") "secretEnv" (include "dex.staticClient.secretEnvName" .id) -}}
+      {{- end -}}
+      {{- $extraStaticClients = append $extraStaticClients $client -}}
     {{- end -}}
     {{- compact $extraStaticClients | toYaml | nindent 4 -}}
   {{- end -}}
+{{- end -}}
+
+{{/*
+Name of the environment variable carrying a referenced static client secret,
+derived from the client id: DEX_CLIENT_SECRET_<id upper-cased, [^A-Za-z0-9] -> _>.
+*/}}
+{{- define "dex.staticClient.secretEnvName" -}}
+DEX_CLIENT_SECRET_{{ regexReplaceAll "[^A-Za-z0-9]" . "_" | upper }}
+{{- end -}}
+
+{{/*
+The secret line of a pre-defined static client: `secret: <inline value>` or,
+for a client declared with `clientSecretRef`, `secretEnv: <variable>`. The
+reference takes precedence: an inline `clientSecret` next to it is ignored.
+Takes a dict with `id` (the client id) and `client` (the client's values).
+*/}}
+{{- define "dex.staticClient.secretField" -}}
+{{- if .client.clientSecretRef -}}
+secretEnv: {{ include "dex.staticClient.secretEnvName" .id }}
+{{- else -}}
+secret: {{ .client.clientSecret }}
+{{- end -}}
+{{- end -}}
+
+{{/*
+The pre-defined static clients that authenticate with a secret, as their values
+keys in the order they are validated. The public ones (grafana, gsCLIAuth,
+happa) have no secret; dex-k8s-authenticator, always rendered, is handled apart.
+*/}}
+{{- define "dex.staticClients.confidential" -}}
+gitopsui mcpCapi mcpKubernetes mcpPrometheus muster
+{{- end -}}
+
+{{/*
+Whether a pre-defined static client has a secret source, clientSecret or
+clientSecretRef (both at once: the reference is used, the inline value ignored).
+A client with a clientID and neither is left out of the configuration, as it
+was before v3.1.0, and named in NOTES.txt. Takes the client's values; prints
+"true" or nothing.
+*/}}
+{{- define "dex.staticClient.hasSecret" -}}
+{{- if or .clientSecret .clientSecretRef }}true{{ end -}}
+{{- end -}}
+
+{{/*
+The pre-defined static clients left out of the configuration — a clientID
+without a secret source — as a YAML list of {key, id} for NOTES.txt.
+*/}}
+{{- define "dex.staticClients.withoutSecret" -}}
+{{- range $name := (include "dex.staticClients.confidential" . | splitList " ") -}}
+{{- $client := index $.Values.oidc.staticClients $name -}}
+{{- if and $client.clientID (not (include "dex.staticClient.hasSecret" $client)) }}
+- key: {{ $name }}
+  id: {{ $client.clientID | quote }}
+{{- end -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
+The pre-defined static clients whose inline clientSecret is ignored — set next
+to a clientSecretRef, which takes precedence — as a YAML list of {key, id} for
+NOTES.txt, so the dead value gets deleted from the values that carry it.
+*/}}
+{{- define "dex.staticClients.withIgnoredInlineSecret" -}}
+{{- range $name := (include "dex.staticClients.confidential" . | splitList " ") -}}
+{{- $client := index $.Values.oidc.staticClients $name -}}
+{{- if and $client.clientID $client.clientSecret $client.clientSecretRef }}
+- key: {{ $name }}
+  id: {{ $client.clientID | quote }}
+{{- end -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
+Validates one static client's secret sources — at most one of the inline value,
+the environment variable name and the Secret reference; none only on a public
+client or on one that is left out without a secret (`optional`) — and prints it
+as a YAML list item {id, env, name, key} when it is a reference, nothing
+otherwise. Takes a dict with `id`, `secret`, `secretEnv`, `secretRef`, `public`,
+`optional` and `fields` (the field names for the error message).
+*/}}
+{{- define "dex.staticClient.secretRef" -}}
+{{- $id := .id -}}
+{{- $sources := 0 -}}
+{{- if .secret }}{{ $sources = add1 $sources }}{{ end -}}
+{{- if .secretEnv }}{{ $sources = add1 $sources }}{{ end -}}
+{{- if .secretRef }}{{ $sources = add1 $sources }}{{ end -}}
+{{- if gt $sources 1 -}}
+  {{- fail (printf "dex-app: static client %q sets more than one of %s; set exactly one" $id .fields) -}}
+{{- else if and (eq $sources 0) (not .public) (not .optional) -}}
+  {{- fail (printf "dex-app: static client %q sets none of %s; set exactly one" $id .fields) -}}
+{{- end -}}
+{{- with .secretRef -}}
+  {{- if not (and .name .key) -}}
+    {{- fail (printf "dex-app: static client %q: the secret reference needs name and key" $id) -}}
+  {{- end -}}
+- id: {{ $id | quote }}
+  env: {{ include "dex.staticClient.secretEnvName" $id }}
+  name: {{ .name | quote }}
+  key: {{ .key | quote }}
+{{ end -}}
+{{- end -}}
+
+{{/*
+Every static client whose secret is a reference to a Kubernetes Secret, as a
+YAML list of {id, env, name, key}: the Deployment sets one environment variable
+per item from the referenced key and the dex configuration names that variable
+in `secretEnv`. Every static client is validated on the way: a pre-defined
+client uses the reference when it has one (an inline value next to it is
+ignored and named in NOTES.txt) and is left out with neither
+(dex.staticClient.hasSecret); dex-k8s-authenticator and a confidential extra
+client need exactly one of the inline value and the reference, so rendering
+either template fails naming the client. Two ids that map to the same variable
+name fail as well: the variable would carry only one of the two secrets.
+*/}}
+{{- define "dex.staticClients.secretRefs" -}}
+{{- $clients := .Values.oidc.staticClients -}}
+{{- $refs := "" -}}
+{{- range $name := (include "dex.staticClients.confidential" . | splitList " ") -}}
+  {{- $client := index $clients $name -}}
+  {{- if $client.clientID -}}
+    {{- $inline := $client.clientSecret -}}
+    {{- if $client.clientSecretRef }}{{ $inline = "" }}{{ end -}}
+    {{- $refs = print $refs (include "dex.staticClient.secretRef" (dict "id" $client.clientID "secret" $inline "secretRef" $client.clientSecretRef "optional" true "fields" (printf "oidc.staticClients.%s.clientSecret and .clientSecretRef" $name))) -}}
+  {{- end -}}
+{{- end -}}
+{{- if or .Values.isManagementCluster (eq (include "is-workload-cluster" .) "true") -}}
+  {{- $refs = print $refs (include "dex.staticClient.secretRef" (dict "id" "dex-k8s-authenticator" "secret" $clients.dexK8SAuthenticator.clientSecret "secretRef" $clients.dexK8SAuthenticator.clientSecretRef "fields" "oidc.staticClients.dexK8SAuthenticator.clientSecret (a chart default; set it to \"\" to use the reference) and .clientSecretRef")) -}}
+{{- end -}}
+{{- range .Values.oidc.extraStaticClients -}}
+  {{- if and .secretRef (not .id) -}}
+    {{- fail (printf "dex-app: extra static client %q: secretRef needs a literal id, not idEnv" (.name | default .idEnv)) -}}
+  {{- end -}}
+  {{- $refs = print $refs (include "dex.staticClient.secretRef" (dict "id" (.id | default .idEnv) "secret" .secret "secretEnv" .secretEnv "secretRef" .secretRef "public" .public "fields" "secret, secretEnv and secretRef")) -}}
+{{- end -}}
+{{- $envs := list -}}
+{{- range ($refs | fromYamlArray) -}}
+  {{- if has .env $envs -}}
+    {{- fail (printf "dex-app: static client %q: another client's id also maps to the variable %s; client ids must differ after [^A-Za-z0-9] -> _" .id .env) -}}
+  {{- end -}}
+  {{- $envs = append $envs .env -}}
+{{- end -}}
+{{- $refs -}}
+{{- end -}}
+
+{{/*
+The referenced client Secrets as a projected volume for the dex container: one
+file per referenced static client, named like the client's environment
+variable and holding the referenced key's current value. The kubelet rewrites
+the files after the Secret changes; the environment variable keeps the value
+dex started from, so the two differ exactly when a client secret has been
+rotated (dex.clientSecrets.livenessProbe). Takes the list of
+dex.staticClients.secretRefs.
+*/}}
+{{- define "dex.clientSecrets.volume" -}}
+- name: client-secrets
+  projected:
+    sources:
+    {{- range . }}
+    - secret:
+        name: {{ .name | quote }}
+        items:
+        - key: {{ .key | quote }}
+          path: {{ .env }}
+    {{- end }}
+{{- end -}}
+
+{{- define "dex.clientSecrets.mountPath" -}}
+/etc/dex-client-secrets
+{{- end -}}
+
+{{- define "dex.clientSecrets.volumeMount" -}}
+- name: client-secrets
+  mountPath: {{ include "dex.clientSecrets.mountPath" . }}
+  readOnly: true
+{{- end -}}
+
+{{/*
+The liveness probe of the dex container while static clients reference
+Secrets: the upstream /healthz/live check, then one comparison per referenced
+client of the Secret's current value (its projected file) with the value dex
+started from (the environment variable of the same name). A rotated client
+secret fails the probe naming the client's variable, the kubelet restarts the
+container, the environment is resolved from the Secret again and dex starts
+with the new secret: a rotation reaches dex within about a minute (the
+kubelet's volume refresh, then three failed probes) without a roll of the
+Deployment or a controller watching the Secrets. Dex itself reads a client
+secret only at start-up, from `secret` or `secretEnv`. Takes the list of
+dex.staticClients.secretRefs.
+*/}}
+{{- define "dex.clientSecrets.livenessProbe" -}}
+exec:
+  command:
+    - sh
+    - -ec
+    - |
+      wget -q -T 2 -O /dev/null http://127.0.0.1:5558/healthz/live
+      cd {{ include "dex.clientSecrets.mountPath" . }}
+      for name in{{ range . }} {{ .env }}{{ end }}; do
+        [ "$(cat "$name")" = "$(printenv "$name")" ] && continue
+        echo "the referenced Secret behind $name changed: restarting dex to load it"
+        exit 1
+      done
+timeoutSeconds: 5
 {{- end -}}
 
 {{/*

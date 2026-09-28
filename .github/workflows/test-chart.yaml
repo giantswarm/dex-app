@@ -1,0 +1,28 @@
+name: Test chart
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+
+permissions: {}
+
+jobs:
+  test-chart:
+    name: Chart unit tests
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Install helm
+        uses: azure/setup-helm@v4
+        with:
+          version: v3.19.0
+      - name: Install helm unittest
+        run: helm plugin install https://github.com/helm-unittest/helm-unittest.git --version v1.0.3
+      - name: Run the chart unit tests
+        run: make test-chart

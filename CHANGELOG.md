@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- The 2.x line carries the 3.x features up to 3.2.5, with the 2.x default `oidc.responseTypes: ["code", "token", "id_token"]` kept, so an installation gets them without the 3.0.0 breaking change:
+  - Dex rolls on a configuration change (`checksum/config` on the pod template), and restarts when a referenced client Secret changes.
+  - Static clients read their secret from a Kubernetes Secret: `secretRef: {name, key}` on an `extraStaticClients` entry, `clientSecretRef: {name, key}` on the pre-defined clients. A pre-defined client with both uses the reference; one with neither is left out and named in the release notes.
+  - Built-in static clients `mcpCapi` and `mcpPrometheus`.
+  - Dex `v2.43.3`: the upstream issuer's key fetch is bounded to 5 seconds.
+  - The PodDisruptionBudget selects the dex pods by their selector labels, `maxUnavailable: 1`.
+  - The `helm.sh/chart` label is valid for long chart versions.
+
 ## [2.3.0] - 2026-09-01
 
 ### Added

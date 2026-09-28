@@ -207,8 +207,7 @@ oidc:
   issuerAddress: ""
   # -- OAuth2 response types dex will accept. `token` and `id_token` enable the
   # implicit flow, which is considered insecure and is not needed by any client
-  # we ship. Add them back only if a client genuinely requires the implicit or
-  # hybrid flow.
+  # we ship. The 2.x line keeps them in the default; 3.0.0 drops them.
   responseTypes:
     - "code"
     - "token"
@@ -237,7 +236,15 @@ oidc:
     dexK8SAuthenticator:
       clientAddress: ""
       clientSecret: "default-client-dex-authenticator-secret"
+    mcpCapi:
+      clientID: ""
+      clientSecret: ""
+      redirectURI: ""
     mcpKubernetes:
+      clientID: ""
+      clientSecret: ""
+      redirectURI: ""
+    mcpPrometheus:
       clientID: ""
       clientSecret: ""
       redirectURI: ""
@@ -245,6 +252,14 @@ oidc:
       clientID: ""
       clientSecret: ""
       redirectURI: ""
+  # A static client's secret is either inline (`clientSecret` above, `secret` in an
+  # extra client) or a reference to a key of a Secret in dex's namespace
+  # (`clientSecretRef: {name, key}` above, `secretRef: {name, key}` in an extra
+  # client). A pre-defined client above with both uses the reference and ignores
+  # the inline value; with a `clientID` and neither it is left out of the
+  # configuration; both cases are named in the release notes. `dexK8SAuthenticator`
+  # and an extra client that is not public need exactly one. See the README,
+  # "Static clients".
   extraStaticClients: []
   # Giant Swarm OIDC values to run DEX in the management clusters
   giantswarm:

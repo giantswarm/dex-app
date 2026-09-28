@@ -8,6 +8,7 @@ on:
       - 'main#release#*'
       - 'master#release#*'
       - 'release#*'
+      - 'release-v*.*.x#release#*'
     paths:
       - 'helm/dex-app/Chart.yaml'
 

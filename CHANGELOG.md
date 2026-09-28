@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.4.0] - 2026-09-28
+
 ### Added
 
 - The 2.x line carries the 3.x features up to 3.2.5, with the 2.x default `oidc.responseTypes: ["code", "token", "id_token"]` kept, so an installation gets them without the 3.0.0 breaking change:
@@ -707,7 +709,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add helm chart for dex.
 
 
-[Unreleased]: https://github.com/giantswarm/dex-app/compare/v2.3.0...HEAD
+[Unreleased]: https://github.com/giantswarm/dex-app/compare/v2.4.0...HEAD
+[2.4.0]: https://github.com/giantswarm/dex-app/compare/v2.3.0...v2.4.0
 [2.3.0]: https://github.com/giantswarm/dex-app/compare/v2.2.3...v2.3.0
 [2.2.3]: https://github.com/giantswarm/dex-app/compare/v2.2.2...v2.2.3
 [2.2.2]: https://github.com/giantswarm/dex-app/compare/v2.2.1...v2.2.2

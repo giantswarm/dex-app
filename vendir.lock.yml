@@ -2,8 +2,8 @@ apiVersion: vendir.k14s.io/v1alpha1
 directories:
 - contents:
   - helmChart:
-      appVersion: 2.42.0
-      version: 0.23.0
+      appVersion: 2.45.1
+      version: 0.25.2
     path: dex
   path: vendor
 - contents:

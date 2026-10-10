@@ -1,0 +1,70 @@
+suite: extra redirect URIs of the pre-defined static clients
+templates:
+  - templates/secret-gs.yaml
+tests:
+  - it: renders a client's redirectURI alone without extraRedirectURIs
+    values:
+      - ./values/inline-static-clients.yaml
+    asserts:
+      - matchRegex:
+          path: stringData["config.yaml"]
+          pattern: "name: muster\n  redirectURIs:\n  - https://muster.example.test/callback\n- id: "
+      - matchRegex:
+          path: stringData["config.yaml"]
+          pattern: "name: gitopsui\n  redirectURIs:\n  - https://gitops.example.test/oauth2/callback\n  - http://localhost:9001/oauth2/callback\n- id: "
+
+  - it: renders extraRedirectURIs after redirectURI in their order
+    values:
+      - ./values/inline-static-clients.yaml
+    set:
+      oidc.staticClients.muster.redirectURI: https://muster.example.test/oauth/callback
+      oidc.staticClients.muster.extraRedirectURIs:
+        - https://workspace-manager.example.test/signin
+        - https://second.example.test/callback
+      oidc.staticClients.gitopsui.extraRedirectURIs:
+        - https://gitops-second.example.test/oauth2/callback
+    asserts:
+      - matchRegex:
+          path: stringData["config.yaml"]
+          pattern: "name: muster\n  redirectURIs:\n  - https://muster.example.test/oauth/callback\n  - https://workspace-manager.example.test/signin\n  - https://second.example.test/callback\n- id: "
+      - matchRegex:
+          path: stringData["config.yaml"]
+          pattern: "name: gitopsui\n  redirectURIs:\n  - https://gitops.example.test/oauth2/callback\n  - https://gitops-second.example.test/oauth2/callback\n  - http://localhost:9001/oauth2/callback\n- id: "
+
+  - it: renders extraRedirectURIs of mcpCapi, mcpKubernetes and mcpPrometheus
+    set:
+      oidc.issuerAddress: dex.example.test
+      oidc.staticClients:
+        mcpCapi:
+          clientID: mcp-capi
+          clientSecret: mcp-capi-secret
+          redirectURI: https://capi.example.test/callback
+          extraRedirectURIs: [https://capi-second.example.test/callback]
+        mcpKubernetes:
+          clientID: mcp-kubernetes
+          clientSecret: mcp-kubernetes-secret
+          redirectURI: https://kubernetes.example.test/callback
+          extraRedirectURIs: [https://kubernetes-second.example.test/callback]
+        mcpPrometheus:
+          clientID: mcp-prometheus
+          clientSecret: mcp-prometheus-secret
+          redirectURI: https://prometheus.example.test/callback
+          extraRedirectURIs: [https://prometheus-second.example.test/callback]
+    asserts:
+      - matchRegex:
+          path: stringData["config.yaml"]
+          pattern: "name: MCP CAPI\n  redirectURIs:\n  - https://capi.example.test/callback\n  - https://capi-second.example.test/callback\n"
+      - matchRegex:
+          path: stringData["config.yaml"]
+          pattern: "name: MCP Kubernetes\n  redirectURIs:\n  - https://kubernetes.example.test/callback\n  - https://kubernetes-second.example.test/callback\n"
+      - matchRegex:
+          path: stringData["config.yaml"]
+          pattern: "name: MCP Prometheus\n  redirectURIs:\n  - https://prometheus.example.test/callback\n  - https://prometheus-second.example.test/callback\n"
+
+  - it: rejects extraRedirectURIs that is not a list of URIs
+    set:
+      oidc.issuerAddress: dex.example.test
+      oidc.staticClients.muster.extraRedirectURIs: https://workspace-manager.example.test/signin
+    asserts:
+      - failedTemplate:
+          errorPattern: "extraRedirectURIs"

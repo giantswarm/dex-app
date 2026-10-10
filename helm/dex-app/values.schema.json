@@ -679,6 +679,14 @@
                 "redirectURI": {
                   "type": "string"
                 },
+                "extraRedirectURIs": {
+                  "type": "array",
+                  "description": "Further redirect URIs, rendered after redirectURI in this order",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
                 "clientSecretRef": {
                   "$ref": "#/definitions/staticClientSecretRef"
                 }
@@ -744,6 +752,14 @@
                 "redirectURI": {
                   "type": "string"
                 },
+                "extraRedirectURIs": {
+                  "type": "array",
+                  "description": "Further redirect URIs, rendered after redirectURI in this order",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
                 "clientSecretRef": {
                   "$ref": "#/definitions/staticClientSecretRef"
                 }
@@ -761,6 +777,14 @@
                 },
                 "redirectURI": {
                   "type": "string"
+                },
+                "extraRedirectURIs": {
+                  "type": "array",
+                  "description": "Further redirect URIs, rendered after redirectURI in this order",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  }
                 },
                 "clientSecretRef": {
                   "$ref": "#/definitions/staticClientSecretRef"
@@ -780,6 +804,14 @@
                 "redirectURI": {
                   "type": "string"
                 },
+                "extraRedirectURIs": {
+                  "type": "array",
+                  "description": "Further redirect URIs, rendered after redirectURI in this order",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
                 "clientSecretRef": {
                   "$ref": "#/definitions/staticClientSecretRef"
                 }
@@ -797,6 +829,14 @@
                 },
                 "redirectURI": {
                   "type": "string"
+                },
+                "extraRedirectURIs": {
+                  "type": "array",
+                  "description": "Further redirect URIs, rendered after redirectURI in this order",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  }
                 },
                 "clientSecretRef": {
                   "$ref": "#/definitions/staticClientSecretRef"

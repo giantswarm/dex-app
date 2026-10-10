@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- `oidc.staticClients.<client>.extraRedirectURIs` on the pre-defined clients that authenticate with a secret (`gitopsui`, `muster`, `mcpKubernetes`, `mcpCapi`, `mcpPrometheus`): further redirect URIs, rendered after `redirectURI` in their order, for a second application that signs in through the same client. Empty by default; installations without it render unchanged.
+
 ### Fixed
 
 - The `helm.sh/chart` label is valid for long chart versions: the 63-character cut trims the whole trailing run of `-`, `.` and `_`.

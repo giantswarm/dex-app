@@ -229,6 +229,17 @@ secret: {{ .client.clientSecret }}
 {{- end -}}
 
 {{/*
+The further redirect URIs of a pre-defined static client (`extraRedirectURIs`),
+one list item each, indented to follow the client's `redirectURI`. Takes the
+list; renders nothing when it is empty or unset.
+*/}}
+{{- define "dex.staticClient.extraRedirectURIs" -}}
+{{- range . }}
+{{- printf "- %s" . | nindent 6 }}
+{{- end }}
+{{- end -}}
+
+{{/*
 The pre-defined static clients that authenticate with a secret, as their values
 keys in the order they are validated. The public ones (grafana, gsCLIAuth,
 happa) have no secret; dex-k8s-authenticator, always rendered, is handled apart.

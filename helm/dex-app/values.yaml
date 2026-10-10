@@ -223,6 +223,7 @@ oidc:
       clientID: ""
       clientSecret: ""
       redirectURI: ""
+      extraRedirectURIs: []
     grafana:
       clientID: ""
       redirectURI: ""
@@ -239,18 +240,25 @@ oidc:
       clientID: ""
       clientSecret: ""
       redirectURI: ""
+      extraRedirectURIs: []
     mcpKubernetes:
       clientID: ""
       clientSecret: ""
       redirectURI: ""
+      extraRedirectURIs: []
     mcpPrometheus:
       clientID: ""
       clientSecret: ""
       redirectURI: ""
+      extraRedirectURIs: []
     muster:
       clientID: ""
       clientSecret: ""
       redirectURI: ""
+      extraRedirectURIs: []
+  # `extraRedirectURIs` on a pre-defined client that authenticates with a secret
+  # (gitopsui, mcpCapi, mcpKubernetes, mcpPrometheus, muster) lists further
+  # redirect URIs, rendered after its `redirectURI` in this order.
   # A static client's secret is either inline (`clientSecret` above, `secret` in an
   # extra client) or a reference to a key of a Secret in dex's namespace
   # (`clientSecretRef: {name, key}` above, `secretRef: {name, key}` in an extra

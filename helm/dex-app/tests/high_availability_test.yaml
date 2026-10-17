@@ -1,0 +1,74 @@
+suite: dex high availability
+templates:
+  - templates/deployment.yaml
+  - templates/pdb.yaml
+  - templates/secret-gs.yaml
+  - charts/dex/templates/deployment.yaml
+capabilities:
+  apiVersions:
+    - policy/v1/PodDisruptionBudget
+set:
+  oidc.issuerAddress: dex.example.test
+tests:
+  - it: runs two replicas by default
+    template: templates/deployment.yaml
+    asserts:
+      - equal:
+          path: spec.replicas
+          value: 2
+
+  - it: spreads the replicas over nodes and never puts two of one ReplicaSet on the same node
+    template: templates/deployment.yaml
+    asserts:
+      - contains:
+          path: spec.template.spec.topologySpreadConstraints
+          content:
+            maxSkew: 1
+            topologyKey: kubernetes.io/hostname
+            whenUnsatisfiable: DoNotSchedule
+            nodeTaintsPolicy: Honor
+            labelSelector:
+              matchLabels:
+                app.kubernetes.io/name: dex
+                app.kubernetes.io/component: dex
+            matchLabelKeys:
+              - pod-template-hash
+
+  - it: prefers a node without a dex pod
+    template: templates/deployment.yaml
+    asserts:
+      - equal:
+          path: spec.template.spec.affinity.podAntiAffinity.preferredDuringSchedulingIgnoredDuringExecution[0].podAffinityTerm.topologyKey
+          value: kubernetes.io/hostname
+
+  - it: selects the dex pods with labels the pods carry
+    template: templates/deployment.yaml
+    asserts:
+      - equal:
+          path: spec.template.metadata.labels["app.kubernetes.io/name"]
+          value: dex
+      - equal:
+          path: spec.template.metadata.labels["app.kubernetes.io/component"]
+          value: dex
+
+  - it: keeps one replica available through a voluntary disruption
+    template: templates/pdb.yaml
+    asserts:
+      - isKind:
+          of: PodDisruptionBudget
+      - equal:
+          path: spec.minAvailable
+          value: 1
+      - notExists:
+          path: spec.maxUnavailable
+
+  - it: lets a drain evict a single replica when the replica count is set to one
+    template: templates/pdb.yaml
+    set:
+      dex.replicaCount: 1
+    asserts:
+      - equal:
+          path: spec.maxUnavailable
+          value: 1
+      - notExists:
+          path: spec.minAvailable

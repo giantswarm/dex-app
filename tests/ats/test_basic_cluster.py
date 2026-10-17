@@ -55,7 +55,8 @@ def app_deployment(kube_cluster: Cluster) -> List[pykube.Deployment]:
         Deployment,
         ["dex"],
         "default",
-        lambda d: int(d.obj["status"].get("readyReplicas", 0)) > 0,
+        # every replica Ready, not just the first: the budget test counts them
+        lambda d: int(d.obj["status"].get("readyReplicas", 0)) >= int(d.obj["spec"].get("replicas", 1)),
         timeout,
         False,
     )

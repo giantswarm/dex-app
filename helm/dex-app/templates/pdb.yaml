@@ -6,10 +6,15 @@ metadata:
   labels:
     {{- include "dex.labels.common" . | nindent 4 }}
 spec:
-  # One pod at a time: with a single replica a node drain evicts it and goes
-  # on, where a minAvailable budget would refuse every eviction and hold the
-  # drain until its timeout; with more replicas the rest keep serving.
+  {{- if or (gt (int .Values.dex.replicaCount) 1) .Values.dex.autoscaling.enabled }}
+  # Keep one pod serving: an eviction waits until another replica is Ready,
+  # so a drain or a consolidation never leaves the identity provider down.
+  minAvailable: 1
+  {{- else }}
+  # A single replica: a minAvailable budget would refuse every eviction and
+  # hold a drain until its timeout, so the drain evicts it and goes on.
   maxUnavailable: 1
+  {{- end }}
   selector:
     # The selector labels only: the version and chart labels change with
     # every release and would leave the budget selecting no pod.

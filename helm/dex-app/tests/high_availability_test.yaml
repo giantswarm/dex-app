@@ -34,6 +34,13 @@ tests:
             matchLabelKeys:
               - pod-template-hash
 
+  - it: prefers a node without a dex pod
+    template: templates/deployment.yaml
+    asserts:
+      - equal:
+          path: spec.template.spec.affinity.podAntiAffinity.preferredDuringSchedulingIgnoredDuringExecution[0].podAffinityTerm.topologyKey
+          value: kubernetes.io/hostname
+
   - it: selects the dex pods with labels the pods carry
     template: templates/deployment.yaml
     asserts:

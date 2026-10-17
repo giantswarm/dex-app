@@ -6,6 +6,17 @@ dex:
   # identity provider down. Dex keeps its state in Kubernetes resources, so
   # every replica serves every request.
   replicaCount: 2
+  affinity:
+    podAntiAffinity:
+      # A preference only: the hostname spread below is the hard rule.
+      preferredDuringSchedulingIgnoredDuringExecution:
+        - weight: 100
+          podAffinityTerm:
+            topologyKey: kubernetes.io/hostname
+            labelSelector:
+              matchLabels:
+                app.kubernetes.io/name: dex
+                app.kubernetes.io/component: dex
   topologySpreadConstraints:
     # Never two pods of one ReplicaSet on the same node; a single-node cluster
     # is one domain and still schedules both.

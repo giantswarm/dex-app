@@ -79,15 +79,17 @@ class PodDisruptionBudget(pykube.objects.NamespacedAPIObject):
 
 
 # The budget must select the dex pods (its selector carries no label that
-# changes with a release) and allow one disruption, so a node drain can evict
-# a single replica instead of waiting for its timeout.
+# changes with a release) and keep one available: with the default two
+# replicas a drain evicts one pod while the other serves, and waits for the
+# replacement to be Ready before it may evict the second.
 @pytest.mark.smoke
 @pytest.mark.flaky(reruns=1, reruns_delay=15)
-def test_pdb_allows_a_drain(kube_cluster: Cluster, app_deployment: List[pykube.Deployment]):
+def test_pdb_keeps_one_available(kube_cluster: Cluster, app_deployment: List[pykube.Deployment]):
     ready = sum(int(d.obj["status"].get("readyReplicas", 0)) for d in app_deployment)
+    assert ready >= 2, f"dex runs {ready} ready replicas, the default is 2"
     pdb = PodDisruptionBudget.objects(kube_cluster.kube_client).filter(namespace=namespace_name).get(name="dex")
-    assert pdb.obj["spec"].get("maxUnavailable") == 1
-    assert "minAvailable" not in pdb.obj["spec"]
+    assert pdb.obj["spec"].get("minAvailable") == 1
+    assert "maxUnavailable" not in pdb.obj["spec"]
     status = pdb.obj.get("status", {})
     assert status.get("expectedPods") == ready, f"the budget selects {status.get('expectedPods')} pods, dex runs {ready}"
-    assert status.get("disruptionsAllowed", 0) >= 1
+    assert status.get("disruptionsAllowed", 0) == ready - 1

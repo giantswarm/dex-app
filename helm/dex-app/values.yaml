@@ -1,14 +1,51 @@
 dex:
   # Default values for dex.
   # This is a YAML-formatted file.
-  replicaCount: 1
+  # Two replicas, one per node, behind a budget that keeps one available
+  # (templates/pdb.yaml): a drain or a node consolidation never takes the
+  # identity provider down. Dex keeps its state in Kubernetes resources, so
+  # every replica serves every request.
+  replicaCount: 2
+  affinity:
+    podAntiAffinity:
+      # A preference only: the hostname spread below is the hard rule.
+      preferredDuringSchedulingIgnoredDuringExecution:
+        - weight: 100
+          podAffinityTerm:
+            topologyKey: kubernetes.io/hostname
+            labelSelector:
+              matchLabels:
+                app.kubernetes.io/name: dex
+                app.kubernetes.io/component: dex
+  topologySpreadConstraints:
+    # Never two pods of one ReplicaSet on the same node; a single-node cluster
+    # is one domain and still schedules both.
+    - maxSkew: 1
+      topologyKey: kubernetes.io/hostname
+      whenUnsatisfiable: DoNotSchedule
+      nodeTaintsPolicy: Honor
+      labelSelector:
+        matchLabels:
+          app.kubernetes.io/name: dex
+          app.kubernetes.io/component: dex
+      matchLabelKeys:
+        - pod-template-hash
+    - maxSkew: 1
+      topologyKey: topology.kubernetes.io/zone
+      whenUnsatisfiable: ScheduleAnyway
+      labelSelector:
+        matchLabels:
+          app.kubernetes.io/name: dex
+          app.kubernetes.io/component: dex
+      matchLabelKeys:
+        - pod-template-hash
   dex:
     image:
       registry: gsoci.azurecr.io
       name: giantswarm/dex-app
       # Automatically synced from Chart.yaml appVersion via `make sync-image-tag`
       # Override only for testing with a specific image.
-      tag: "3.3.0"
+      tag: "3.4.0"
       pullPolicy: IfNotPresent
   configSecret:
     # -- Enable creating a secret from the values passed to `config`.

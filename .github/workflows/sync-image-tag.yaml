@@ -23,6 +23,8 @@ jobs:
         with:
           client-id: ${{ secrets.RELEASE_BOT_CLIENT_ID }}
           private-key: ${{ secrets.RELEASE_BOT_PRIVATE_KEY }}
+          # Check out and push the image tag sync commit to the release branch.
+          permission-contents: write
 
       - name: Checkout
         uses: actions/checkout@v4

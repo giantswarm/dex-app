@@ -21,7 +21,7 @@ jobs:
       - name: Install helm
         uses: azure/setup-helm@9bc31f4ebc9c6b171d7bfbaa5d006ae7abdb4310 # v5.0.1
         with:
-          version: v3.19.0
+          version: v3.22.1
       - name: Install helm unittest
         run: helm plugin install https://github.com/helm-unittest/helm-unittest.git --version v1.0.3
       - name: Run the chart unit tests

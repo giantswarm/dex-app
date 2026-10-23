@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Removed
+
+- The old inline `zz_generated.update_chart.yaml`: it pushed with the shared taylorbot token, align-files does not manage it (no `installUpdateChart` in the team-file entry) and it never ran. Syncing the chart by hand stays as it is (giantswarm/giantswarm#2280).
+
 ## [3.4.0] - 2026-10-17
 
 ### Changed

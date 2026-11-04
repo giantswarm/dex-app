@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- CI: architect orb 10.16.7, which pushes the chart to the git app catalogs with the architect GitHub App instead of the `catalogbot` account (giantswarm/giantswarm#34786).
 - Dex runs two replicas by default, spread one per node (`topologySpreadConstraints` on `kubernetes.io/hostname`, `DoNotSchedule`, and on `topology.kubernetes.io/zone`, `ScheduleAnyway`; a preferred pod anti-affinity on `kubernetes.io/hostname`), behind a PodDisruptionBudget of `minAvailable: 1`: a node drain or consolidation waits until another replica is Ready, so the identity provider stays up. With `dex.replicaCount: 1` and no autoscaling the budget stays `maxUnavailable: 1`.
 
 ## [3.3.0] - 2026-10-10

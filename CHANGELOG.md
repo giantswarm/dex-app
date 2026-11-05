@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - `oidc.staticClients.<client>.extraRedirectURIs` on the pre-defined clients that authenticate with a secret (`gitopsui`, `muster`, `mcpKubernetes`, `mcpCapi`, `mcpPrometheus`): further redirect URIs, rendered after `redirectURI` in their order, for a second application that signs in through the same client. Empty by default; installations without it render unchanged.
 
+### Changed
+
+- CI: architect orb 10.16.7, which pushes the chart to the git app catalogs with the architect GitHub App instead of the `catalogbot` account (giantswarm/giantswarm#34786).
+
 ### Fixed
 
 - The `helm.sh/chart` label is valid for long chart versions: the 63-character cut trims the whole trailing run of `-`, `.` and `_`.

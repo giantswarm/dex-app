@@ -5,13 +5,15 @@
     // Go specific config - https://github.com/giantswarm/renovate-presets/blob/main/lang-go.json5
     "github>giantswarm/renovate-presets:lang-go.json5",
   ],
-  // Track the GS dex fork base image in the Dockerfile.
-  // This is a forked repo so we use a custom versioning regex to match tags like v2.43.1-gs2.
+  // The Dex image in the Dockerfile comes from giantswarm/dex: an upstream Dex
+  // release plus our patches, released as X.Y.Z-gs.N (FORK.md on its giantswarm
+  // branch). Only those tags count as versions, so Renovate skips the dev builds
+  // (X.Y.Z-r<...>h<sha>) that the same image repository holds.
   "packageRules": [
     {
       "matchDatasources": ["docker"],
-      "matchPackageNames": ["gsoci.azurecr.io/giantswarm/dex"],
-      "versioning": "regex:^v?(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)(-gs(?<build>\\d+))?$",
+      "matchPackageNames": ["gsoci.azurecr.io/giantswarm/dex/dex"],
+      "versioning": "regex:^(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)-gs\\.(?<build>\\d+)$",
     },
   ],
 }

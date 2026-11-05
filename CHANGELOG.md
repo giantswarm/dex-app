@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Dex is the Giant Swarm Dex line's `2.46.0-gs.1` (`gsoci.azurecr.io/giantswarm/dex/dex`), upstream Dex v2.46.0 with our patches, instead of the old fork's v2.43.3. Renovate follows the new image's `X.Y.Z-gs.N` releases.
+
 ### Removed
 
 - The old inline `zz_generated.update_chart.yaml`: it pushed with the shared taylorbot token, align-files does not manage it (no `installUpdateChart` in the team-file entry) and it never ran. Syncing the chart by hand stays as it is (giantswarm/giantswarm#2280).

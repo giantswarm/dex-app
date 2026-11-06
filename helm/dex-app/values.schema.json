@@ -651,6 +651,49 @@
           "minItems": 1,
           "uniqueItems": true
         },
+        "passwordDB": {
+          "type": "object",
+          "description": "Dex's own user database (enablePasswordDB) with static users, for an installation without an upstream identity provider. Off by default.",
+          "additionalProperties": false,
+          "properties": {
+            "enabled": {
+              "type": "boolean",
+              "description": "Enable Dex's password database and the static users below."
+            },
+            "staticPasswords": {
+              "type": "array",
+              "description": "Static users. The bcrypt hash of each user's password is read from the environment variable hashFromEnv names, never from values (dex.envFrom sets it from a Secret).",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "email",
+                  "username",
+                  "userID",
+                  "hashFromEnv"
+                ],
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "username": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "userID": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "hashFromEnv": {
+                    "type": "string",
+                    "pattern": "^[A-Z_][A-Z0-9_]*$"
+                  }
+                }
+              }
+            }
+          }
+        },
         "expiry": {
           "type": "object",
           "properties": {

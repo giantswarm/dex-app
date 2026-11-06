@@ -12,8 +12,8 @@ In addition to Dex itself, this app provides [Dex K8s Authenticator](https://git
 
 There are several ways to install this app.
 
-1. [Using our web interface](https://docs.giantswarm.io/ui-api/web/app-platform/#installing-an-app)
-2. Creating the [App resource](https://docs.giantswarm.io/ui-api/management-api/crd/apps.application.giantswarm.io/) in the management cluster. Check the [getting started with app platform](https://docs.giantswarm.io/app-platform/getting-started/) guide for details.
+1. [Using our web interface](https://docs.giantswarm.io/tutorials/fleet-management/app-platform/deploy-app/)
+2. Creating the [App resource](https://docs.giantswarm.io/reference/platform-api/crd/apps.application.giantswarm.io/) in the management cluster. Check the [getting started with app platform](https://docs.giantswarm.io/tutorials/fleet-management/app-platform/) guide for details.
 
 ## Configuring
 
@@ -46,7 +46,7 @@ oidc:
 
 Some notes:
 
-- `.service.kubernetes.api.caPem` is the CA certificate of your workload cluster in PEM format. At Giant Swarm, you can retrieve this certificate via the [kubectl gs login](https://docs.giantswarm.io/ui-api/kubectl-gs/login/) command, when creating a client certificate for the workload cluster. It ends up in Base46-encoded form in your kubectl config file. The CA certificate is required by Dex K8s Authenticator.
+- `.service.kubernetes.api.caPem` is the CA certificate of your workload cluster in PEM format. At Giant Swarm, you can retrieve this certificate via the [kubectl gs login](https://docs.giantswarm.io/reference/kubectl-gs/login/) command, when creating a client certificate for the workload cluster. It ends up in Base46-encoded form in your kubectl config file. The CA certificate is required by Dex K8s Authenticator.
 
 - The `redirectURI` in your connector configuration must contain the proper host name for Dex's own ingress. In the default form, it contains the workload cluster name (replace `<CLUSTER>` with the actual name) and a base domain (replace `<BASEDOMAIN>` with the proper base domain).
 
@@ -97,7 +97,7 @@ Note:
 
 ### Installing the Chart in Giant Swarm workload clusters
 
-The app is installed in workload clusters, via our [app platform](https://docs.giantswarm.io/app-platform/).
+The app is installed in workload clusters, via our [app platform](https://docs.giantswarm.io/overview/fleet-management/app-management/).
 Before doing so, please create the following `ConfigMap` resource in the namespace named after that workload cluster to provide the contents of your `values.yaml` file.
 
 ```yaml
@@ -207,6 +207,25 @@ cluster:
     http: "https://proxy.host:4040" # hostname of the proxy for HTTP traffic
     https: "https://proxy.host:4040" # hostname of the proxy for HTTPS traffic
     noProxy: "kubernetes-api-ip-range" # comma-separated list of hostnames and IP ranges, whose traffic should not go through the proxy. # Kubernetes API IP range needs to be defined here in order for Dex to work correctly
+```
+
+### Static users
+
+Without an upstream identity provider, such as on an air-gapped cluster, Dex can sign people in from its own user database. `oidc.passwordDB.enabled` turns it on, and `oidc.passwordDB.staticPasswords` lists the users. A user's bcrypt password hash is never a value: Dex reads it at start-up from the environment variable `hashFromEnv` names, set from a Secret in Dex's namespace:
+
+```yaml
+oidc:
+  passwordDB:
+    enabled: true
+    staticPasswords:
+      - email: tester@example.com
+        username: tester
+        userID: 6b9a3f1e-0c55-4b8e-9d0e-2f1f6f0f7a11
+        hashFromEnv: DEX_TESTER_HASH
+dex:
+  envFrom:
+    - secretRef:
+        name: dex-static-users   # key DEX_TESTER_HASH: the output of `htpasswd -nbBC 10 "" '<password>' | cut -d: -f2`
 ```
 
 ### Static clients

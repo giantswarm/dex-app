@@ -248,6 +248,19 @@ oidc:
   # hybrid flow.
   responseTypes:
     - "code"
+  # -- Dex's own user database (`enablePasswordDB`) with static users, for an
+  # installation without an upstream identity provider (an air-gapped
+  # cluster's testers). Off by default. Each user's bcrypt password hash is read
+  # at start-up from the environment variable its `hashFromEnv` names; set the
+  # variables from a Secret with `dex.envFrom`, so no hash is in the values:
+  #   staticPasswords:
+  #     - email: tester@example.com
+  #       username: tester
+  #       userID: 6b9a3f1e-0c55-4b8e-9d0e-2f1f6f0f7a11
+  #       hashFromEnv: DEX_TESTER_HASH
+  passwordDB:
+    enabled: false
+    staticPasswords: []
   expiry:
     signingKeys: 6h
     idTokens: 30m

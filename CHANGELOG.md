@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- `oidc.passwordDB`: Dex's own user database with static users, for an installation without an upstream identity provider, such as an air-gapped cluster's testers. Off by default. Each user's bcrypt hash is read from the environment variable its `hashFromEnv` names, which `dex.envFrom` sets from a Secret, so no hash is in the values. Installations without it render unchanged.
+
 ### Changed
 
 - Dex is the Giant Swarm Dex line's `2.46.0-gs.1` (`gsoci.azurecr.io/giantswarm/dex/dex`), upstream Dex v2.46.0 with our patches, instead of the old fork's v2.43.3. Renovate follows the new image's `X.Y.Z-gs.N` releases.

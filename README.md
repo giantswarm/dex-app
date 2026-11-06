@@ -224,6 +224,25 @@ If a client of yours genuinely needs the implicit or hybrid flow, set this value
 
 Note that this list is also what dex publishes as `response_types_supported` in its OIDC discovery document, so clients that pick a flow from provider metadata will follow it.
 
+### Static users
+
+Without an upstream identity provider, such as on an air-gapped cluster, Dex can sign people in from its own user database. `oidc.passwordDB.enabled` turns it on, and `oidc.passwordDB.staticPasswords` lists the users. A user's bcrypt password hash is never a value: Dex reads it at start-up from the environment variable `hashFromEnv` names, set from a Secret in Dex's namespace:
+
+```yaml
+oidc:
+  passwordDB:
+    enabled: true
+    staticPasswords:
+      - email: tester@example.com
+        username: tester
+        userID: 6b9a3f1e-0c55-4b8e-9d0e-2f1f6f0f7a11
+        hashFromEnv: DEX_TESTER_HASH
+dex:
+  envFrom:
+    - secretRef:
+        name: dex-static-users   # key DEX_TESTER_HASH: the output of `htpasswd -nbBC 10 "" '<password>' | cut -d: -f2`
+```
+
 ### Static clients
 
 In addition to a few pre-defined static clients Dex app supports the possibility to define custom static clients as well.

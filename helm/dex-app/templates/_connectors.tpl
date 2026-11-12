@@ -1,6 +1,6 @@
 {{/* Map keys are connector ids; list entries carry their own ids. */}}
-{{- define "dex.giantswarm.connectors" -}}
-{{- $connectors := .Values.oidc.giantswarm.connectors -}}
+{{- define "dex.connectors.normalize" -}}
+{{- $connectors := .connectors -}}
 {{- if kindIs "map" $connectors -}}
 {{- range $id := keys $connectors | sortAlpha -}}
 {{- $connector := deepCopy (index $connectors $id) -}}
@@ -10,8 +10,16 @@
 {{- else if kindIs "slice" $connectors -}}
 {{- toYaml $connectors -}}
 {{- else if $connectors -}}
-{{- fail "dex-app: oidc.giantswarm.connectors must be a map or a list" -}}
+{{- fail (printf "dex-app: %s must be a map or a list" .path) -}}
 {{- end -}}
+{{- end -}}
+
+{{- define "dex.giantswarm.connectors" -}}
+{{- include "dex.connectors.normalize" (dict "connectors" .Values.oidc.giantswarm.connectors "path" "oidc.giantswarm.connectors") -}}
+{{- end -}}
+
+{{- define "dex.customer.connectors" -}}
+{{- include "dex.connectors.normalize" (dict "connectors" .Values.oidc.customer.connectors "path" "oidc.customer.connectors") -}}
 {{- end -}}
 
 {{- define "dex.connector.secretEnvName" -}}
@@ -20,7 +28,7 @@
 
 {{- define "dex.connectors.secretRefs" -}}
 {{- $envs := list -}}
-{{- range (include "dex.giantswarm.connectors" . | fromYamlArray) -}}
+{{- range concat (include "dex.giantswarm.connectors" . | fromYamlArray) (include "dex.customer.connectors" . | fromYamlArray) -}}
 {{- with .clientSecretRef -}}
 {{- if not (and .name .key) -}}
 {{- fail "dex-app: connector clientSecretRef needs name and key" -}}

@@ -311,9 +311,22 @@ oidc:
       clientID: ""
       clientSecret: ""
       team: ""
-    # A map keyed by connector id, or a list with an id per entry.
-    # Map entries use connectorConfig (YAML string) or config (map).
-    # clientSecretRef: {name, key} on an entry with config reads an optional Secret.
+    # Map entries merge by connector id across values sources; lists with id per entry are also accepted.
+    # Mixing a list and a map replaces the collection.
+    # config (map) takes precedence over connectorConfig (YAML string).
+    # clientSecretRef requires config and names a key of a Secret in Dex's namespace.
+    # A missing Secret allows Dex to start; Secret changes restart Dex.
+    # Example:
+    #   example:
+    #     connectorType: oidc
+    #     connectorName: Example OIDC
+    #     config:
+    #       issuer: https://issuer.example.com
+    #       clientID: dex-cluster
+    #       redirectURI: https://dex.example.com/callback
+    #     clientSecretRef:
+    #       name: dex-connector-example
+    #       key: client-secret
     connectors: {}
   customer:
     enabled: false

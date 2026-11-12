@@ -8,9 +8,7 @@ workflows:
     - architect/push-to-registries:
         context: architect
         name: push-to-registries
-        # dex base image is amd64-only; without a go-build job architect v9 would
-        # otherwise fall back to linux/amd64,linux/arm64 and fail on the arm64 base.
-        platforms: linux/amd64
+        platforms: linux/amd64,linux/arm64
         # Push only to gsoci here; the gsoci -> Aliyun mirror is handled
         # out-of-band by sync-china-registry below so the cross-Pacific push
         # cannot time out and block the chart catalog publish.

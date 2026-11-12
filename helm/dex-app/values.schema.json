@@ -991,6 +991,10 @@
       "type": "boolean",
       "description": "Whether this is a workload cluster"
     },
+    "architecture": {
+      "type": "string",
+      "enum": ["", "amd64", "arm64"]
+    },
     "deployDexK8SAuthenticator": {
       "type": "boolean",
       "description": "Enable the deployment of the dex k8s authenticator together with dex"

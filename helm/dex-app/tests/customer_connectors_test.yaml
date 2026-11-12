@@ -3,6 +3,15 @@ templates:
   - templates/secret-gs.yaml
   - templates/deployment.yaml
   - charts/dex/templates/deployment.yaml
+  - templates/dex-k8s-authenticator/*
+set:
+  deployDexK8SAuthenticator: true
+  isManagementCluster: true
+  oidc.customer.enabled: true
+  monitoring.podLogs.enabled: true
+capabilities:
+  apiVersions:
+    - networking.k8s.io/v1/Ingress
 tests:
   - it: accepts an empty map
     set:
@@ -25,6 +34,26 @@ tests:
         matchRegex:
           path: stringData["config.yaml"]
           pattern: "- type: oidc\n  id: federation\n  name: Federation\n  config:\n    issuer: https://hub.example.test\n    insecureEnableGroups: true"
+      - template: templates/dex-k8s-authenticator/configmap-customer.yaml
+        matchRegex:
+          path: data["config.yaml"]
+          pattern: 'connector_id: federation'
+      - template: templates/dex-k8s-authenticator/deployment-customer.yaml
+        equal:
+          path: metadata.name
+          value: dex-k8s-authenticator-federation
+      - template: templates/dex-k8s-authenticator/service-customer.yaml
+        equal:
+          path: metadata.name
+          value: dex-k8s-authenticator-federation
+      - template: templates/dex-k8s-authenticator/ingress.yaml
+        equal:
+          path: spec.rules[0].http.paths[0].backend.service.name
+          value: dex-k8s-authenticator-federation
+      - template: templates/dex-k8s-authenticator/podlogs.yaml
+        equal:
+          path: spec.selector.matchExpressions[0].values
+          value: [dex-k8s-authenticator-federation]
 
   - it: sorts map entries by id and uses the map key over an entry id
     set:
@@ -47,6 +76,37 @@ tests:
         notMatchRegex:
           path: stringData["config.yaml"]
           pattern: 'id: ignored'
+      - template: templates/dex-k8s-authenticator/configmap-customer.yaml
+        hasDocuments:
+          count: 2
+      - template: templates/dex-k8s-authenticator/configmap-customer.yaml
+        matchRegex:
+          path: data["config.yaml"]
+          pattern: 'connector_id: (alpha|zulu)'
+      - template: templates/dex-k8s-authenticator/deployment-customer.yaml
+        matchRegex:
+          path: metadata.name
+          pattern: '-(alpha|zulu)$'
+      - template: templates/dex-k8s-authenticator/service-customer.yaml
+        matchRegex:
+          path: metadata.name
+          pattern: '-(alpha|zulu)$'
+      - template: templates/dex-k8s-authenticator/ingress.yaml
+        equal:
+          path: spec.rules[0].http.paths[0].backend.service.name
+          value: dex-k8s-authenticator-alpha
+      - template: templates/dex-k8s-authenticator/ingress.yaml
+        equal:
+          path: spec.rules[0].http.paths[1].backend.service.name
+          value: dex-k8s-authenticator-zulu
+      - template: templates/dex-k8s-authenticator/podlogs.yaml
+        equal:
+          path: spec.selector.matchExpressions[0].values
+          value: [dex-k8s-authenticator-alpha, dex-k8s-authenticator-zulu]
+      - template: templates/dex-k8s-authenticator/podlogs.yaml
+        equal:
+          path: spec.selector.matchExpressions[1].values
+          value: [dex-k8s-authenticator-alpha, dex-k8s-authenticator-zulu]
 
   - it: expands a referenced connector secret and makes its environment and volume optional
     set:

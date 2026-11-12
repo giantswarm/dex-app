@@ -3,12 +3,13 @@
 {{- if .Values.oidc.customer.connectors -}}
 {{ $values := .Values }}
 {{ $resource := . }}
-{{- range (include "dex.customer.connectors" . | fromYamlArray) }}
+{{- range $id, $connector := .Values.oidc.customer.connectors }}
+{{- if kindIs "slice" $values.oidc.customer.connectors }}{{ $id = $connector.id }}{{ end }}
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "resource.dexk8sauth.name" $resource }}-{{ .id }}
+  name: {{ include "resource.dexk8sauth.name" $resource }}-{{ $id }}
   labels:
     {{- include "dexk8sauth.labels.common" $resource | nindent 4 }}
 spec:
@@ -19,8 +20,8 @@ spec:
     protocol: TCP
     name: http
   selector:
-    app.kubernetes.io/name: dex-k8s-authenticator-{{ .id }}
-    app.kubernetes.io/component: dex-k8s-authenticator-{{ .id }}
+    app.kubernetes.io/name: dex-k8s-authenticator-{{ $id }}
+    app.kubernetes.io/component: dex-k8s-authenticator-{{ $id }}
 {{- end }}
 {{- else }}
 apiVersion: v1

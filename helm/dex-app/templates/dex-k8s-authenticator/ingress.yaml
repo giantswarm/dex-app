@@ -56,17 +56,18 @@ spec:
 {{- if .Values.oidc.customer.connectors -}}
 {{ $values := .Values -}}
 {{ $resource := . }}
-{{- range (include "dex.customer.connectors" . | fromYamlArray) }}
+{{- range $id, $connector := .Values.oidc.customer.connectors }}
+{{- if kindIs "slice" $values.oidc.customer.connectors }}{{ $id = $connector.id }}{{ end }}
       - path: /
         pathType: Prefix
         backend:
   {{- if $resource.Capabilities.APIVersions.Has "networking.k8s.io/v1/Ingress" }}
           service:
-            name: {{ include "resource.dexk8sauth.name" $resource }}-{{ .id }}
+            name: {{ include "resource.dexk8sauth.name" $resource }}-{{ $id }}
             port:
               name: http
   {{- else }}
-          serviceName: {{ include "resource.dexk8sauth.name" $resource }}-{{ .id }}
+          serviceName: {{ include "resource.dexk8sauth.name" $resource }}-{{ $id }}
           servicePort: http
   {{- end }}
 {{- end }}

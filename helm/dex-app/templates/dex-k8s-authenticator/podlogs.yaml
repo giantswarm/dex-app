@@ -24,14 +24,16 @@ spec:
     - key: app.kubernetes.io/name
       operator: In
       values:
-      {{- range (include "dex.customer.connectors" $ | fromYamlArray) }}
-      - dex-k8s-authenticator-{{ .id }}
+      {{- range $id, $connector := $.Values.oidc.customer.connectors }}
+      {{- if kindIs "slice" $.Values.oidc.customer.connectors }}{{ $id = $connector.id }}{{ end }}
+      - dex-k8s-authenticator-{{ $id }}
       {{- end }}
     - key: app.kubernetes.io/component
       operator: In
       values:
-      {{- range (include "dex.customer.connectors" $ | fromYamlArray) }}
-      - dex-k8s-authenticator-{{ .id }}
+      {{- range $id, $connector := $.Values.oidc.customer.connectors }}
+      {{- if kindIs "slice" $.Values.oidc.customer.connectors }}{{ $id = $connector.id }}{{ end }}
+      - dex-k8s-authenticator-{{ $id }}
       {{- end }}
     {{- else }}
     matchLabels:

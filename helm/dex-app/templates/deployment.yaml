@@ -19,4 +19,4 @@ helpers in _helpers.tpl).
       "Release" .Release
       "Capabilities" .Capabilities
       "configChecksum" (include (print $.Template.BasePath "/secret-gs.yaml") . | sha256sum)
-      "clientSecretEnv" (include "dex.staticClients.secretRefs" . | fromYamlArray)) }}
+      "clientSecretEnv" (concat (include "dex.staticClients.secretRefs" . | fromYamlArray) (include "dex.connectors.secretRefs" . | fromYamlArray))) }}

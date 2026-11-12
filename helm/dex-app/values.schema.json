@@ -867,7 +867,8 @@
               }
             },
             "connectors": {
-              "type": "array"
+              "type": ["object", "array"],
+              "description": "Connectors keyed by id, or a list of connectors with an id per entry. Entries accept connectorConfig as a YAML string or config as an object, with an optional clientSecretRef."
             }
           }
         },

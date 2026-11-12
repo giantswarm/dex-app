@@ -274,7 +274,10 @@ oidc:
       clientID: ""
       clientSecret: ""
       team: ""
-    connectors: []
+    # A map keyed by connector id, or a list with an id per entry.
+    # Map entries use connectorConfig (YAML string) or config (map).
+    # clientSecretRef: {name, key} on an entry with config reads an optional Secret.
+    connectors: {}
   customer:
     enabled: false
     connectorType: ""

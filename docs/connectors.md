@@ -1,6 +1,6 @@
 # Connector values
 
-`oidc.giantswarm.connectors` accepts a map keyed by connector id. Entries from
+`oidc.giantswarm.connectors` and `oidc.customer.connectors` accept maps keyed by connector id. Entries from
 different Flux values sources merge by key. A list with an `id` per entry is
 also accepted. A list and a map in different sources replace one another;
 upgrade every writer to maps before relying on merging.

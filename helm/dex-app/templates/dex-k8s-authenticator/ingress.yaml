@@ -56,7 +56,7 @@ spec:
 {{- if .Values.oidc.customer.connectors -}}
 {{ $values := .Values -}}
 {{ $resource := . }}
-{{- range .Values.oidc.customer.connectors }}
+{{- range (include "dex.customer.connectors" . | fromYamlArray) }}
       - path: /
         pathType: Prefix
         backend:

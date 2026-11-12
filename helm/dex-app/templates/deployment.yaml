@@ -11,10 +11,17 @@ start-up through the `secretEnv` of the client in the configuration, projects
 the referenced Secrets as files and compares the two in the liveness probe, so
 a rotated client secret restarts the container (the `dex.clientSecrets.*`
 helpers in _helpers.tpl).
+
+`architecture` is merged into the subchart's nodeSelector and tolerations here
+because the subchart cannot see parent values.
 */}}
 {{- $dex := index .Subcharts "dex" -}}
+{{- $values := deepCopy $dex.Values -}}
+{{- $scheduling := include "dex-app.podScheduling" (dict "Values" (dict "architecture" .Values.architecture "nodeSelector" $values.nodeSelector "tolerations" $values.tolerations)) | fromYaml -}}
+{{- $_ := set $values "nodeSelector" ($scheduling.nodeSelector | default dict) -}}
+{{- $_ := set $values "tolerations" ($scheduling.tolerations | default list) -}}
 {{- include "dex.deployment" (dict
-      "Values" $dex.Values
+      "Values" $values
       "Chart" $dex.Chart
       "Release" .Release
       "Capabilities" .Capabilities

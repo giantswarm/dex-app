@@ -12,3 +12,4 @@ test-chart: ## Run the chart unit tests: helm unittest, and the checksum/config 
 	$(APPLICATION)/tests/checksum_test.sh $(APPLICATION)
 	bash $(APPLICATION)/tests/connector_secrets_test.sh $(APPLICATION)
 	bash $(APPLICATION)/tests/customer_connector_resources_test.sh $(APPLICATION)
+	bash $(APPLICATION)/tests/connector_schema_test.sh $(APPLICATION)

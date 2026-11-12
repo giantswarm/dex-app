@@ -117,35 +117,6 @@ tests:
                       - key: client-secret
                         path: DEX_CONNECTOR_SECRET_FEDERATION
 
-  - it: rejects an incomplete secret reference
-    set:
-      oidc.giantswarm.connectors:
-        federation:
-          connectorType: oidc
-          connectorName: Federation
-          config: {}
-          clientSecretRef:
-            name: dex-connector-federation
-    asserts:
-      - template: templates/secret-gs.yaml
-        failedTemplate:
-          errorMessage: 'dex-app: connector clientSecretRef needs name and key'
-
-  - it: requires structured config for a secret reference
-    set:
-      oidc.giantswarm.connectors:
-        federation:
-          connectorType: oidc
-          connectorName: Federation
-          connectorConfig: 'issuer: https://hub.example.test'
-          clientSecretRef:
-            name: dex-connector-federation
-            key: client-secret
-    asserts:
-      - template: templates/secret-gs.yaml
-        failedTemplate:
-          errorMessage: 'dex-app: connector "federation": clientSecretRef requires config as a map'
-
   - it: rejects connector ids that share a secret environment variable
     set:
       oidc.giantswarm.connectors:

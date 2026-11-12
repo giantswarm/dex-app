@@ -333,7 +333,8 @@ oidc:
     connectorType: ""
     connectorName: ""
     connectorConfig: ""
-    connectors: []
+    # Same map/list forms, config and clientSecretRef options as giantswarm.connectors.
+    connectors: {}
 # Note that the public address in Giant Swarm management cluster configurations already includes the port
 services:
   kubernetes:

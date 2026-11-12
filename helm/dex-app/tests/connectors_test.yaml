@@ -4,6 +4,29 @@ templates:
   - templates/deployment.yaml
   - charts/dex/templates/deployment.yaml
 tests:
+  - it: rejects secret environment collisions across owners
+    set:
+      oidc.giantswarm.connectors:
+        hub-one:
+          connectorType: oidc
+          connectorName: One
+          config: {}
+          clientSecretRef:
+            name: one
+            key: secret
+      oidc.customer.connectors:
+        hub_one:
+          connectorType: oidc
+          connectorName: Two
+          config: {}
+          clientSecretRef:
+            name: two
+            key: secret
+    asserts:
+      - template: templates/secret-gs.yaml
+        failedTemplate:
+          errorPattern: 'another connector.s id also maps to variable DEX_CONNECTOR_SECRET_HUB_ONE'
+
   - it: accepts an empty map
     set:
       oidc.giantswarm.connectors: {}

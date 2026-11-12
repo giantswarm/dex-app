@@ -24,13 +24,13 @@ spec:
     - key: app.kubernetes.io/name
       operator: In
       values:
-      {{- range $.Values.oidc.customer.connectors }}
+      {{- range (include "dex.customer.connectors" $ | fromYamlArray) }}
       - dex-k8s-authenticator-{{ .id }}
       {{- end }}
     - key: app.kubernetes.io/component
       operator: In
       values:
-      {{- range $.Values.oidc.customer.connectors }}
+      {{- range (include "dex.customer.connectors" $ | fromYamlArray) }}
       - dex-k8s-authenticator-{{ .id }}
       {{- end }}
     {{- else }}

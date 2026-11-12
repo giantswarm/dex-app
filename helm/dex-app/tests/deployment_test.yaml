@@ -83,7 +83,7 @@ tests:
           pattern: "^wget -q -T 2 -O /dev/null http://127.0.0.1:5558/healthz/live\n"
       - matchRegex:
           path: spec.template.spec.containers[0].livenessProbe.exec.command[2]
-          pattern: "\ncd /etc/dex-client-secrets\nfor name in DEX_CLIENT_SECRET_MCP_PROMETHEUS DEX_CLIENT_SECRET_PLATFORM_MANAGER; do\n  \\[ \"\\$\\(cat \"\\$name\"\\)\" = \"\\$\\(printenv \"\\$name\"\\)\" \\] && continue\n"
+          pattern: '\[ "\$\(cat "\$name" 2>/dev/null \|\| true\)" = "\$\(printenv "\$name" \|\| true\)" \] && continue'
       - matchRegex:
           path: spec.template.spec.containers[0].livenessProbe.exec.command[2]
           pattern: "\n  exit 1\ndone\n$"

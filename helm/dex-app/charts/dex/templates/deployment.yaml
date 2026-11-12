@@ -96,6 +96,9 @@ spec:
                 secretKeyRef:
                   name: {{ .name }}
                   key: {{ .key }}
+                  {{- if .optional }}
+                  optional: true
+                  {{- end }}
             {{- end }}
           {{- with .Values.envVars }}
             {{- toYaml . | nindent 12 }}

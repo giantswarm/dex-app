@@ -376,6 +376,9 @@ dex.staticClients.secretRefs.
     {{- range . }}
     - secret:
         name: {{ .name | quote }}
+        {{- if .optional }}
+        optional: true
+        {{- end }}
         items:
         - key: {{ .key | quote }}
           path: {{ .env }}
@@ -414,7 +417,7 @@ exec:
       wget -q -T 2 -O /dev/null http://127.0.0.1:5558/healthz/live
       cd {{ include "dex.clientSecrets.mountPath" . }}
       for name in{{ range . }} {{ .env }}{{ end }}; do
-        [ "$(cat "$name")" = "$(printenv "$name")" ] && continue
+        [ "$(cat "$name" 2>/dev/null || true)" = "$(printenv "$name" || true)" ] && continue
         echo "the referenced Secret behind $name changed: restarting dex to load it"
         exit 1
       done

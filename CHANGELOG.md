@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Accept maps keyed by connector id under `oidc.giantswarm.connectors` alongside lists, with optional `clientSecretRef` on structured connector configuration and restart on referenced Secret changes.
+
 - `oidc.staticClients.<client>.extraRedirectURIs` on the pre-defined clients that authenticate with a secret (`gitopsui`, `muster`, `mcpKubernetes`, `mcpCapi`, `mcpPrometheus`): further redirect URIs, rendered after `redirectURI` in their order, for a second application that signs in through the same client. Empty by default; installations without it render unchanged.
 
 ### Changed

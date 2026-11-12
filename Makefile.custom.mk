@@ -10,5 +10,3 @@ sync-image-tag: ## Sync dex.dex.image.tag in values.yaml from Chart.yaml appVers
 test-chart: ## Run the chart unit tests: helm unittest, and the checksum/config cases of tests/checksum_test.sh.
 	helm unittest $(APPLICATION)
 	$(APPLICATION)/tests/checksum_test.sh $(APPLICATION)
-	bash $(APPLICATION)/tests/connector_secrets_test.sh $(APPLICATION)
-	bash $(APPLICATION)/tests/connector_schema_test.sh $(APPLICATION)

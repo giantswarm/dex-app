@@ -1,0 +1,405 @@
+suite: giantswarm connector map schema
+tests:
+  - it: accepts an empty collection
+    set:
+      oidc.giantswarm.connectors: {}
+    asserts:
+      - notFailedTemplate: {}
+
+  - it: rejects a non-object connector
+    set:
+      oidc.giantswarm.connectors: {"federation":true}
+    asserts: &schemaFailure
+      - failedTemplate:
+          errorPattern: "values don't meet the specifications of the schema"
+
+  - it: accepts legacy YAML configuration
+    set:
+      oidc.giantswarm.connectors: {"federation":{"connectorType":"oidc","connectorName":"Federation","connectorConfig":"issuer: https://hub.example.test"}}
+    asserts:
+      - notFailedTemplate: {}
+
+  - it: accepts connector-specific structured configuration
+    set:
+      oidc.giantswarm.connectors: {"federation":{"connectorType":"oidc","connectorName":"Federation","config":{"issuer":"https://hub.example.test","insecureEnableGroups":true,"scopes":["openid"]}}}
+    asserts:
+      - notFailedTemplate: {}
+
+  - it: accepts both configuration forms
+    set:
+      oidc.giantswarm.connectors: {"federation":{"connectorType":"oidc","connectorName":"Federation","config":{"issuer":"https://hub.example.test"},"connectorConfig":"issuer: https://ignored.example.test"}}
+    asserts:
+      - notFailedTemplate: {}
+
+  - it: accepts a referenced Secret
+    set:
+      oidc.giantswarm.connectors: {"federation":{"connectorType":"oidc","connectorName":"Federation","config":{"issuer":"https://hub.example.test"},"clientSecretRef":{"name":"connector","key":"secret"}}}
+    asserts:
+      - notFailedTemplate: {}
+
+  - it: rejects a missing connector type
+    set:
+      oidc.giantswarm.connectors: {"federation":{"connectorName":"Federation","config":{"issuer":"https://hub.example.test"}}}
+    asserts: *schemaFailure
+
+  - it: rejects a missing connector name
+    set:
+      oidc.giantswarm.connectors: {"federation":{"connectorType":"oidc","config":{"issuer":"https://hub.example.test"}}}
+    asserts: *schemaFailure
+
+  - it: rejects missing configuration
+    set:
+      oidc.giantswarm.connectors: {"federation":{"connectorType":"oidc","connectorName":"Federation"}}
+    asserts: *schemaFailure
+
+  - it: rejects a non-string connector type
+    set:
+      oidc.giantswarm.connectors: {"federation":{"connectorType":true,"connectorName":"Federation","config":{"issuer":"https://hub.example.test"}}}
+    asserts: *schemaFailure
+
+  - it: rejects an unknown connector field
+    set:
+      oidc.giantswarm.connectors: {"federation":{"connectorType":"oidc","connectorName":"Federation","config":{"issuer":"https://hub.example.test"},"clientSecretReff":{}}}
+    asserts: *schemaFailure
+
+  - it: rejects non-object structured configuration
+    set:
+      oidc.giantswarm.connectors: {"federation":{"connectorType":"oidc","connectorName":"Federation","config":"issuer: https://hub.example.test"}}
+    asserts: *schemaFailure
+
+  - it: rejects non-string legacy configuration
+    set:
+      oidc.giantswarm.connectors: {"federation":{"connectorType":"oidc","connectorName":"Federation","connectorConfig":{}}}
+    asserts: *schemaFailure
+
+  - it: rejects a Secret reference without structured configuration
+    set:
+      oidc.giantswarm.connectors: {"federation":{"connectorType":"oidc","connectorName":"Federation","connectorConfig":"issuer: https://hub.example.test","clientSecretRef":{"name":"connector","key":"secret"}}}
+    asserts: *schemaFailure
+
+  - it: rejects a Secret reference without its key
+    set:
+      oidc.giantswarm.connectors: {"federation":{"connectorType":"oidc","connectorName":"Federation","config":{"issuer":"https://hub.example.test"},"clientSecretRef":{"name":"connector"}}}
+    asserts: *schemaFailure
+
+  - it: rejects a Secret reference without its name
+    set:
+      oidc.giantswarm.connectors: {"federation":{"connectorType":"oidc","connectorName":"Federation","config":{"issuer":"https://hub.example.test"},"clientSecretRef":{"key":"secret"}}}
+    asserts: *schemaFailure
+
+  - it: rejects an empty Secret key
+    set:
+      oidc.giantswarm.connectors: {"federation":{"connectorType":"oidc","connectorName":"Federation","config":{"issuer":"https://hub.example.test"},"clientSecretRef":{"name":"connector","key":""}}}
+    asserts: *schemaFailure
+
+  - it: rejects a non-string Secret name
+    set:
+      oidc.giantswarm.connectors: {"federation":{"connectorType":"oidc","connectorName":"Federation","config":{"issuer":"https://hub.example.test"},"clientSecretRef":{"name":42,"key":"secret"}}}
+    asserts: *schemaFailure
+---
+suite: giantswarm connector list schema
+tests:
+  - it: accepts an empty collection
+    set:
+      oidc.giantswarm.connectors: []
+    asserts:
+      - notFailedTemplate: {}
+
+  - it: rejects a non-object connector
+    set:
+      oidc.giantswarm.connectors: [true]
+    asserts: &schemaFailure
+      - failedTemplate:
+          errorPattern: "values don't meet the specifications of the schema"
+
+  - it: accepts legacy YAML configuration
+    set:
+      oidc.giantswarm.connectors: [{"id":"federation","connectorType":"oidc","connectorName":"Federation","connectorConfig":"issuer: https://hub.example.test"}]
+    asserts:
+      - notFailedTemplate: {}
+
+  - it: accepts connector-specific structured configuration
+    set:
+      oidc.giantswarm.connectors: [{"id":"federation","connectorType":"oidc","connectorName":"Federation","config":{"issuer":"https://hub.example.test","insecureEnableGroups":true,"scopes":["openid"]}}]
+    asserts:
+      - notFailedTemplate: {}
+
+  - it: accepts both configuration forms
+    set:
+      oidc.giantswarm.connectors: [{"id":"federation","connectorType":"oidc","connectorName":"Federation","config":{"issuer":"https://hub.example.test"},"connectorConfig":"issuer: https://ignored.example.test"}]
+    asserts:
+      - notFailedTemplate: {}
+
+  - it: accepts a referenced Secret
+    set:
+      oidc.giantswarm.connectors: [{"id":"federation","connectorType":"oidc","connectorName":"Federation","config":{"issuer":"https://hub.example.test"},"clientSecretRef":{"name":"connector","key":"secret"}}]
+    asserts:
+      - notFailedTemplate: {}
+
+  - it: rejects a missing connector type
+    set:
+      oidc.giantswarm.connectors: [{"id":"federation","connectorName":"Federation","config":{"issuer":"https://hub.example.test"}}]
+    asserts: *schemaFailure
+
+  - it: rejects a missing connector name
+    set:
+      oidc.giantswarm.connectors: [{"id":"federation","connectorType":"oidc","config":{"issuer":"https://hub.example.test"}}]
+    asserts: *schemaFailure
+
+  - it: rejects missing configuration
+    set:
+      oidc.giantswarm.connectors: [{"id":"federation","connectorType":"oidc","connectorName":"Federation"}]
+    asserts: *schemaFailure
+
+  - it: rejects a non-string connector type
+    set:
+      oidc.giantswarm.connectors: [{"id":"federation","connectorType":true,"connectorName":"Federation","config":{"issuer":"https://hub.example.test"}}]
+    asserts: *schemaFailure
+
+  - it: rejects an unknown connector field
+    set:
+      oidc.giantswarm.connectors: [{"id":"federation","connectorType":"oidc","connectorName":"Federation","config":{"issuer":"https://hub.example.test"},"clientSecretReff":{}}]
+    asserts: *schemaFailure
+
+  - it: rejects non-object structured configuration
+    set:
+      oidc.giantswarm.connectors: [{"id":"federation","connectorType":"oidc","connectorName":"Federation","config":"issuer: https://hub.example.test"}]
+    asserts: *schemaFailure
+
+  - it: rejects non-string legacy configuration
+    set:
+      oidc.giantswarm.connectors: [{"id":"federation","connectorType":"oidc","connectorName":"Federation","connectorConfig":{}}]
+    asserts: *schemaFailure
+
+  - it: rejects a Secret reference without structured configuration
+    set:
+      oidc.giantswarm.connectors: [{"id":"federation","connectorType":"oidc","connectorName":"Federation","connectorConfig":"issuer: https://hub.example.test","clientSecretRef":{"name":"connector","key":"secret"}}]
+    asserts: *schemaFailure
+
+  - it: rejects a Secret reference without its key
+    set:
+      oidc.giantswarm.connectors: [{"id":"federation","connectorType":"oidc","connectorName":"Federation","config":{"issuer":"https://hub.example.test"},"clientSecretRef":{"name":"connector"}}]
+    asserts: *schemaFailure
+
+  - it: rejects a Secret reference without its name
+    set:
+      oidc.giantswarm.connectors: [{"id":"federation","connectorType":"oidc","connectorName":"Federation","config":{"issuer":"https://hub.example.test"},"clientSecretRef":{"key":"secret"}}]
+    asserts: *schemaFailure
+
+  - it: rejects an empty Secret key
+    set:
+      oidc.giantswarm.connectors: [{"id":"federation","connectorType":"oidc","connectorName":"Federation","config":{"issuer":"https://hub.example.test"},"clientSecretRef":{"name":"connector","key":""}}]
+    asserts: *schemaFailure
+
+  - it: rejects a non-string Secret name
+    set:
+      oidc.giantswarm.connectors: [{"id":"federation","connectorType":"oidc","connectorName":"Federation","config":{"issuer":"https://hub.example.test"},"clientSecretRef":{"name":42,"key":"secret"}}]
+    asserts: *schemaFailure
+
+  - it: requires ids on list entries
+    set:
+      oidc.giantswarm.connectors: [{"connectorType":"oidc","connectorName":"Federation","config":{"issuer":"https://hub.example.test"}}]
+    asserts: *schemaFailure
+---
+suite: customer connector map schema
+tests:
+  - it: accepts an empty collection
+    set:
+      oidc.customer.connectors: {}
+    asserts:
+      - notFailedTemplate: {}
+
+  - it: rejects a non-object connector
+    set:
+      oidc.customer.connectors: {"federation":true}
+    asserts: &schemaFailure
+      - failedTemplate:
+          errorPattern: "values don't meet the specifications of the schema"
+
+  - it: accepts legacy YAML configuration
+    set:
+      oidc.customer.connectors: {"federation":{"connectorType":"oidc","connectorName":"Federation","connectorConfig":"issuer: https://hub.example.test"}}
+    asserts:
+      - notFailedTemplate: {}
+
+  - it: accepts connector-specific structured configuration
+    set:
+      oidc.customer.connectors: {"federation":{"connectorType":"oidc","connectorName":"Federation","config":{"issuer":"https://hub.example.test","insecureEnableGroups":true,"scopes":["openid"]}}}
+    asserts:
+      - notFailedTemplate: {}
+
+  - it: accepts both configuration forms
+    set:
+      oidc.customer.connectors: {"federation":{"connectorType":"oidc","connectorName":"Federation","config":{"issuer":"https://hub.example.test"},"connectorConfig":"issuer: https://ignored.example.test"}}
+    asserts:
+      - notFailedTemplate: {}
+
+  - it: accepts a referenced Secret
+    set:
+      oidc.customer.connectors: {"federation":{"connectorType":"oidc","connectorName":"Federation","config":{"issuer":"https://hub.example.test"},"clientSecretRef":{"name":"connector","key":"secret"}}}
+    asserts:
+      - notFailedTemplate: {}
+
+  - it: rejects a missing connector type
+    set:
+      oidc.customer.connectors: {"federation":{"connectorName":"Federation","config":{"issuer":"https://hub.example.test"}}}
+    asserts: *schemaFailure
+
+  - it: rejects a missing connector name
+    set:
+      oidc.customer.connectors: {"federation":{"connectorType":"oidc","config":{"issuer":"https://hub.example.test"}}}
+    asserts: *schemaFailure
+
+  - it: rejects missing configuration
+    set:
+      oidc.customer.connectors: {"federation":{"connectorType":"oidc","connectorName":"Federation"}}
+    asserts: *schemaFailure
+
+  - it: rejects a non-string connector type
+    set:
+      oidc.customer.connectors: {"federation":{"connectorType":true,"connectorName":"Federation","config":{"issuer":"https://hub.example.test"}}}
+    asserts: *schemaFailure
+
+  - it: rejects an unknown connector field
+    set:
+      oidc.customer.connectors: {"federation":{"connectorType":"oidc","connectorName":"Federation","config":{"issuer":"https://hub.example.test"},"clientSecretReff":{}}}
+    asserts: *schemaFailure
+
+  - it: rejects non-object structured configuration
+    set:
+      oidc.customer.connectors: {"federation":{"connectorType":"oidc","connectorName":"Federation","config":"issuer: https://hub.example.test"}}
+    asserts: *schemaFailure
+
+  - it: rejects non-string legacy configuration
+    set:
+      oidc.customer.connectors: {"federation":{"connectorType":"oidc","connectorName":"Federation","connectorConfig":{}}}
+    asserts: *schemaFailure
+
+  - it: rejects a Secret reference without structured configuration
+    set:
+      oidc.customer.connectors: {"federation":{"connectorType":"oidc","connectorName":"Federation","connectorConfig":"issuer: https://hub.example.test","clientSecretRef":{"name":"connector","key":"secret"}}}
+    asserts: *schemaFailure
+
+  - it: rejects a Secret reference without its key
+    set:
+      oidc.customer.connectors: {"federation":{"connectorType":"oidc","connectorName":"Federation","config":{"issuer":"https://hub.example.test"},"clientSecretRef":{"name":"connector"}}}
+    asserts: *schemaFailure
+
+  - it: rejects a Secret reference without its name
+    set:
+      oidc.customer.connectors: {"federation":{"connectorType":"oidc","connectorName":"Federation","config":{"issuer":"https://hub.example.test"},"clientSecretRef":{"key":"secret"}}}
+    asserts: *schemaFailure
+
+  - it: rejects an empty Secret key
+    set:
+      oidc.customer.connectors: {"federation":{"connectorType":"oidc","connectorName":"Federation","config":{"issuer":"https://hub.example.test"},"clientSecretRef":{"name":"connector","key":""}}}
+    asserts: *schemaFailure
+
+  - it: rejects a non-string Secret name
+    set:
+      oidc.customer.connectors: {"federation":{"connectorType":"oidc","connectorName":"Federation","config":{"issuer":"https://hub.example.test"},"clientSecretRef":{"name":42,"key":"secret"}}}
+    asserts: *schemaFailure
+---
+suite: customer connector list schema
+tests:
+  - it: accepts an empty collection
+    set:
+      oidc.customer.connectors: []
+    asserts:
+      - notFailedTemplate: {}
+
+  - it: rejects a non-object connector
+    set:
+      oidc.customer.connectors: [true]
+    asserts: &schemaFailure
+      - failedTemplate:
+          errorPattern: "values don't meet the specifications of the schema"
+
+  - it: accepts legacy YAML configuration
+    set:
+      oidc.customer.connectors: [{"id":"federation","connectorType":"oidc","connectorName":"Federation","connectorConfig":"issuer: https://hub.example.test"}]
+    asserts:
+      - notFailedTemplate: {}
+
+  - it: accepts connector-specific structured configuration
+    set:
+      oidc.customer.connectors: [{"id":"federation","connectorType":"oidc","connectorName":"Federation","config":{"issuer":"https://hub.example.test","insecureEnableGroups":true,"scopes":["openid"]}}]
+    asserts:
+      - notFailedTemplate: {}
+
+  - it: accepts both configuration forms
+    set:
+      oidc.customer.connectors: [{"id":"federation","connectorType":"oidc","connectorName":"Federation","config":{"issuer":"https://hub.example.test"},"connectorConfig":"issuer: https://ignored.example.test"}]
+    asserts:
+      - notFailedTemplate: {}
+
+  - it: accepts a referenced Secret
+    set:
+      oidc.customer.connectors: [{"id":"federation","connectorType":"oidc","connectorName":"Federation","config":{"issuer":"https://hub.example.test"},"clientSecretRef":{"name":"connector","key":"secret"}}]
+    asserts:
+      - notFailedTemplate: {}
+
+  - it: rejects a missing connector type
+    set:
+      oidc.customer.connectors: [{"id":"federation","connectorName":"Federation","config":{"issuer":"https://hub.example.test"}}]
+    asserts: *schemaFailure
+
+  - it: rejects a missing connector name
+    set:
+      oidc.customer.connectors: [{"id":"federation","connectorType":"oidc","config":{"issuer":"https://hub.example.test"}}]
+    asserts: *schemaFailure
+
+  - it: rejects missing configuration
+    set:
+      oidc.customer.connectors: [{"id":"federation","connectorType":"oidc","connectorName":"Federation"}]
+    asserts: *schemaFailure
+
+  - it: rejects a non-string connector type
+    set:
+      oidc.customer.connectors: [{"id":"federation","connectorType":true,"connectorName":"Federation","config":{"issuer":"https://hub.example.test"}}]
+    asserts: *schemaFailure
+
+  - it: rejects an unknown connector field
+    set:
+      oidc.customer.connectors: [{"id":"federation","connectorType":"oidc","connectorName":"Federation","config":{"issuer":"https://hub.example.test"},"clientSecretReff":{}}]
+    asserts: *schemaFailure
+
+  - it: rejects non-object structured configuration
+    set:
+      oidc.customer.connectors: [{"id":"federation","connectorType":"oidc","connectorName":"Federation","config":"issuer: https://hub.example.test"}]
+    asserts: *schemaFailure
+
+  - it: rejects non-string legacy configuration
+    set:
+      oidc.customer.connectors: [{"id":"federation","connectorType":"oidc","connectorName":"Federation","connectorConfig":{}}]
+    asserts: *schemaFailure
+
+  - it: rejects a Secret reference without structured configuration
+    set:
+      oidc.customer.connectors: [{"id":"federation","connectorType":"oidc","connectorName":"Federation","connectorConfig":"issuer: https://hub.example.test","clientSecretRef":{"name":"connector","key":"secret"}}]
+    asserts: *schemaFailure
+
+  - it: rejects a Secret reference without its key
+    set:
+      oidc.customer.connectors: [{"id":"federation","connectorType":"oidc","connectorName":"Federation","config":{"issuer":"https://hub.example.test"},"clientSecretRef":{"name":"connector"}}]
+    asserts: *schemaFailure
+
+  - it: rejects a Secret reference without its name
+    set:
+      oidc.customer.connectors: [{"id":"federation","connectorType":"oidc","connectorName":"Federation","config":{"issuer":"https://hub.example.test"},"clientSecretRef":{"key":"secret"}}]
+    asserts: *schemaFailure
+
+  - it: rejects an empty Secret key
+    set:
+      oidc.customer.connectors: [{"id":"federation","connectorType":"oidc","connectorName":"Federation","config":{"issuer":"https://hub.example.test"},"clientSecretRef":{"name":"connector","key":""}}]
+    asserts: *schemaFailure
+
+  - it: rejects a non-string Secret name
+    set:
+      oidc.customer.connectors: [{"id":"federation","connectorType":"oidc","connectorName":"Federation","config":{"issuer":"https://hub.example.test"},"clientSecretRef":{"name":42,"key":"secret"}}]
+    asserts: *schemaFailure
+
+  - it: requires ids on list entries
+    set:
+      oidc.customer.connectors: [{"connectorType":"oidc","connectorName":"Federation","config":{"issuer":"https://hub.example.test"}}]
+    asserts: *schemaFailure

@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "dex.fullname" . }}
+  name: {{ include "dex.name" . }}
   namespace: {{ include "dex.namespace" . }}
   labels:
     {{- include "dex.labels" . | nindent 4 }}

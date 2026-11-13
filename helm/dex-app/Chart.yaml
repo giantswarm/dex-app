@@ -32,4 +32,4 @@ annotations:
   io.giantswarm.application.team: shield
 dependencies:
   - name: dex
-    version: "0.23.0"
+    version: "0.26.0"

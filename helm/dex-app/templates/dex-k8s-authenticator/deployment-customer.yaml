@@ -3,28 +3,29 @@
 {{- if .Values.oidc.customer.connectors -}}
 {{ $values := .Values }}
 {{ $resource := . }}
-{{- range .Values.oidc.customer.connectors }}
+{{- range $id, $connector := .Values.oidc.customer.connectors }}
+{{- if kindIs "slice" $values.oidc.customer.connectors }}{{ $id = $connector.id }}{{ end }}
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "resource.dexk8sauth.name" $resource }}-{{ .id }}
+  name: {{ include "resource.dexk8sauth.name" $resource }}-{{ $id }}
   labels:
     {{- include "dexk8sauth.labels.common" $resource | nindent 4 }}
-    app.kubernetes.io/name: dex-k8s-authenticator-{{ .id }}
-    app.kubernetes.io/component: dex-k8s-authenticator-{{ .id }}
+    app.kubernetes.io/name: dex-k8s-authenticator-{{ $id }}
+    app.kubernetes.io/component: dex-k8s-authenticator-{{ $id }}
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app.kubernetes.io/name: dex-k8s-authenticator-{{ .id }}
-      app.kubernetes.io/component: dex-k8s-authenticator-{{ .id }}
+      app.kubernetes.io/name: dex-k8s-authenticator-{{ $id }}
+      app.kubernetes.io/component: dex-k8s-authenticator-{{ $id }}
   template:
     metadata:
       labels:
         {{- include "dexk8sauth.labels.common" $resource | nindent 8 }}
-        app.kubernetes.io/name: dex-k8s-authenticator-{{ .id }}
-        app.kubernetes.io/component: dex-k8s-authenticator-{{ .id }}
+        app.kubernetes.io/name: dex-k8s-authenticator-{{ $id }}
+        app.kubernetes.io/component: dex-k8s-authenticator-{{ $id }}
     spec:
       securityContext:
         runAsNonRoot: true
@@ -98,7 +99,7 @@ spec:
       volumes:
       - name: config
         configMap:
-          name: {{ include "resource.dexk8sauth.name" $resource }}-{{ .id }}
+          name: {{ include "resource.dexk8sauth.name" $resource }}-{{ $id }}
       {{- if $values.trustedRootCA }}
       - name: ca-cert
         secret:

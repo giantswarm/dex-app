@@ -1,5 +1,5 @@
 diff --git a/vendor/dex/templates/deployment.yaml b/helm/dex-app/charts/dex/templates/deployment.yaml
-index 607cafd..e4dd7a3 100644
+index 607cafd..5cd7a6a 100644
 --- a/vendor/dex/templates/deployment.yaml
 +++ b/helm/dex-app/charts/dex/templates/deployment.yaml
 @@ -1,7 +1,19 @@
@@ -49,7 +49,7 @@ index 607cafd..e4dd7a3 100644
            args:
              - dex
              - serve
-@@ -84,6 +90,13 @@ spec:
+@@ -84,6 +90,16 @@ spec:
              - name: {{ $key }}
                value: {{ $value | quote }}
              {{- end }}
@@ -59,11 +59,14 @@ index 607cafd..e4dd7a3 100644
 +                secretKeyRef:
 +                  name: {{ .name }}
 +                  key: {{ .key }}
++                  {{- if .optional }}
++                  optional: true
++                  {{- end }}
 +            {{- end }}
            {{- with .Values.envVars }}
              {{- toYaml . | nindent 12 }}
            {{- end }}
-@@ -109,9 +122,13 @@ spec:
+@@ -109,9 +125,13 @@ spec:
                containerPort: 5558
                protocol: TCP
            livenessProbe:
@@ -77,7 +80,7 @@ index 607cafd..e4dd7a3 100644
            readinessProbe:
              httpGet:
                path: /healthz/ready
-@@ -122,6 +139,11 @@ spec:
+@@ -122,6 +142,11 @@ spec:
              - name: config
                mountPath: /etc/dex
                readOnly: true
@@ -89,7 +92,7 @@ index 607cafd..e4dd7a3 100644
            {{- with .Values.volumeMounts }}
              {{- toYaml . | nindent 12 }}
            {{- end }}
-@@ -129,6 +151,11 @@ spec:
+@@ -129,6 +154,11 @@ spec:
          - name: config
            secret:
              secretName: {{ include "dex.configSecretName" . }}
@@ -101,7 +104,7 @@ index 607cafd..e4dd7a3 100644
        {{- with .Values.volumes }}
          {{- toYaml . | nindent 8 }}
        {{- end }}
-@@ -148,3 +175,4 @@ spec:
+@@ -148,3 +178,4 @@ spec:
        tolerations:
          {{- toYaml . | nindent 8 }}
        {{- end }}

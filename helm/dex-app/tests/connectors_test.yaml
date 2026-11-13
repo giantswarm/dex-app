@@ -1,0 +1,123 @@
+suite: Giant Swarm connector maps
+templates:
+  - templates/secret-gs.yaml
+  - templates/deployment.yaml
+  - charts/dex/templates/deployment.yaml
+tests:
+  - it: rejects secret environment collisions across owners
+    set:
+      oidc.giantswarm.connectors:
+        hub-one:
+          connectorType: oidc
+          connectorName: One
+          config: {}
+          clientSecretRef:
+            name: one
+            key: secret
+      oidc.customer.connectors:
+        hub_one:
+          connectorType: oidc
+          connectorName: Two
+          config: {}
+          clientSecretRef:
+            name: two
+            key: secret
+    asserts:
+      - template: templates/secret-gs.yaml
+        failedTemplate:
+          errorPattern: 'another connector.s id also maps to variable DEX_CONNECTOR_SECRET_HUB_ONE'
+
+  - it: preserves list connector fields
+    set:
+      oidc.giantswarm.connectors:
+        - id: federation
+          connectorType: oidc
+          connectorName: Federation
+          connectorConfig: "issuer: https://hub.example.test\ninsecureEnableGroups: true"
+    asserts:
+      - template: templates/secret-gs.yaml
+        matchRegex:
+          path: stringData["config.yaml"]
+          pattern: "- type: oidc\n  id: federation\n  name: Federation\n  config:\n    issuer: https://hub.example.test\n    insecureEnableGroups: true"
+
+  - it: sorts map entries by id and uses the map key over an entry id
+    set:
+      oidc.giantswarm.connectors:
+        zulu:
+          connectorType: oidc
+          connectorName: Zulu
+          connectorConfig: "issuer: https://zulu.example.test"
+        alpha:
+          id: ignored
+          connectorType: oidc
+          connectorName: Alpha
+          connectorConfig: "issuer: https://alpha.example.test"
+    asserts:
+      - template: templates/secret-gs.yaml
+        matchRegex:
+          path: stringData["config.yaml"]
+          pattern: '(?s)id: alpha.*id: zulu'
+      - template: templates/secret-gs.yaml
+        notMatchRegex:
+          path: stringData["config.yaml"]
+          pattern: 'id: ignored'
+
+  - it: expands a referenced connector secret and makes its environment and volume optional
+    set:
+      oidc.giantswarm.connectors:
+        federation:
+          connectorType: oidc
+          connectorName: Federation
+          config:
+            issuer: https://hub.example.test
+            clientID: dex-spoke
+            clientSecret: ignored
+          clientSecretRef:
+            name: dex-connector-federation
+            key: client-secret
+    asserts:
+      - template: templates/deployment.yaml
+        equal:
+          path: spec.template.spec.containers[0].livenessProbe.exec.command
+          value:
+            - sh
+            - -ec
+            - |
+              wget -q -T 2 -O /dev/null http://127.0.0.1:5558/healthz/live
+              cd /etc/dex-client-secrets
+              for name in DEX_CONNECTOR_SECRET_FEDERATION; do
+                [ "$(cat "$name" 2>/dev/null || true)" = "$(printenv "$name" || true)" ] && continue
+                echo "the referenced Secret behind $name changed: restarting dex to load it"
+                exit 1
+              done
+      - template: templates/secret-gs.yaml
+        matchRegex:
+          path: stringData["config.yaml"]
+          pattern: 'clientSecret: \$\{DEX_CONNECTOR_SECRET_FEDERATION\}'
+      - template: templates/secret-gs.yaml
+        notMatchRegex:
+          path: stringData["config.yaml"]
+          pattern: 'ignored|clientSecretRef'
+      - template: templates/deployment.yaml
+        contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: DEX_CONNECTOR_SECRET_FEDERATION
+            valueFrom:
+              secretKeyRef:
+                name: dex-connector-federation
+                key: client-secret
+                optional: true
+      - template: templates/deployment.yaml
+        contains:
+          path: spec.template.spec.volumes
+          content:
+            name: client-secrets
+            projected:
+              sources:
+                - secret:
+                    name: dex-connector-federation
+                    optional: true
+                    items:
+                      - key: client-secret
+                        path: DEX_CONNECTOR_SECRET_FEDERATION

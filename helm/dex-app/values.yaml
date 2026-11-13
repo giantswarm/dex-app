@@ -311,13 +311,30 @@ oidc:
       clientID: ""
       clientSecret: ""
       team: ""
-    connectors: []
+    # Map entries merge by connector id across values sources; lists with id per entry are also accepted.
+    # Mixing a list and a map replaces the collection.
+    # config (map) takes precedence over connectorConfig (YAML string).
+    # clientSecretRef requires config and names a key of a Secret in Dex's namespace.
+    # A missing Secret allows Dex to start; Secret changes restart Dex.
+    # Example:
+    #   example:
+    #     connectorType: oidc
+    #     connectorName: Example OIDC
+    #     config:
+    #       issuer: https://issuer.example.com
+    #       clientID: dex-cluster
+    #       redirectURI: https://dex.example.com/callback
+    #     clientSecretRef:
+    #       name: dex-connector-example
+    #       key: client-secret
+    connectors: {}
   customer:
     enabled: false
     connectorType: ""
     connectorName: ""
     connectorConfig: ""
-    connectors: []
+    # Same map/list forms, config and clientSecretRef options as giantswarm.connectors.
+    connectors: {}
 # Note that the public address in Giant Swarm management cluster configurations already includes the port
 services:
   kubernetes:

@@ -867,7 +867,7 @@
               }
             },
             "connectors": {
-              "type": "array"
+              "$ref": "#/definitions/connectors"
             }
           }
         },
@@ -887,7 +887,7 @@
               "type": "string"
             },
             "connectors": {
-              "type": "array"
+              "$ref": "#/definitions/connectors"
             }
           },
           "required": [
@@ -1069,6 +1069,71 @@
   },
   "additionalProperties": true,
   "definitions": {
+    "connectors": {
+      "type": ["object", "array"],
+      "description": "Connectors keyed by id, or a list of connectors with an id per entry.",
+      "additionalProperties": {
+        "$ref": "#/definitions/connector"
+      },
+      "items": {
+        "allOf": [
+          {
+            "$ref": "#/definitions/connector"
+          }
+        ],
+        "required": ["id"]
+      }
+    },
+    "connector": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "connectorType": {
+          "type": "string",
+          "minLength": 1
+        },
+        "connectorName": {
+          "type": "string",
+          "minLength": 1
+        },
+        "connectorConfig": {
+          "type": "string"
+        },
+        "config": {
+          "type": "object",
+          "description": "Connector-specific configuration; takes precedence over connectorConfig.",
+          "additionalProperties": true
+        },
+        "clientSecretRef": {
+          "type": "object",
+          "description": "Reference to a Secret key in Dex's namespace; requires config.",
+          "properties": {
+            "name": {
+              "type": "string",
+              "minLength": 1
+            },
+            "key": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": ["name", "key"],
+          "additionalProperties": false
+        }
+      },
+      "required": ["connectorType", "connectorName"],
+      "anyOf": [
+        {"required": ["config"]},
+        {"required": ["connectorConfig"]}
+      ],
+      "dependencies": {
+        "clientSecretRef": ["config"]
+      },
+      "additionalProperties": false
+    },
     "staticClientSecretRef": {
       "type": "object",
       "description": "Reference to the key of a Secret in dex's namespace that holds the client secret; exactly one of this and the inline secret per client",

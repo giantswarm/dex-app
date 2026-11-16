@@ -304,7 +304,10 @@ oidc:
   # configuration; both cases are named in the release notes. `dexK8SAuthenticator`
   # and an extra client that is not public need exactly one. See the README,
   # "Static clients".
-  extraStaticClients: []
+  # A list, or a map keyed by client id: map entries from several values sources
+  # merge by id, a list replaces the whole collection. Empty (null) by default so
+  # neither form warns.
+  extraStaticClients: null
   # Giant Swarm OIDC values to run DEX in the management clusters
   giantswarm:
     connectorConfig:
@@ -312,10 +315,10 @@ oidc:
       clientSecret: ""
       team: ""
     # Map entries merge by connector id across values sources; lists with id per entry are also accepted.
-    # Mixing a list and a map replaces the collection.
+    # Mixing a list and a map replaces the collection. The default is empty (null) so neither form warns.
     # config (map) takes precedence over connectorConfig (YAML string).
     # clientSecretRef requires config and names a key of a Secret in Dex's namespace.
-    # A missing Secret allows Dex to start; Secret changes restart Dex.
+    # Dex does not start until the referenced Secret and key exist; Secret changes restart Dex.
     # Example:
     #   example:
     #     connectorType: oidc
@@ -327,14 +330,14 @@ oidc:
     #     clientSecretRef:
     #       name: dex-connector-example
     #       key: client-secret
-    connectors: {}
+    connectors: null
   customer:
     enabled: false
     connectorType: ""
     connectorName: ""
     connectorConfig: ""
     # Same map/list forms, config and clientSecretRef options as giantswarm.connectors.
-    connectors: {}
+    connectors: null
 # Note that the public address in Giant Swarm management cluster configurations already includes the port
 services:
   kubernetes:

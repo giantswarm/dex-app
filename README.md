@@ -52,6 +52,40 @@ Some notes:
 
 - If you configure more than one connector, make sure to set a unique `id` for each one. Be aware that this version of Dex is configured to prefix all user group names with the connector ID. So if your connector's `id` is `customer`, a membership in group `devops` will appear as `customer:devops`.
 
+### Connectors and clients from several values sources
+
+Helm merges maps from several values sources (`-f` files, Flux `valuesFrom`) key by key, but a list from a later source replaces the earlier list whole. `oidc.giantswarm.connectors`, `oidc.customer.connectors` and `oidc.extraStaticClients` therefore also accept a map keyed by id, so each source can add its own entries:
+
+```yaml
+oidc:
+  giantswarm:
+    connectors:
+      giantswarm-hub:
+        connectorType: oidc
+        connectorName: Hub
+        config:
+          issuer: https://dex.hub.example.com
+          clientID: federation-spoke
+          redirectURI: https://dex.spoke.example.com/callback
+        clientSecretRef:
+          name: dex-connector-giantswarm-hub
+          key: client-secret
+  extraStaticClients:
+    federation-spoke:
+      name: Federation for spoke
+      secretRef:
+        name: dex-client-federation-spoke
+        key: secret
+      redirectURIs:
+      - https://dex.spoke.example.com/callback
+```
+
+- The key is the id: an `id` inside a map entry is ignored, and `idEnv` is refused for an extra static client.
+- Give each id a single writer. Two sources that set the same id merge field by field into one entry.
+- A list in one source and a map in another do not merge: the later source replaces the collection.
+- A connector `clientSecretRef` needs `config` (not `connectorConfig`). Dex does not start until the referenced Secret and key exist, and restarts when the Secret changes.
+- Map entries are validated strictly (type, name, configuration, no unknown fields). List entries only need an `id` and a configuration, so lists written before the map form keep rendering.
+
 ### Other connector types
 
 Example connector configuration for Keycloak:
@@ -227,7 +261,7 @@ Note that this list is also what dex publishes as `response_types_supported` in 
 ### Static clients
 
 In addition to a few pre-defined static clients Dex app supports the possibility to define custom static clients as well.
-They need to be defined as an array of object in a specific property of the configuration yaml file called `extraStaticClients`.
+They are defined in `oidc.extraStaticClients`, either as a list or as a map keyed by client id (see [Connectors and clients from several values sources](#connectors-and-clients-from-several-values-sources)).
 The structure of each custom static client object is exactly the same as in upstream Dex, plus `secretRef`:
 
 ```yaml

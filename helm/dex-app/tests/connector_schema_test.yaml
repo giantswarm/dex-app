@@ -136,17 +136,19 @@ tests:
     asserts:
       - notFailedTemplate: {}
 
-  - it: rejects a missing connector type
+  - it: accepts a list entry without a connector type
     set:
       oidc.giantswarm.connectors: [{"id":"federation","connectorName":"Federation","config":{"issuer":"https://hub.example.test"}}]
-    asserts: *schemaFailure
+    asserts:
+      - notFailedTemplate: {}
 
-  - it: rejects a missing connector name
+  - it: accepts a list entry without a connector name
     set:
       oidc.giantswarm.connectors: [{"id":"federation","connectorType":"oidc","config":{"issuer":"https://hub.example.test"}}]
-    asserts: *schemaFailure
+    asserts:
+      - notFailedTemplate: {}
 
-  - it: rejects missing configuration
+  - it: rejects a list entry without configuration
     set:
       oidc.giantswarm.connectors: [{"id":"federation","connectorType":"oidc","connectorName":"Federation"}]
     asserts: *schemaFailure
@@ -156,10 +158,11 @@ tests:
       oidc.giantswarm.connectors: [{"id":"federation","connectorType":true,"connectorName":"Federation","config":{"issuer":"https://hub.example.test"}}]
     asserts: *schemaFailure
 
-  - it: rejects an unknown connector field
+  - it: accepts an unknown field on a list entry
     set:
       oidc.giantswarm.connectors: [{"id":"federation","connectorType":"oidc","connectorName":"Federation","config":{"issuer":"https://hub.example.test"},"clientSecretReff":{}}]
-    asserts: *schemaFailure
+    asserts:
+      - notFailedTemplate: {}
 
   - it: rejects non-object structured configuration
     set:
@@ -339,17 +342,19 @@ tests:
     asserts:
       - notFailedTemplate: {}
 
-  - it: rejects a missing connector type
+  - it: accepts a list entry without a connector type
     set:
       oidc.customer.connectors: [{"id":"federation","connectorName":"Federation","config":{"issuer":"https://hub.example.test"}}]
-    asserts: *schemaFailure
+    asserts:
+      - notFailedTemplate: {}
 
-  - it: rejects a missing connector name
+  - it: accepts a list entry without a connector name
     set:
       oidc.customer.connectors: [{"id":"federation","connectorType":"oidc","config":{"issuer":"https://hub.example.test"}}]
-    asserts: *schemaFailure
+    asserts:
+      - notFailedTemplate: {}
 
-  - it: rejects missing configuration
+  - it: rejects a list entry without configuration
     set:
       oidc.customer.connectors: [{"id":"federation","connectorType":"oidc","connectorName":"Federation"}]
     asserts: *schemaFailure
@@ -359,10 +364,11 @@ tests:
       oidc.customer.connectors: [{"id":"federation","connectorType":true,"connectorName":"Federation","config":{"issuer":"https://hub.example.test"}}]
     asserts: *schemaFailure
 
-  - it: rejects an unknown connector field
+  - it: accepts an unknown field on a list entry
     set:
       oidc.customer.connectors: [{"id":"federation","connectorType":"oidc","connectorName":"Federation","config":{"issuer":"https://hub.example.test"},"clientSecretReff":{}}]
-    asserts: *schemaFailure
+    asserts:
+      - notFailedTemplate: {}
 
   - it: rejects non-object structured configuration
     set:
@@ -403,3 +409,18 @@ tests:
     set:
       oidc.customer.connectors: [{"connectorType":"oidc","connectorName":"Federation","config":{"issuer":"https://hub.example.test"}}]
     asserts: *schemaFailure
+---
+suite: connector list entries written before the map form
+tests:
+  - it: accepts an empty connector name and an extra key
+    set:
+      oidc.giantswarm.connectors: [{"id":"giantswarm-ad","connectorType":"microsoft","connectorName":"","connectorConfig":"clientID: abc","description":"leftover"}]
+    asserts:
+      - notFailedTemplate: {}
+
+  - it: still requires an id
+    set:
+      oidc.customer.connectors: [{"connectorType":"oidc","connectorName":"Federation","connectorConfig":"issuer: https://hub.example.test"}]
+    asserts:
+      - failedTemplate:
+          errorPattern: "values don't meet the specifications of the schema"

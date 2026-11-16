@@ -846,8 +846,14 @@
           }
         },
         "extraStaticClients": {
-          "type": "array",
-          "description": "Extra static clients configuration"
+          "type": ["array", "object", "null"],
+          "description": "Extra static clients: a list, or a map keyed by client id so entries from several values sources merge by id.",
+          "items": {
+            "type": "object"
+          },
+          "additionalProperties": {
+            "type": "object"
+          }
         },
         "giantswarm": {
           "type": "object",
@@ -1070,19 +1076,65 @@
   "additionalProperties": true,
   "definitions": {
     "connectors": {
-      "type": ["object", "array"],
+      "type": ["object", "array", "null"],
       "description": "Connectors keyed by id, or a list of connectors with an id per entry.",
       "additionalProperties": {
         "$ref": "#/definitions/connector"
       },
       "items": {
-        "allOf": [
-          {
-            "$ref": "#/definitions/connector"
-          }
-        ],
-        "required": ["id"]
+        "$ref": "#/definitions/connectorListEntry"
       }
+    },
+    "connectorListEntry": {
+      "type": "object",
+      "description": "A connector in the list form. Only the fields the chart reads are type-checked, so lists written before the map form keep rendering.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "connectorType": {
+          "type": "string"
+        },
+        "connectorName": {
+          "type": "string"
+        },
+        "connectorConfig": {
+          "type": "string"
+        },
+        "config": {
+          "type": "object",
+          "additionalProperties": true
+        },
+        "clientSecretRef": {
+          "$ref": "#/definitions/connectorSecretRef"
+        }
+      },
+      "required": ["id"],
+      "anyOf": [
+        {"required": ["config"]},
+        {"required": ["connectorConfig"]}
+      ],
+      "dependencies": {
+        "clientSecretRef": ["config"]
+      },
+      "additionalProperties": true
+    },
+    "connectorSecretRef": {
+      "type": "object",
+      "description": "Reference to a Secret key in Dex's namespace; requires config.",
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "key": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": ["name", "key"],
+      "additionalProperties": false
     },
     "connector": {
       "type": "object",
@@ -1108,20 +1160,7 @@
           "additionalProperties": true
         },
         "clientSecretRef": {
-          "type": "object",
-          "description": "Reference to a Secret key in Dex's namespace; requires config.",
-          "properties": {
-            "name": {
-              "type": "string",
-              "minLength": 1
-            },
-            "key": {
-              "type": "string",
-              "minLength": 1
-            }
-          },
-          "required": ["name", "key"],
-          "additionalProperties": false
+          "$ref": "#/definitions/connectorSecretRef"
         }
       },
       "required": ["connectorType", "connectorName"],

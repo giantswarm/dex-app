@@ -1,0 +1,10 @@
+oidc:
+  issuerAddress: dex.example.test
+  extraStaticClients:
+    federation-spoke:
+      name: Federation for spoke
+      secretRef:
+        name: dex-client-federation-spoke
+        key: secret
+      redirectURIs:
+        - https://dex.spoke.example.test/callback

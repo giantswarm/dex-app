@@ -1,0 +1,7 @@
+oidc:
+  extraStaticClients:
+    manual-tool:
+      name: Manual tool
+      secret: inline-secret
+      redirectURIs:
+        - https://tool.example.test/callback

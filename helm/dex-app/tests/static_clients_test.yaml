@@ -390,3 +390,70 @@ tests:
       - template: templates/NOTES.txt
         matchRegexRaw:
           pattern: "  - oidc.staticClients.mcpCapi \\(clientID mcp-capi\\)\n  - oidc.staticClients.mcpPrometheus \\(clientID mcp-prometheus\\)\n"
+
+  - it: keeps the extra clients of every values source in the map form, each with its key as id
+    values:
+      - ./values/extra-static-clients-map-hub.yaml
+      - ./values/extra-static-clients-map-manual.yaml
+    asserts:
+      - template: templates/secret-gs.yaml
+        matchRegex:
+          path: stringData["config.yaml"]
+          pattern: "- id: federation-spoke\n(  .*\n)*  secretEnv: DEX_CLIENT_SECRET_FEDERATION_SPOKE\n"
+      - template: templates/secret-gs.yaml
+        matchRegex:
+          path: stringData["config.yaml"]
+          pattern: "- id: manual-tool\n"
+      - template: templates/deployment.yaml
+        contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: DEX_CLIENT_SECRET_FEDERATION_SPOKE
+            valueFrom:
+              secretKeyRef:
+                name: dex-client-federation-spoke
+                key: secret
+
+  - it: uses the map key as the extra client id
+    set:
+      oidc.issuerAddress: dex.example.test
+      oidc.extraStaticClients:
+        federation-spoke:
+          id: ignored
+          name: Federation for spoke
+          public: true
+          redirectURIs:
+            - https://dex.spoke.example.test/callback
+    asserts:
+      - template: templates/secret-gs.yaml
+        matchRegex:
+          path: stringData["config.yaml"]
+          pattern: "- id: federation-spoke\n"
+      - template: templates/secret-gs.yaml
+        notMatchRegex:
+          path: stringData["config.yaml"]
+          pattern: "id: ignored"
+
+  - it: refuses idEnv in the map form
+    set:
+      oidc.issuerAddress: dex.example.test
+      oidc.extraStaticClients:
+        federation-spoke:
+          idEnv: CLIENT_ID
+          name: Federation for spoke
+          public: true
+    asserts:
+      - template: templates/secret-gs.yaml
+        failedTemplate:
+          errorMessage: 'dex-app: extra static client "federation-spoke": idEnv cannot be used in the map form, the key is the client id'
+
+  - it: requires a secret on a confidential extra client in the map form
+    set:
+      oidc.issuerAddress: dex.example.test
+      oidc.extraStaticClients:
+        federation-spoke:
+          name: Federation for spoke
+    asserts:
+      - template: templates/secret-gs.yaml
+        failedTemplate:
+          errorPattern: 'static client "federation-spoke" sets none of'

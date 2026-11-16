@@ -17,7 +17,6 @@
   env: {{ $env }}
   name: {{ .name | quote }}
   key: {{ .key | quote }}
-  optional: true
 {{ end -}}
 {{- end -}}
 {{- end -}}

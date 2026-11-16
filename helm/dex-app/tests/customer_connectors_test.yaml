@@ -99,7 +99,7 @@ tests:
           path: spec.selector.matchExpressions[1].values
           value: [dex-k8s-authenticator-alpha, dex-k8s-authenticator-zulu]
 
-  - it: expands a referenced connector secret and makes its environment and volume optional
+  - it: expands a referenced connector secret and requires the Secret
     set:
       oidc.customer.connectors:
         federation:
@@ -144,7 +144,6 @@ tests:
               secretKeyRef:
                 name: dex-connector-federation
                 key: client-secret
-                optional: true
       - template: templates/deployment.yaml
         contains:
           path: spec.template.spec.volumes
@@ -154,7 +153,6 @@ tests:
               sources:
                 - secret:
                     name: dex-connector-federation
-                    optional: true
                     items:
                       - key: client-secret
                         path: DEX_CONNECTOR_SECRET_FEDERATION

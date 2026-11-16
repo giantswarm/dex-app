@@ -62,7 +62,7 @@ tests:
           path: stringData["config.yaml"]
           pattern: 'id: ignored'
 
-  - it: expands a referenced connector secret and makes its environment and volume optional
+  - it: expands a referenced connector secret and requires the Secret
     set:
       oidc.giantswarm.connectors:
         federation:
@@ -107,7 +107,6 @@ tests:
               secretKeyRef:
                 name: dex-connector-federation
                 key: client-secret
-                optional: true
       - template: templates/deployment.yaml
         contains:
           path: spec.template.spec.volumes
@@ -117,7 +116,6 @@ tests:
               sources:
                 - secret:
                     name: dex-connector-federation
-                    optional: true
                     items:
                       - key: client-secret
                         path: DEX_CONNECTOR_SECRET_FEDERATION

@@ -188,6 +188,30 @@ Gather and print trusted peers of a static client from various sources
 {{- end -}}
 
 {{/*
+oidc.extraStaticClients as a YAML list. A list is returned as is. In the map
+form the key is the client id, so map entries from several values sources merge
+by id; an entry's own `id` is replaced by its key and `idEnv` is refused, since
+the key already names the client.
+*/}}
+{{- define "dex.extraStaticClients" -}}
+{{- if kindIs "map" . -}}
+  {{- $clients := list -}}
+  {{- range $id, $client := . -}}
+    {{- if not (kindIs "map" $client) -}}
+      {{- fail (printf "dex-app: extra static client %q must be an object" $id) -}}
+    {{- end -}}
+    {{- if $client.idEnv -}}
+      {{- fail (printf "dex-app: extra static client %q: idEnv cannot be used in the map form, the key is the client id" $id) -}}
+    {{- end -}}
+    {{- $clients = append $clients (set (deepCopy $client) "id" $id) -}}
+  {{- end -}}
+  {{- toYaml $clients -}}
+{{- else -}}
+  {{- toYaml (. | default list) -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
 Clean up and print extra static clients. A client declaring its secret as a
 reference (`secretRef: {name, key}`) is printed with `secretEnv` naming the
 variable the Deployment sets from that Secret; dex reads it at start-up.
@@ -344,7 +368,7 @@ name fail as well: the variable would carry only one of the two secrets.
 {{- if or .Values.isManagementCluster (eq (include "is-workload-cluster" .) "true") -}}
   {{- $refs = print $refs (include "dex.staticClient.secretRef" (dict "id" "dex-k8s-authenticator" "secret" $clients.dexK8SAuthenticator.clientSecret "secretRef" $clients.dexK8SAuthenticator.clientSecretRef "fields" "oidc.staticClients.dexK8SAuthenticator.clientSecret (a chart default; set it to \"\" to use the reference) and .clientSecretRef")) -}}
 {{- end -}}
-{{- range .Values.oidc.extraStaticClients -}}
+{{- range (include "dex.extraStaticClients" .Values.oidc.extraStaticClients | fromYamlArray) -}}
   {{- if and .secretRef (not .id) -}}
     {{- fail (printf "dex-app: extra static client %q: secretRef needs a literal id, not idEnv" (.name | default .idEnv)) -}}
   {{- end -}}

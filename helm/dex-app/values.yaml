@@ -43,7 +43,7 @@ dex:
     image:
       registry: gsoci.azurecr.io
       name: giantswarm/dex-app
-      # Automatically synced from Chart.yaml appVersion via `make sync-image-tag`
+      # Set at build time to the image built with the chart.
       # Override only for testing with a specific image.
       tag: "3.4.0"
       pullPolicy: IfNotPresent

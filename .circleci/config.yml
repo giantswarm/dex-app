@@ -13,6 +13,21 @@ workflows:
         # out-of-band by sync-china-registry below so the cross-Pacific push
         # cannot time out and block the chart catalog publish.
         split-china-push: true
+        # The chart runs the image this job pushed: stamp its tag into
+        # values.yaml, which the chart jobs attach before they package.
+        post-steps:
+          - run:
+              name: Stamp the built image tag into values.yaml
+              command: |
+                set -euo pipefail
+                version="$(cat .build_version)"
+                test "$(grep -c '^      tag: ' helm/dex-app/values.yaml)" -eq 1
+                sed -i -E "s/^(      tag: ).*/\1\"${version}\"/" helm/dex-app/values.yaml
+                grep -n "^      tag: \"${version}\"$" helm/dex-app/values.yaml
+          - persist_to_workspace:
+              root: .
+              paths:
+                - helm/dex-app/values.yaml
         filters:
             # Trigger the job also on git tag.
           tags:
@@ -46,8 +61,6 @@ workflows:
         executor: app-build-suite
         persist_chart_archive: true
         push_to_oci_registry: true
-        # Attach the workspace so the post-step below can read `.build_version`
-        # (the canonical image tag persisted by push-to-registries).
         attach_workspace: true
         requires:
         - push-to-registries
@@ -59,30 +72,6 @@ workflows:
             ignore:
             - main
             - master
-        post-steps:
-          - run:
-              name: Create test values with built image tag
-              command: |
-                mkdir -p build
-                cp tests/test-values.yaml build/test-values-dev.yaml
-                # `.build_version` is written by architect's image-prepare-tag step in
-                # push-to-registries (the canonical `gitsemver get` tag, including the
-                # timestamped `-dev.<branch>.<date>.<time>` suffix for branch builds) and
-                # persisted to the workspace. It is the exact tag push-to-registries
-                # published, so the ATS deploys the image that was just built. Recomputing
-                # it as "<last-tag>-<sha>" broke when architect v9 changed the dev-tag
-                # format, leaving the ATS pulling a tag that is never pushed.
-                if [ -f .build_version ]; then
-                  DEV_TAG="$(cat .build_version)"
-                  printf '\ndex:\n  dex:\n    image:\n      tag: "%s"\n' "${DEV_TAG}" >> build/test-values-dev.yaml
-                  echo "test image tag set to ${DEV_TAG}"
-                else
-                  echo "WARNING: .build_version not found; using the chart's default image tag"
-                fi
-          - persist_to_workspace:
-              root: build
-              paths:
-                - test-values-dev.yaml
 
       # make it available to customers (only tags)
     - architect/push-to-app-catalog:
@@ -93,6 +82,7 @@ workflows:
         context: architect
         executor: app-build-suite
         push_to_oci_registry: true
+        attach_workspace: true
         requires:
         - push-to-registries
         filters:
@@ -110,6 +100,7 @@ workflows:
         app_catalog_test: giantswarm-playground-test-catalog
         chart: dex-app
         executor: app-build-suite
+        attach_workspace: true
         requires:
         - push-to-registries
         filters:
@@ -131,4 +122,4 @@ workflows:
         - push-to-control-plane-app-catalog
         app-test-suite_version: v0.15.0
         app-test-suite_container_tag: 0.15.0
-        additional_app-test-suite_flags: "--app-tests-app-config-file build/test-values-dev.yaml"
+        additional_app-test-suite_flags: "--app-tests-app-config-file tests/test-values.yaml"

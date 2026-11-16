@@ -338,13 +338,13 @@ In order to update the image used in this chart it is currently needed to to do 
 
 Then in this repo:
 
-- Update the image version tag
+- Update the `FROM` image in the `Dockerfile`. Renovate opens this pull request.
+- The image copies `web/` over the Dex web directory, so `web/templates/login.html` and `web/templates/error.html` replace the upstream ones. When the new Dex version changes either upstream file, re-base ours on it and keep only the Giant Swarm changes: the connector list in `login.html` (`connector_filter`, which kubectl-gs sends, the connector ID under each name, and Giant Swarm connectors last) and the unknown-connector message in `error.html`.
 - Test the new version before releasing. Make sure to test token refresh as well.
+
+Every build sets `dex.dex.image.tag` to the image tag it pushed before it packages the chart, so a chart always runs the image of its own build.
 
 ## Release Process
 
-- Ensure CHANGELOG.md is up to date.
-- In case of changes to `values.yaml`, ensure that `values.schema.json` is updated to reflect all values and their types correctly.
-- Create a branch `master#release#v<major.minor.patch>`, wait for the according release PR to be created, approve it, merge it.
-- This will push a new git tag and trigger a new tarball to be pushed to the
-[control-plane-catalog](https://github.com/giantswarm/control-plane-catalog).
+Releases are cut by the Auto-release workflow from the conventional commit titles of merged pull requests. A minor or major change cuts a release candidate; run the workflow with `release-type: stable` to promote the latest one.
+In case of changes to `values.yaml`, ensure that `values.schema.json` is updated to reflect all values and their types correctly.

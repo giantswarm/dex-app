@@ -1,16 +1,26 @@
 {{ template "header.html" . }}
 
+<style>
+  code {
+    color: #666;
+    font-size: 90%;
+    font-weight: 400;
+  }
+
+  .dex-btn-provider .dex-btn-text {
+    flex-direction: column;
+  }
+</style>
+
 <div class="theme-panel">
   <h2 class="theme-heading">Log in to {{ issuer }} </h2>
   <div id="connectors">
     <noscript>
       {{ range $c := .Connectors }}
       <div class="theme-form-row">
-        <a href="{{ $c.URL }}" target="_self">
-          <button class="dex-btn theme-btn-provider">
-            <span class="dex-btn-icon dex-btn-icon--{{ $c.Type }}"></span>
-            <span class="dex-btn-text">{{ $c.Name }}</span>
-          </button>
+        <a href="{{ $c.URL }}" class="dex-btn dex-btn-provider theme-btn-provider">
+          <span class="dex-btn-icon dex-btn-icon--{{ $c.Type }}"></span>
+          <span class="dex-btn-text">{{ $c.Name }}</span>
         </a>
       </div>
       {{ end }}
@@ -66,9 +76,7 @@
       rowEl.classList.add('theme-form-row');
       const linkEl = document.createElement('a');
       linkEl.href = c.url;
-      linkEl.target = '_self';
-      const buttonEl = document.createElement('button');
-      buttonEl.classList.add('dex-btn', 'theme-btn-provider');
+      linkEl.classList.add('dex-btn', 'dex-btn-provider', 'theme-btn-provider');
       const buttonIcon = document.createElement('span');
       buttonIcon.classList.add('dex-btn-icon', `dex-btn-icon--${c.type}`);
       const buttonContent = document.createElement('span');
@@ -78,8 +86,7 @@
       const buttonContentConnectorID = document.createElement('code');
       buttonContentConnectorID.textContent = `ID: ${c.id}`;
       buttonContent.append(buttonContentText, buttonContentConnectorID);
-      buttonEl.append(buttonIcon, buttonContent);
-      linkEl.append(buttonEl);
+      linkEl.append(buttonIcon, buttonContent);
       rowEl.append(linkEl);
 
       return rowEl;

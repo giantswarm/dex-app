@@ -1,0 +1,31 @@
+suite: Giant Swarm web pages
+templates:
+  - templates/configmap-web.yaml
+  - templates/secret-gs.yaml
+tests:
+  - it: puts the login page, with its connector filter, and the error page in the ConfigMap unrendered
+    template: templates/configmap-web.yaml
+    asserts:
+      - isKind:
+          of: ConfigMap
+      - equal:
+          path: metadata.name
+          value: dex-web-templates
+      - matchRegex:
+          path: data["login.html"]
+          pattern: connector_filter
+      - matchRegex:
+          path: data["login.html"]
+          pattern: "\\{\\{ range \\$c := \\.Connectors \\}\\}"
+      - matchRegex:
+          path: data["error.html"]
+          pattern: There is no connector matching the ID
+
+  - it: points Dex at the web directory the pages are mounted into
+    template: templates/secret-gs.yaml
+    set:
+      oidc.issuerAddress: dex.example.test
+    asserts:
+      - matchRegex:
+          path: stringData["config.yaml"]
+          pattern: "frontend:\\n\\s+dir: /srv/dex/web\\n"

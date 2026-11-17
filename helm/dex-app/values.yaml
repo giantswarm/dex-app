@@ -40,12 +40,12 @@ dex:
       matchLabelKeys:
         - pod-template-hash
   dex:
+    # The Giant Swarm Dex line: upstream Dex plus our patches, from the
+    # giantswarm branch of giantswarm/dex. Renovate bumps the tag.
     image:
       registry: gsoci.azurecr.io
-      name: giantswarm/dex-app
-      # Automatically synced from Chart.yaml appVersion via `make sync-image-tag`
-      # Override only for testing with a specific image.
-      tag: "3.4.0"
+      name: giantswarm/dex/dex
+      tag: "2.46.1-gs.4"
       pullPolicy: IfNotPresent
   configSecret:
     # -- Enable creating a secret from the values passed to `config`.

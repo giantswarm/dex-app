@@ -18,6 +18,7 @@ renders the configuration and the container environment of inline clients unchan
       enablePasswordDB: false
       oidcGroupsPrefix: true
       frontend:
+        dir: /srv/dex/web
         logoURL: https://s.giantswarm.io/brand/1/logo.svg
       issuer: https://dex.example.test
       expiry:

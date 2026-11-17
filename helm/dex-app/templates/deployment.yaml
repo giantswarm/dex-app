@@ -14,9 +14,21 @@ helpers in _helpers.tpl).
 
 `architecture` is merged into the subchart's nodeSelector and tolerations here
 because the subchart cannot see parent values.
+
+The pages of templates/configmap-web.yaml are mounted one file each over their
+upstream copies in the image's web directory, so the image's other pages and
+assets stay in place. A file mounted with subPath is not updated when the
+ConfigMap changes, so the ConfigMap is part of the configuration checksum.
 */}}
 {{- $dex := index .Subcharts "dex" -}}
 {{- $values := deepCopy $dex.Values -}}
+{{- $webVolume := "web-templates" -}}
+{{- $_ := set $values "volumes" (append ($values.volumes | default list) (dict "name" $webVolume "configMap" (dict "name" (include "dex-app.webTemplates.name" .)))) -}}
+{{- $mounts := $values.volumeMounts | default list -}}
+{{- range $path, $_ := .Files.Glob "files/web/templates/*.html" -}}
+{{- $mounts = append $mounts (dict "name" $webVolume "mountPath" (printf "/srv/dex/web/templates/%s" (base $path)) "subPath" (base $path) "readOnly" true) -}}
+{{- end -}}
+{{- $_ := set $values "volumeMounts" $mounts -}}
 {{- $scheduling := include "dex-app.podScheduling" (dict "Values" (dict "architecture" .Values.architecture "nodeSelector" $values.nodeSelector "tolerations" $values.tolerations)) | fromYaml -}}
 {{- $_ := set $values "nodeSelector" ($scheduling.nodeSelector | default dict) -}}
 {{- $_ := set $values "tolerations" ($scheduling.tolerations | default list) -}}
@@ -25,5 +37,5 @@ because the subchart cannot see parent values.
       "Chart" $dex.Chart
       "Release" .Release
       "Capabilities" .Capabilities
-      "configChecksum" (include (print $.Template.BasePath "/secret-gs.yaml") . | sha256sum)
+      "configChecksum" (print (include (print $.Template.BasePath "/secret-gs.yaml") .) (include "dex-app.webTemplates.data" .) | sha256sum)
       "clientSecretEnv" (concat (include "dex.staticClients.secretRefs" . | fromYamlArray) (include "dex.connectors.secretRefs" . | fromYamlArray))) }}

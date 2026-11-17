@@ -2,8 +2,9 @@
 # checksum/config on the dex pod template: identical values render the same value,
 # so a reconcile without a change rolls nothing; a change to the dex configuration
 # (the issuer, a static client added, a client's secret moved from the inline value
-# to a referenced Secret) renders a different one, so the helm upgrade that writes
-# the configuration rolls the pod. Run by `make test-chart`; takes the chart path.
+# to a referenced Secret, a change to one of the Giant Swarm web pages) renders a
+# different one, so the helm upgrade that writes the configuration rolls the pod.
+# Run by `make test-chart`; takes the chart path.
 set -euo pipefail
 
 chart=${1:-$(dirname "$0")/..}
@@ -23,10 +24,17 @@ other_issuer=$(checksum --set oidc.issuerAddress=dex.other.example.test)
 with_client=$(checksum --set-json "oidc.extraStaticClients=$inline")
 with_referenced=$(checksum --set-json "oidc.extraStaticClients=$referenced")
 
+edited_chart=$(mktemp -d)
+trap 'rm -rf "$edited_chart"' EXIT
+cp -r "$chart/." "$edited_chart"
+echo "<!-- edited -->" >> "$edited_chart/files/web/templates/login.html"
+with_edited_page=$(chart=$edited_chart checksum)
+
 [[ $base =~ ^[0-9a-f]{64}$ ]] || fail "no sha256 checksum/config on the pod template: '$base'"
 [ "$base" = "$again" ] || fail "identical values rendered different checksums: $base $again"
 [ "$base" != "$other_issuer" ] || fail "an issuer change left checksum/config unchanged"
 [ "$base" != "$with_client" ] || fail "a static client added left checksum/config unchanged"
 [ "$with_client" != "$with_referenced" ] || fail "a client secret moved to a referenced Secret left checksum/config unchanged"
+[ "$base" != "$with_edited_page" ] || fail "a web page change left checksum/config unchanged"
 
-echo "checksum/config: stable across identical renders ($base); changes with the issuer ($other_issuer), a static client added ($with_client) and its secret moved to a referenced Secret ($with_referenced)"
+echo "checksum/config: stable across identical renders ($base); changes with the issuer ($other_issuer), a static client added ($with_client), its secret moved to a referenced Secret ($with_referenced) and a web page edited ($with_edited_page)"

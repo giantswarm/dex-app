@@ -1,8 +1,8 @@
 diff --git a/vendor/dex/templates/deployment.yaml b/helm/dex-app/charts/dex/templates/deployment.yaml
-index 607cafd..5cd7a6a 100644
+index 607cafd..87589da 100644
 --- a/vendor/dex/templates/deployment.yaml
 +++ b/helm/dex-app/charts/dex/templates/deployment.yaml
-@@ -1,7 +1,19 @@
+@@ -1,3 +1,15 @@
 +{{/*
 +The Deployment is a named template rendered by the parent chart
 +(templates/deployment.yaml), which passes the checksum of the dex configuration
@@ -18,11 +18,6 @@ index 607cafd..5cd7a6a 100644
  apiVersion: apps/v1
  kind: Deployment
  metadata:
--  name: {{ include "dex.fullname" . }}
-+  name: {{ include "dex.name" . }}
-   namespace: {{ include "dex.namespace" . }}
-   labels:
-     {{- include "dex.labels" . | nindent 4 }}
 @@ -30,9 +42,7 @@ spec:
        {{- with .Values.podAnnotations }}
          {{- toYaml . | nindent 8 }}

@@ -45,7 +45,7 @@ dex:
     image:
       registry: gsoci.azurecr.io
       name: giantswarm/dex/dex
-      tag: "2.46.1-gs.3"
+      tag: "2.46.1-gs.4"
       pullPolicy: IfNotPresent
   configSecret:
     # -- Enable creating a secret from the values passed to `config`.

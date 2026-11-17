@@ -156,7 +156,7 @@ tests:
     asserts:
       - equal:
           path: spec.template.spec.containers[0].image
-          value: gsoci.azurecr.io/giantswarm/dex/dex:2.46.1-gs.3
+          value: gsoci.azurecr.io/giantswarm/dex/dex:2.46.1-gs.4
       - contains:
           path: spec.template.spec.volumes
           content:

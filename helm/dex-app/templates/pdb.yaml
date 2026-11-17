@@ -4,7 +4,7 @@ kind: PodDisruptionBudget
 metadata:
   name: {{ include "resource.dex.name" . }}
   labels:
-    {{- include "dex.labels.common" . | nindent 4 }}
+    {{- include "dex.labels" . | nindent 4 }}
 spec:
   {{- if or (gt (int .Values.dex.replicaCount) 1) .Values.dex.autoscaling.enabled }}
   # Keep one pod serving: an eviction waits until another replica is Ready,

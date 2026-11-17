@@ -5,9 +5,22 @@
     // Go specific config - https://github.com/giantswarm/renovate-presets/blob/main/lang-go.json5
     "github>giantswarm/renovate-presets:lang-go.json5",
   ],
-  // The Dex image in the Dockerfile comes from giantswarm/dex: an upstream Dex
-  // release plus our patches, released as X.Y.Z-gs.N (FORK.md on its giantswarm
-  // branch). Only those tags count as versions, so Renovate skips the dev builds
+  // The chart runs the Dex image of giantswarm/dex: an upstream Dex release
+  // plus our patches, released as X.Y.Z-gs.N (FORK.md on its giantswarm
+  // branch). values.yaml names it in three keys (registry, name, tag), which
+  // the helm-values manager does not read.
+  "customManagers": [
+    {
+      "customType": "regex",
+      "managerFilePatterns": ["/^helm/dex-app/values\\.yaml$/"],
+      "matchStrings": [
+        "registry: gsoci\\.azurecr\\.io\\n\\s+name: giantswarm/dex/dex\\n\\s+tag: \"(?<currentValue>[^\"]+)\"",
+      ],
+      "depNameTemplate": "gsoci.azurecr.io/giantswarm/dex/dex",
+      "datasourceTemplate": "docker",
+    },
+  ],
+  // Only the release tags count as versions, so Renovate skips the dev builds
   // (X.Y.Z-r<...>h<sha>) that the same image repository holds.
   "packageRules": [
     {

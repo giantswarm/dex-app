@@ -338,11 +338,9 @@ In order to update the image used in this chart it is currently needed to to do 
 
 Then in this repo:
 
-- Update the `FROM` image in the `Dockerfile`. Renovate opens this pull request.
-- The image copies `web/` over the Dex web directory, so `web/templates/login.html` and `web/templates/error.html` replace the upstream ones. When the new Dex version changes either upstream file, re-base ours on it and keep only the Giant Swarm changes: the connector list in `login.html` (`connector_filter`, which kubectl-gs sends, the connector ID under each name, and Giant Swarm connectors last) and the unknown-connector message in `error.html`.
+- Update `dex.dex.image.tag` in `helm/dex-app/values.yaml`. Renovate opens this pull request.
+- The chart mounts `helm/dex-app/files/web/templates/login.html` and `error.html` over the upstream pages in the image's web directory; every other page and asset comes from the image. When the new Dex version changes either upstream page, re-base ours on it and keep only the Giant Swarm changes: the connector list in `login.html` (`connector_filter`, which kubectl-gs sends, the connector ID under each name, and Giant Swarm connectors last) and the unknown-connector message in `error.html`.
 - Test the new version before releasing. Make sure to test token refresh as well.
-
-Every build sets `dex.dex.image.tag` to the image tag it pushed before it packages the chart, so a chart always runs the image of its own build.
 
 ## Release Process
 

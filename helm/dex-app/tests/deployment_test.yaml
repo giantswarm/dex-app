@@ -147,4 +147,61 @@ tests:
           any: true
       - lengthEqual:
           path: spec.template.spec.volumes
-          count: 2
+          count: 3
+
+  - it: runs the Giant Swarm Dex image and mounts the login and error pages over their upstream copies
+    template: templates/deployment.yaml
+    set:
+      oidc.issuerAddress: dex.example.test
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].image
+          value: gsoci.azurecr.io/giantswarm/dex/dex:2.46.1-gs.3
+      - contains:
+          path: spec.template.spec.volumes
+          content:
+            name: web-templates
+            configMap:
+              name: dex-web-templates
+      - contains:
+          path: spec.template.spec.containers[0].volumeMounts
+          content:
+            name: web-templates
+            mountPath: /srv/dex/web/templates/login.html
+            subPath: login.html
+            readOnly: true
+      - contains:
+          path: spec.template.spec.containers[0].volumeMounts
+          content:
+            name: web-templates
+            mountPath: /srv/dex/web/templates/error.html
+            subPath: error.html
+            readOnly: true
+
+  - it: keeps the volumes and mounts set in the values next to the pages
+    template: templates/deployment.yaml
+    set:
+      oidc.issuerAddress: dex.example.test
+      dex.volumes:
+        - name: extra
+          emptyDir: {}
+      dex.volumeMounts:
+        - name: extra
+          mountPath: /extra
+    asserts:
+      - contains:
+          path: spec.template.spec.volumes
+          content:
+            name: extra
+            emptyDir: {}
+      - contains:
+          path: spec.template.spec.volumes
+          content:
+            name: web-templates
+            configMap:
+              name: dex-web-templates
+      - contains:
+          path: spec.template.spec.containers[0].volumeMounts
+          content:
+            name: extra
+            mountPath: /extra

@@ -1,0 +1,14 @@
+{{/*
+The Giant Swarm versions of Dex's login and error pages. templates/deployment.yaml
+mounts each file over its upstream copy in the image's web directory, which the
+dex configuration names as `frontend.dir`; every other page and asset comes
+from the image. Their content is part of the pod template's `checksum/config`.
+*/}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  labels:
+    {{- include "dex.labels.common" . | nindent 4 }}
+  name: {{ include "dex-app.webTemplates.name" . }}
+data:
+  {{- include "dex-app.webTemplates.data" . | nindent 2 }}

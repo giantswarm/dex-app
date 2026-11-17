@@ -5,45 +5,10 @@ orbs:
 workflows:
   build:
     jobs:
-    - architect/push-to-registries:
-        context: architect
-        name: push-to-registries
-        platforms: linux/amd64,linux/arm64
-        # Push only to gsoci here; the gsoci -> Aliyun mirror is handled
-        # out-of-band by sync-china-registry below so the cross-Pacific push
-        # cannot time out and block the chart catalog publish.
-        split-china-push: true
-        # The chart runs the image this job pushed: stamp its tag into
-        # values.yaml, which the chart jobs attach before they package.
-        post-steps:
-          - run:
-              name: Stamp the built image tag into values.yaml
-              command: |
-                set -euo pipefail
-                version="$(cat .build_version)"
-                test "$(grep -c '^      tag: ' helm/dex-app/values.yaml)" -eq 1
-                sed -i -E "s/^(      tag: ).*/\1\"${version}\"/" helm/dex-app/values.yaml
-                grep -n "^      tag: \"${version}\"$" helm/dex-app/values.yaml
-          - persist_to_workspace:
-              root: .
-              paths:
-                - helm/dex-app/values.yaml
-        filters:
-            # Trigger the job also on git tag.
-          tags:
-            only: /^v.*/
-          branches:
-            ignore:
-            - main
-            - master
-
-    # Mirror gsoci -> Aliyun via the in-China giantswarm/galaxy-runner. Runs out
-    # of band; an Aliyun mirror failure does NOT block the chart catalog publish.
-    - architect/sync-china-registry:
-        context: architect
-        name: sync-china-registry
-        requires:
-        - push-to-registries
+    # Resolve the version once and persist it to the workspace, so the three
+    # chart jobs below publish the same version.
+    - architect/pin-version:
+        name: pin-version
         filters:
           tags:
             only: /^v.*/
@@ -63,7 +28,7 @@ workflows:
         push_to_oci_registry: true
         attach_workspace: true
         requires:
-        - push-to-registries
+        - pin-version
         filters:
             # Trigger the job also on git tag.
           tags:
@@ -84,7 +49,7 @@ workflows:
         push_to_oci_registry: true
         attach_workspace: true
         requires:
-        - push-to-registries
+        - pin-version
         filters:
           tags:
             only: /^v.*/
@@ -102,7 +67,7 @@ workflows:
         executor: app-build-suite
         attach_workspace: true
         requires:
-        - push-to-registries
+        - pin-version
         filters:
           tags:
             only: /^v.*/

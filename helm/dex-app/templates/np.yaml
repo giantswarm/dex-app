@@ -7,7 +7,7 @@ metadata:
 spec:
   podSelector:
     matchLabels:
-      {{- include "dex.labels.selector" . | nindent 6 }}
+      {{- include "dex.selectorLabels" . | nindent 6 }}
   policyTypes:
   - Ingress
   - Egress

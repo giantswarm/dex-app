@@ -104,22 +104,6 @@ Create the name of the secret containing the config file to use
 {{- end }}
 
 {{/*
-Selector dex labels
-*/}}
-{{- define "dex.labels.selector" -}}
-app.kubernetes.io/name: {{ include "dex.name" . }}
-app.kubernetes.io/component: {{ include "dex.name" . }}
-app.kubernetes.io/instance: {{ .Release.Name | quote }}
-{{- end -}}
-
-{{/*
-Helpers for dex-k8s-authenticator.
-*/}}
-{{- define "dexk8sauth.customer.name" -}}
-dex-k8s-authenticator
-{{- end -}}
-
-{{/*
 Common dex-k8s-authenticator labels
 */}}
 {{- define "dexk8sauth.labels.common" -}}
@@ -136,14 +120,6 @@ Selector dex-k8s-authenticator customer labels
 {{- define "dexk8sauth.customer.labels.selector" -}}
 app.kubernetes.io/name: dex-k8s-authenticator-customer
 app.kubernetes.io/component: dex-k8s-authenticator-customer
-{{- end -}}
-
-{{/*
-Selector dex-k8s-authenticator giantswarm labels
-*/}}
-{{- define "dexk8sauth.giantswarm.labels.selector" -}}
-app.kubernetes.io/name: dex-k8s-authenticator-giantswarm
-app.kubernetes.io/component: dex-k8s-authenticator-giantswarm
 {{- end -}}
 
 {{/*

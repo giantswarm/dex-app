@@ -19,5 +19,5 @@ spec:
     # The selector labels only: the version and chart labels change with
     # every release and would leave the budget selecting no pod.
     matchLabels:
-      {{- include "dex.labels.selector" . | nindent 6 }}
+      {{- include "dex.selectorLabels" . | nindent 6 }}
 {{- end }}

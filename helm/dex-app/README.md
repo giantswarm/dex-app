@@ -29,8 +29,9 @@ services:
         M...=
         -----END CERTIFICATE-----
 oidc:
+  signer:
+    keysRotationPeriod: 6h
   expiry:
-    signingKeys: 6h
     idTokens: 30m
   customer:
     connectors:

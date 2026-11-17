@@ -1,0 +1,55 @@
+suite: signing key rotation
+templates:
+  - templates/secret-gs.yaml
+set:
+  oidc.issuerAddress: dex.example.test
+tests:
+  - it: renders the local signer with the 6h default and no expiry.signingKeys
+    asserts:
+      - matchRegex:
+          path: stringData["config.yaml"]
+          pattern: "\nsigner:\n  type: local\n  config:\n    keysRotationPeriod: \"6h\"\n"
+      - notMatchRegex:
+          path: stringData["config.yaml"]
+          pattern: signingKeys
+
+  - it: uses oidc.signer.keysRotationPeriod
+    set:
+      oidc.signer.keysRotationPeriod: 12h
+    asserts:
+      - matchRegex:
+          path: stringData["config.yaml"]
+          pattern: "keysRotationPeriod: \"12h\"\n"
+
+  - it: uses the deprecated oidc.expiry.signingKeys when oidc.signer.keysRotationPeriod is empty
+    set:
+      oidc.expiry.signingKeys: 24h
+    asserts:
+      - matchRegex:
+          path: stringData["config.yaml"]
+          pattern: "keysRotationPeriod: \"24h\"\n"
+      - notMatchRegex:
+          path: stringData["config.yaml"]
+          pattern: signingKeys
+
+  - it: prefers oidc.signer.keysRotationPeriod over oidc.expiry.signingKeys
+    set:
+      oidc.signer.keysRotationPeriod: 3h
+      oidc.expiry.signingKeys: 24h
+    asserts:
+      - matchRegex:
+          path: stringData["config.yaml"]
+          pattern: "keysRotationPeriod: \"3h\"\n"
+
+  - it: keeps the expiry token settings
+    asserts:
+      - matchRegex:
+          path: stringData["config.yaml"]
+          pattern: "\nexpiry:\n  idTokens: \"30m\"\n  refreshTokens:\n"
+
+  - it: rejects a keysRotationPeriod that is not a Go duration
+    set:
+      oidc.signer.keysRotationPeriod: six hours
+    asserts:
+      - failedTemplate:
+          errorPattern: keysRotationPeriod

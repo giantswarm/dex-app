@@ -651,12 +651,22 @@
           "minItems": 1,
           "uniqueItems": true
         },
+        "signer": {
+          "type": "object",
+          "properties": {
+            "keysRotationPeriod": {
+              "type": "string",
+              "pattern": "^$|^([0-9]+(\\.[0-9]+)?(ns|us|µs|ms|s|m|h))+$",
+              "description": "Signing key rotation period as a Go duration, rendered as Dex signer.config.keysRotationPeriod. Empty falls back to expiry.signingKeys, then 6h."
+            }
+          }
+        },
         "expiry": {
           "type": "object",
           "properties": {
             "signingKeys": {
               "type": "string",
-              "description": "Signing keys expiry duration"
+              "description": "Deprecated: use signer.keysRotationPeriod. Used as the signing key rotation period when that is empty."
             },
             "idTokens": {
               "type": "string",

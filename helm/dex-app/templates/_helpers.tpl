@@ -376,9 +376,6 @@ dex.staticClients.secretRefs.
     {{- range . }}
     - secret:
         name: {{ .name | quote }}
-        {{- if .optional }}
-        optional: true
-        {{- end }}
         items:
         - key: {{ .key | quote }}
           path: {{ .env }}

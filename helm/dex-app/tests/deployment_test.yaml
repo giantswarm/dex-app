@@ -205,3 +205,13 @@ tests:
           content:
             name: extra
             mountPath: /extra
+      - contains:
+          path: spec.template.spec.volumes
+          content:
+            name: tmp-volume
+            emptyDir: {}
+      - contains:
+          path: spec.template.spec.containers[0].volumeMounts
+          content:
+            name: tmp-volume
+            mountPath: /tmp

@@ -1,0 +1,32 @@
+suite: team label
+templates:
+  - templates/deployment.yaml
+  - templates/podlogs.yaml
+  - templates/secret-gs.yaml
+  - charts/dex/templates/deployment.yaml
+  - charts/dex/templates/service.yaml
+  - charts/dex/templates/serviceaccount.yaml
+  - charts/dex/templates/rbac.yaml
+  - charts/dex/templates/servicemonitor.yaml
+set:
+  oidc.issuerAddress: dex.example.test
+tests:
+  - it: labels the objects rendered with the dex subchart's context with the owning team
+    templates:
+      - templates/deployment.yaml
+      - templates/podlogs.yaml
+      - charts/dex/templates/service.yaml
+      - charts/dex/templates/serviceaccount.yaml
+      - charts/dex/templates/rbac.yaml
+      - charts/dex/templates/servicemonitor.yaml
+    asserts:
+      - equal:
+          path: metadata.labels["application.giantswarm.io/team"]
+          value: shield
+
+  - it: labels the objects rendered with this chart's context with the team of its annotation
+    template: templates/secret-gs.yaml
+    asserts:
+      - equal:
+          path: metadata.labels["application.giantswarm.io/team"]
+          value: shield

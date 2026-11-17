@@ -56,6 +56,15 @@ Create chart name and version as used by the chart label.
 {{- end -}}
 
 {{/*
+The owning team, from this chart's io.giantswarm.application.team annotation.
+Objects rendered with the dex subchart's context see the subchart's Chart.yaml,
+which has no such annotation, so they fall back to the same team.
+*/}}
+{{- define "dex-app.team" -}}
+{{- index .Chart.Annotations "io.giantswarm.application.team" | default "shield" -}}
+{{- end -}}
+
+{{/*
 Common labels
 */}}
 {{- define "dex.labels" -}}
@@ -68,7 +77,7 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{- if .Values.commonLabels}}
 {{ toYaml .Values.commonLabels }}
 {{- end }}
-application.giantswarm.io/team: {{ index .Chart.Annotations "io.giantswarm.application.team" | quote }}
+application.giantswarm.io/team: {{ include "dex-app.team" . | quote }}
 giantswarm.io/service-type: "managed"
 {{- end }}
 
@@ -512,7 +521,7 @@ helm.sh/chart: {{ include "dex.chart" . }}
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
-application.giantswarm.io/team: {{ index .Chart.Annotations "io.giantswarm.application.team" | quote }}
+application.giantswarm.io/team: {{ include "dex-app.team" . | quote }}
 giantswarm.io/service-type: "managed"
 {{- end -}}
 

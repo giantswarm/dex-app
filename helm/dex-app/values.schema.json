@@ -549,14 +549,6 @@
             }
           }
         },
-        "extraVolumes": {
-          "type": "array",
-          "description": "Extra volumes to add to the pod"
-        },
-        "extraVolumeMounts": {
-          "type": "array",
-          "description": "Extra volume mounts to add to the container"
-        },
         "logoURI": {
           "type": "string",
           "format": "uri",

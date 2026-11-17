@@ -140,8 +140,7 @@ dex:
       # requests:
       #   cpu: 100m
       #   memory: 128Mi
-  extraVolumes: []
-  extraVolumeMounts: []
+  # -- Logo shown on the dex-k8s-authenticator login page.
   logoURI: https://s.giantswarm.io/brand/1/logo.svg
 client:
   image:

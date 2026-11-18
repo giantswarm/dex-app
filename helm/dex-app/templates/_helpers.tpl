@@ -104,22 +104,6 @@ Create the name of the secret containing the config file to use
 {{- end }}
 
 {{/*
-Selector dex labels
-*/}}
-{{- define "dex.labels.selector" -}}
-app.kubernetes.io/name: {{ include "dex.name" . }}
-app.kubernetes.io/component: {{ include "dex.name" . }}
-app.kubernetes.io/instance: {{ .Release.Name | quote }}
-{{- end -}}
-
-{{/*
-Helpers for dex-k8s-authenticator.
-*/}}
-{{- define "dexk8sauth.customer.name" -}}
-dex-k8s-authenticator
-{{- end -}}
-
-{{/*
 Common dex-k8s-authenticator labels
 */}}
 {{- define "dexk8sauth.labels.common" -}}
@@ -136,14 +120,6 @@ Selector dex-k8s-authenticator customer labels
 {{- define "dexk8sauth.customer.labels.selector" -}}
 app.kubernetes.io/name: dex-k8s-authenticator-customer
 app.kubernetes.io/component: dex-k8s-authenticator-customer
-{{- end -}}
-
-{{/*
-Selector dex-k8s-authenticator giantswarm labels
-*/}}
-{{- define "dexk8sauth.giantswarm.labels.selector" -}}
-app.kubernetes.io/name: dex-k8s-authenticator-giantswarm
-app.kubernetes.io/component: dex-k8s-authenticator-giantswarm
 {{- end -}}
 
 {{/*
@@ -459,61 +435,6 @@ Checks if any services in addition to Kubernetes are defined in values
 {{- end -}}
 {{- end -}}
 {{- printf "%v" $ok -}}
-{{- end -}}
-
-### GS-Helpers
-{{/*
-Before trying to contribute this file to upstream, please read below.
-This helpers file contains Giant Swarm specific overrides to helpers defined
-in the original upstream _helpers.tpl file.
-*/}}
-
-{{/*
-Labels that should be added on each resource
-*/}}
-{{- define "labels" -}}
-app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
-giantswarm.io/service-type: "managed"
-application.giantswarm.io/team: {{ index .Chart.Annotations "io.giantswarm.application.team" | quote }}
-{{- if eq (default "helm" .Values.creator) "helm" }}
-helm.sh/chart: {{ include "chartName" . }}
-{{- end -}}
-{{- end -}}
-
-{{/*
-Override for original helper because Giant Swarm cert-manager chart v2 label selectors are different
-*/}}
-{{- define "cainjector.name" -}}
-{{- printf "%s" (include "cert-manager.name" .) -}}
-{{- end -}}
-
-{{/*
-Override for original helper because Giant Swarm cert-manager chart v2 label selectors are different
-*/}}
-{{- define "webhook.name" -}}
-{{- printf "%s" (include "cert-manager.name" .) -}}
-{{- end -}}
-
-{{- define "registry" }}
-{{- $registry := .Values.image.registry -}}
-{{- if and .Values.global (and .Values.global.image .Values.global.image.registry) -}}
-{{- $registry = .Values.global.image.registry -}}
-{{- end -}}
-{{- printf "%s" $registry -}}
-{{- end -}}
-{{/*
-
-{{/*
-Common dex labels
-*/}}
-{{- define "dex.labels.common" -}}
-{{ include "dex.labels.selector" . }}
-helm.sh/chart: {{ include "dex.chart" . }}
-{{- if .Chart.AppVersion }}
-app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
-{{- end }}
-application.giantswarm.io/team: {{ index .Chart.Annotations "io.giantswarm.application.team" | quote }}
-giantswarm.io/service-type: "managed"
 {{- end -}}
 
 {{/*

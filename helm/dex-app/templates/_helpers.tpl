@@ -68,7 +68,7 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{- if .Values.commonLabels}}
 {{ toYaml .Values.commonLabels }}
 {{- end }}
-application.giantswarm.io/team: {{ index .Chart.Annotations "io.giantswarm.application.team" | quote }}
+application.giantswarm.io/team: {{ index .Chart.Annotations "io.giantswarm.application.team" | default "shield" | quote }}
 giantswarm.io/service-type: "managed"
 {{- end }}
 

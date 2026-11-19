@@ -377,9 +377,6 @@ cluster:
     http: ""
     https: ""
     noProxy: ""
-global:
-  podSecurityStandards:
-    enforced: false
 logger:
   level: INFO
 monitoring:

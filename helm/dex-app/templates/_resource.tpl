@@ -16,6 +16,3 @@ dex-k8s-authenticator
 {{- include "resource.dexk8sauth.name" . -}}-network-policy
 {{- end -}}
 
-{{- define "resource.dexk8sauth.psp.name" -}}
-{{- include "resource.dexk8sauth.name" . -}}-psp
-{{- end -}}

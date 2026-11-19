@@ -1,34 +1,54 @@
 {{/*
-The dex Deployment is the vendored dex subchart's template, rendered here rather
-than in the subchart so that its pod template carries the checksum of the dex
-configuration this chart renders in templates/secret-gs.yaml. A subchart cannot
-see its parent's values; from here, a configuration change rolls the pod in the
-same helm upgrade that writes the secret, with or without a forced upgrade.
+The dex Deployment is the vendored dex subchart's template, rendered here with
+a copy of the subchart's values that this chart completes, because a subchart
+cannot see its parent's values. Everything is set through the dex chart's own
+values:
 
-`clientSecretEnv` lists the static clients whose secret is a Secret reference;
-the subchart template sets one environment variable per item, read by dex at
-start-up through the `secretEnv` of the client in the configuration, projects
-the referenced Secrets as files and compares the two in the liveness probe, so
-a rotated client secret restarts the container (the `dex.clientSecrets.*`
-helpers in _helpers.tpl).
-
-`architecture` is merged into the subchart's nodeSelector and tolerations here
-because the subchart cannot see parent values.
-
-The pages of templates/configmap-web.yaml are mounted one file each over their
-upstream copies in the image's web directory, so the image's other pages and
-assets stay in place. A file mounted with subPath is not updated when the
-ConfigMap changes, so the ConfigMap is part of the configuration checksum.
+- `podAnnotations`: `checksum/config`, over the dex configuration of
+  templates/secret-gs.yaml and the web pages, so a change of either rolls the
+  pod in the same helm upgrade that writes it. A file mounted with subPath is
+  not updated when its ConfigMap changes.
+- `envVars`: one variable per static client or connector whose secret is a
+  Secret reference, read by dex at start-up through `secretEnv` or `$VAR`.
+- `volumes` and `volumeMounts`: a writable /tmp, where the image's entrypoint
+  renders the configuration; the referenced Secrets as files, which the
+  liveness probe compares with the variables so that a rotated secret restarts
+  the container (the `dex.clientSecrets.*` helpers in _helpers.tpl); and the
+  pages of templates/configmap-web.yaml, mounted one file each over their copies
+  in the image's web directory.
+- `image`, from `dex.dex.image`.
+- `nodeSelector` and `tolerations`, with the `architecture` shorthand merged in.
 */}}
 {{- $dex := index .Subcharts "dex" -}}
 {{- $values := deepCopy $dex.Values -}}
+{{- $refs := concat (include "dex.staticClients.secretRefs" . | fromYamlArray) (include "dex.connectors.secretRefs" . | fromYamlArray) -}}
+{{- $checksum := print (include (print $.Template.BasePath "/secret-gs.yaml") .) (include "dex-app.webTemplates.data" .) | sha256sum -}}
+{{- $_ := set $values "podAnnotations" (merge (dict "checksum/config" $checksum) ($values.podAnnotations | default dict)) -}}
+{{- with $values.dex.image -}}
+{{- $_ := set $values "image" (dict "repository" (printf "%s/%s" .registry .name) "tag" .tag "pullPolicy" .pullPolicy) -}}
+{{- end -}}
+{{- $volumes := list (dict "name" "tmp-volume" "emptyDir" dict) -}}
+{{- $mounts := list (dict "name" "tmp-volume" "mountPath" "/tmp") -}}
+{{- $probe := dict "httpGet" (dict "path" "/healthz/live" "port" "telemetry") -}}
+{{- if $refs -}}
+{{- $env := list -}}
+{{- range $refs -}}
+{{- $env = append $env (dict "name" .env "valueFrom" (dict "secretKeyRef" (dict "name" .name "key" .key))) -}}
+{{- end -}}
+{{- $_ := set $values "envVars" (concat $env ($values.envVars | default list)) -}}
+{{- $volumes = concat $volumes (include "dex.clientSecrets.volume" $refs | fromYamlArray) -}}
+{{- $mounts = concat $mounts (include "dex.clientSecrets.volumeMount" $refs | fromYamlArray) -}}
+{{- $probe = include "dex.clientSecrets.livenessProbe" $refs | fromYaml -}}
+{{- end -}}
 {{- $webVolume := "web-templates" -}}
-{{- $_ := set $values "volumes" (append ($values.volumes | default list) (dict "name" $webVolume "configMap" (dict "name" (include "dex-app.webTemplates.name" .)))) -}}
-{{- $mounts := $values.volumeMounts | default list -}}
+{{- $volumes = append (concat $volumes ($values.volumes | default list)) (dict "name" $webVolume "configMap" (dict "name" (include "dex-app.webTemplates.name" .))) -}}
+{{- $mounts = concat $mounts ($values.volumeMounts | default list) -}}
 {{- range $path, $_ := .Files.Glob "files/web/templates/*.html" -}}
 {{- $mounts = append $mounts (dict "name" $webVolume "mountPath" (printf "/srv/dex/web/templates/%s" (base $path)) "subPath" (base $path) "readOnly" true) -}}
 {{- end -}}
+{{- $_ := set $values "volumes" $volumes -}}
 {{- $_ := set $values "volumeMounts" $mounts -}}
+{{- $_ := set $values "livenessProbe" $probe -}}
 {{- $scheduling := include "dex-app.podScheduling" (dict "Values" (dict "architecture" .Values.architecture "nodeSelector" $values.nodeSelector "tolerations" $values.tolerations)) | fromYaml -}}
 {{- $_ := set $values "nodeSelector" ($scheduling.nodeSelector | default dict) -}}
 {{- $_ := set $values "tolerations" ($scheduling.tolerations | default list) -}}
@@ -37,5 +57,4 @@ ConfigMap changes, so the ConfigMap is part of the configuration checksum.
       "Chart" $dex.Chart
       "Release" .Release
       "Capabilities" .Capabilities
-      "configChecksum" (print (include (print $.Template.BasePath "/secret-gs.yaml") .) (include "dex-app.webTemplates.data" .) | sha256sum)
-      "clientSecretEnv" (concat (include "dex.staticClients.secretRefs" . | fromYamlArray) (include "dex.connectors.secretRefs" . | fromYamlArray))) }}
+      "Template" .Template) }}

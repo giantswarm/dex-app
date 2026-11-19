@@ -47,6 +47,12 @@ dex:
       name: giantswarm/dex/dex
       tag: "2.46.1-gs.4"
       pullPolicy: IfNotPresent
+  # -- Name of the dex subchart's objects (Deployment, Service, RBAC, ServiceMonitor
+  # and the rest): `dex`, the name ingresses and in-cluster clients address.
+  fullnameOverride: dex
+  serviceAccount:
+    # -- Name of the ServiceAccount the dex pods run as.
+    name: dex-app
   configSecret:
     # -- Enable creating a secret from the values passed to `config`.
     # If set to false, name must point to an existing secret.

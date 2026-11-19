@@ -13,7 +13,7 @@ probe that restarts the container when a file no longer matches its variable
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "dex.name" . }}
+  name: {{ include "dex.fullname" . }}
   namespace: {{ include "dex.namespace" . }}
   labels:
     {{- include "dex.labels" . | nindent 4 }}

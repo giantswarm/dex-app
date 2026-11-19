@@ -486,3 +486,14 @@ Emits nothing when unset, so rendered output is unchanged for existing users.
 {{- if $tolerations -}}{{- $_ := set $scheduling "tolerations" $tolerations -}}{{- end -}}
 {{- with $scheduling }}{{ toYaml . }}{{ end -}}
 {{- end -}}
+
+{{/*
+Dex refuses an empty keysRotationPeriod once signer.type is local, so the
+period always resolves to a value: oidc.signer, then oidc.expiry.signingKeys,
+then the 6h Dex applies when neither is set.
+*/}}
+{{- define "dex.signer.keysRotationPeriod" -}}
+{{- $signer := .Values.oidc.signer | default dict -}}
+{{- $expiry := .Values.oidc.expiry | default dict -}}
+{{- $signer.keysRotationPeriod | default $expiry.signingKeys | default "6h" -}}
+{{- end -}}

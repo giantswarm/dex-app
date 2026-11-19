@@ -248,8 +248,12 @@ oidc:
   # hybrid flow.
   responseTypes:
     - "code"
+  signer:
+    # -- How often Dex rotates its signing keys, rendered as Dex's
+    # `signer.config.keysRotationPeriod`. Empty falls back to the deprecated
+    # `oidc.expiry.signingKeys`, then to 6h.
+    keysRotationPeriod: ""
   expiry:
-    signingKeys: 6h
     idTokens: 30m
     refreshTokens:
       reuseInterval: 3s

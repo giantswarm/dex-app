@@ -21,8 +21,11 @@ renders the configuration and the container environment of inline clients unchan
         dir: /srv/dex/web
         logoURL: https://s.giantswarm.io/brand/1/logo.svg
       issuer: https://dex.example.test
+      signer:
+        type: local
+        config:
+          keysRotationPeriod: "6h"
       expiry:
-        signingKeys: "6h"
         idTokens: "30m"
         refreshTokens:
           reuseInterval: "3s"

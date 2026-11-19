@@ -405,7 +405,9 @@ container, the environment is resolved from the Secret again and dex starts
 with the new secret: a rotation reaches dex within about a minute (the
 kubelet's volume refresh, then three failed probes) without a roll of the
 Deployment or a controller watching the Secrets. Dex itself reads a client
-secret only at start-up, from `secret` or `secretEnv`. Takes the list of
+secret only at start-up, from `secret` or `secretEnv`. BusyBox wget honours
+http_proxy but not no_proxy, so `-Y off` keeps the loopback check off a
+cluster proxy injected into the pod. Takes the list of
 dex.staticClients.secretRefs.
 */}}
 {{- define "dex.clientSecrets.livenessProbe" -}}
@@ -414,7 +416,7 @@ exec:
     - sh
     - -ec
     - |
-      wget -q -T 2 -O /dev/null http://127.0.0.1:5558/healthz/live
+      wget -Y off -q -T 2 -O /dev/null http://127.0.0.1:5558/healthz/live
       cd {{ include "dex.clientSecrets.mountPath" . }}
       for name in{{ range . }} {{ .env }}{{ end }}; do
         [ "$(cat "$name" 2>/dev/null || true)" = "$(printenv "$name" || true)" ] && continue

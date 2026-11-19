@@ -8,10 +8,6 @@ dex
 {{- include "resource.dex.name" . -}}-network-policy
 {{- end -}}
 
-{{- define "resource.dex.psp.name" -}}
-{{- include "resource.dex.name" . -}}-psp
-{{- end -}}
-
 {{- define "resource.dexk8sauth.name" -}}
 dex-k8s-authenticator
 {{- end -}}

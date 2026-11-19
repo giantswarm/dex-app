@@ -68,7 +68,7 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{- if .Values.commonLabels}}
 {{ toYaml .Values.commonLabels }}
 {{- end }}
-application.giantswarm.io/team: {{ index .Chart.Annotations "io.giantswarm.application.team" | quote }}
+application.giantswarm.io/team: {{ index .Chart.Annotations "io.giantswarm.application.team" | default "shield" | quote }}
 giantswarm.io/service-type: "managed"
 {{- end }}
 
@@ -104,22 +104,6 @@ Create the name of the secret containing the config file to use
 {{- end }}
 
 {{/*
-Selector dex labels
-*/}}
-{{- define "dex.labels.selector" -}}
-app.kubernetes.io/name: {{ include "dex.name" . }}
-app.kubernetes.io/component: {{ include "dex.name" . }}
-app.kubernetes.io/instance: {{ .Release.Name | quote }}
-{{- end -}}
-
-{{/*
-Helpers for dex-k8s-authenticator.
-*/}}
-{{- define "dexk8sauth.customer.name" -}}
-dex-k8s-authenticator
-{{- end -}}
-
-{{/*
 Common dex-k8s-authenticator labels
 */}}
 {{- define "dexk8sauth.labels.common" -}}
@@ -136,14 +120,6 @@ Selector dex-k8s-authenticator customer labels
 {{- define "dexk8sauth.customer.labels.selector" -}}
 app.kubernetes.io/name: dex-k8s-authenticator-customer
 app.kubernetes.io/component: dex-k8s-authenticator-customer
-{{- end -}}
-
-{{/*
-Selector dex-k8s-authenticator giantswarm labels
-*/}}
-{{- define "dexk8sauth.giantswarm.labels.selector" -}}
-app.kubernetes.io/name: dex-k8s-authenticator-giantswarm
-app.kubernetes.io/component: dex-k8s-authenticator-giantswarm
 {{- end -}}
 
 {{/*
@@ -429,7 +405,9 @@ container, the environment is resolved from the Secret again and dex starts
 with the new secret: a rotation reaches dex within about a minute (the
 kubelet's volume refresh, then three failed probes) without a roll of the
 Deployment or a controller watching the Secrets. Dex itself reads a client
-secret only at start-up, from `secret` or `secretEnv`. Takes the list of
+secret only at start-up, from `secret` or `secretEnv`. BusyBox wget honours
+http_proxy but not no_proxy, so `-Y off` keeps the loopback check off a
+cluster proxy injected into the pod. Takes the list of
 dex.staticClients.secretRefs.
 */}}
 {{- define "dex.clientSecrets.livenessProbe" -}}
@@ -438,7 +416,7 @@ exec:
     - sh
     - -ec
     - |
-      wget -q -T 2 -O /dev/null http://127.0.0.1:5558/healthz/live
+      wget -Y off -q -T 2 -O /dev/null http://127.0.0.1:5558/healthz/live
       cd {{ include "dex.clientSecrets.mountPath" . }}
       for name in{{ range . }} {{ .env }}{{ end }}; do
         [ "$(cat "$name" 2>/dev/null || true)" = "$(printenv "$name" || true)" ] && continue
@@ -459,61 +437,6 @@ Checks if any services in addition to Kubernetes are defined in values
 {{- end -}}
 {{- end -}}
 {{- printf "%v" $ok -}}
-{{- end -}}
-
-### GS-Helpers
-{{/*
-Before trying to contribute this file to upstream, please read below.
-This helpers file contains Giant Swarm specific overrides to helpers defined
-in the original upstream _helpers.tpl file.
-*/}}
-
-{{/*
-Labels that should be added on each resource
-*/}}
-{{- define "labels" -}}
-app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
-giantswarm.io/service-type: "managed"
-application.giantswarm.io/team: {{ index .Chart.Annotations "io.giantswarm.application.team" | quote }}
-{{- if eq (default "helm" .Values.creator) "helm" }}
-helm.sh/chart: {{ include "chartName" . }}
-{{- end -}}
-{{- end -}}
-
-{{/*
-Override for original helper because Giant Swarm cert-manager chart v2 label selectors are different
-*/}}
-{{- define "cainjector.name" -}}
-{{- printf "%s" (include "cert-manager.name" .) -}}
-{{- end -}}
-
-{{/*
-Override for original helper because Giant Swarm cert-manager chart v2 label selectors are different
-*/}}
-{{- define "webhook.name" -}}
-{{- printf "%s" (include "cert-manager.name" .) -}}
-{{- end -}}
-
-{{- define "registry" }}
-{{- $registry := .Values.image.registry -}}
-{{- if and .Values.global (and .Values.global.image .Values.global.image.registry) -}}
-{{- $registry = .Values.global.image.registry -}}
-{{- end -}}
-{{- printf "%s" $registry -}}
-{{- end -}}
-{{/*
-
-{{/*
-Common dex labels
-*/}}
-{{- define "dex.labels.common" -}}
-{{ include "dex.labels.selector" . }}
-helm.sh/chart: {{ include "dex.chart" . }}
-{{- if .Chart.AppVersion }}
-app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
-{{- end }}
-application.giantswarm.io/team: {{ index .Chart.Annotations "io.giantswarm.application.team" | quote }}
-giantswarm.io/service-type: "managed"
 {{- end -}}
 
 {{/*

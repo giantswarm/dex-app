@@ -53,3 +53,10 @@ tests:
     asserts:
       - failedTemplate:
           errorPattern: keysRotationPeriod
+
+  - it: rejects a deprecated oidc.expiry.signingKeys that is not a Go duration
+    set:
+      oidc.expiry.signingKeys: 6 hours
+    asserts:
+      - failedTemplate:
+          errorPattern: signingKeys

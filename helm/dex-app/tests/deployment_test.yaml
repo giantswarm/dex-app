@@ -205,3 +205,35 @@ tests:
           content:
             name: extra
             mountPath: /extra
+
+  - it: passes the cluster proxy to dex before the env vars set in dex.envVars
+    template: templates/deployment.yaml
+    set:
+      oidc.issuerAddress: dex.example.test
+      cluster.proxy:
+        http: http://proxy.example.test:3128
+        https: http://proxy.example.test:3128
+        noProxy: 10.0.0.0/8,.svc,.cluster.local
+      dex.envVars:
+        - name: HTTPS_PROXY
+          value: http://other-proxy.example.test:3128
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].env
+          value:
+            - name: HTTPS_PROXY
+              value: http://proxy.example.test:3128
+            - name: HTTP_PROXY
+              value: http://proxy.example.test:3128
+            - name: NO_PROXY
+              value: 10.0.0.0/8,.svc,.cluster.local
+            - name: HTTPS_PROXY
+              value: http://other-proxy.example.test:3128
+
+  - it: sets no proxy variable when the cluster has no proxy
+    template: templates/deployment.yaml
+    set:
+      oidc.issuerAddress: dex.example.test
+    asserts:
+      - isNullOrEmpty:
+          path: spec.template.spec.containers[0].env

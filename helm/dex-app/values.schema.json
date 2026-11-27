@@ -1043,18 +1043,7 @@
       }
     },
     "global": {
-      "type": "object",
-      "properties": {
-        "podSecurityStandards": {
-          "type": "object",
-          "properties": {
-            "enforced": {
-              "type": "boolean",
-              "description": "Whether pod security standards are enforced"
-            }
-          }
-        }
-      }
+      "type": "object"
     },
     "monitoring": {
       "type": "object",

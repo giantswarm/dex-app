@@ -294,6 +294,9 @@ oidc:
           issuer: https://dex.example.com
 ```
 
+`client_credentials` belongs only in `oidc.grantTypes`: that grant authenticates the client
+directly and uses no connector, so Dex refuses it in a connector's `grantTypes`.
+
 ### Static clients
 
 In addition to a few pre-defined static clients Dex app supports the possibility to define custom static clients as well.

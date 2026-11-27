@@ -27,6 +27,9 @@
 - type: {{ $connector.connectorType }}
   id: {{ .id }}
   name: {{ $connector.connectorName }}
+{{- with $connector.grantTypes }}
+  grantTypes: {{ . | toJson }}
+{{- end }}
   config:
 {{- if hasKey $connector "config" -}}
 {{- $config := deepCopy $connector.config -}}

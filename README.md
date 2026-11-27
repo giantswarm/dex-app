@@ -259,6 +259,41 @@ If a client of yours genuinely needs the implicit or hybrid flow, set this value
 
 Note that this list is also what dex publishes as `response_types_supported` in its OIDC discovery document, so clients that pick a flow from provider metadata will follow it.
 
+### OAuth2 grant types
+
+`oidc.grantTypes` sets Dex's `oauth2.grantTypes`, the grants Dex allows. Empty, the default, leaves
+Dex's own list, which does not include `client_credentials`. A list replaces that default, so name
+every grant the installation's clients use:
+
+```yaml
+oidc:
+  grantTypes:
+    - authorization_code
+    - refresh_token
+    - urn:ietf:params:oauth:grant-type:device_code
+    - urn:ietf:params:oauth:grant-type:token-exchange
+    - client_credentials
+```
+
+The list applies to every client. Dex has no grant types per client, so with `client_credentials`
+every confidential client can get a token for itself, with its client id as subject.
+
+A connector can be limited to some grants with its own `grantTypes`, for example an `oidc`
+connector used only to exchange tokens (RFC 8693), which then never appears as a login option:
+
+```yaml
+oidc:
+  giantswarm:
+    connectors:
+      applications:
+        connectorType: oidc
+        connectorName: Applications
+        grantTypes:
+          - urn:ietf:params:oauth:grant-type:token-exchange
+        config:
+          issuer: https://dex.example.com
+```
+
 ### Static clients
 
 In addition to a few pre-defined static clients Dex app supports the possibility to define custom static clients as well.

@@ -250,8 +250,7 @@ oidc:
     - "code"
   # -- OAuth2 grant types Dex allows, rendered as Dex's `oauth2.grantTypes`.
   # Empty leaves Dex's default, which does not include `client_credentials`.
-  # The list applies to every client: Dex has no per-client grant types, so
-  # `client_credentials` lets every confidential client get a token for itself.
+  # Each client's grantTypes further restricts this list.
   grantTypes: []
   signer:
     # -- How often Dex rotates its signing keys, rendered as Dex's
@@ -266,38 +265,56 @@ oidc:
       absoluteLifetime: 720h
   staticClients:
     gitopsui:
+      grantTypes: []
+      allowedConnectors: []
       clientID: ""
       clientSecret: ""
       redirectURI: ""
       extraRedirectURIs: []
     grafana:
+      grantTypes: []
+      allowedConnectors: []
       clientID: ""
       redirectURI: ""
     gsCLIAuth:
+      grantTypes: []
+      allowedConnectors: []
       clientID: "zQiFLUnrTFQwrybYzeY53hWWfhOKWRAU"
       address: http://localhost:8085/oauth/callback
     happa:
+      grantTypes: []
+      allowedConnectors: []
       clientID: ""
       redirectURI: ""
     dexK8SAuthenticator:
+      grantTypes: []
+      allowedConnectors: []
       clientAddress: ""
       clientSecret: "default-client-dex-authenticator-secret"
     mcpCapi:
+      grantTypes: []
+      allowedConnectors: []
       clientID: ""
       clientSecret: ""
       redirectURI: ""
       extraRedirectURIs: []
     mcpKubernetes:
+      grantTypes: []
+      allowedConnectors: []
       clientID: ""
       clientSecret: ""
       redirectURI: ""
       extraRedirectURIs: []
     mcpPrometheus:
+      grantTypes: []
+      allowedConnectors: []
       clientID: ""
       clientSecret: ""
       redirectURI: ""
       extraRedirectURIs: []
     muster:
+      grantTypes: []
+      allowedConnectors: []
       clientID: ""
       clientSecret: ""
       redirectURI: ""

@@ -6,7 +6,7 @@ tests:
     asserts:
       - notMatchRegex:
           path: stringData["config.yaml"]
-          pattern: "grantTypes:"
+          pattern: 'oauth2:\n  responseTypes: \["code"\]\n  grantTypes:'
 
   - it: renders the installation's grant types
     set:
@@ -52,7 +52,7 @@ tests:
     asserts:
       - notMatchRegex:
           path: stringData["config.yaml"]
-          pattern: "grantTypes:"
+          pattern: 'name: Hub\n  grantTypes:'
 
   - it: refuses client credentials on a Giant Swarm connector map entry
     set:

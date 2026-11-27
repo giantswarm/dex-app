@@ -8,10 +8,10 @@ tests:
     asserts:
       - matchRegex:
           path: stringData["config.yaml"]
-          pattern: "name: muster\n  redirectURIs:\n  - https://muster.example.test/callback\n- id: "
+          pattern: "name: muster\n  redirectURIs:\n  - https://muster.example.test/callback\n  grantTypes: [^\n]+\n- id: "
       - matchRegex:
           path: stringData["config.yaml"]
-          pattern: "name: gitopsui\n  redirectURIs:\n  - https://gitops.example.test/oauth2/callback\n  - http://localhost:9001/oauth2/callback\n- id: "
+          pattern: "name: gitopsui\n  redirectURIs:\n  - https://gitops.example.test/oauth2/callback\n  - http://localhost:9001/oauth2/callback\n  grantTypes: [^\n]+\n- id: "
 
   - it: renders extraRedirectURIs after redirectURI in their order
     values:
@@ -26,10 +26,10 @@ tests:
     asserts:
       - matchRegex:
           path: stringData["config.yaml"]
-          pattern: "name: muster\n  redirectURIs:\n  - https://muster.example.test/oauth/callback\n  - https://workspace-manager.example.test/signin\n  - https://second.example.test/callback\n- id: "
+          pattern: "name: muster\n  redirectURIs:\n  - https://muster.example.test/oauth/callback\n  - https://workspace-manager.example.test/signin\n  - https://second.example.test/callback\n  grantTypes: [^\n]+\n- id: "
       - matchRegex:
           path: stringData["config.yaml"]
-          pattern: "name: gitopsui\n  redirectURIs:\n  - https://gitops.example.test/oauth2/callback\n  - https://gitops-second.example.test/oauth2/callback\n  - http://localhost:9001/oauth2/callback\n- id: "
+          pattern: "name: gitopsui\n  redirectURIs:\n  - https://gitops.example.test/oauth2/callback\n  - https://gitops-second.example.test/oauth2/callback\n  - http://localhost:9001/oauth2/callback\n  grantTypes: [^\n]+\n- id: "
 
   - it: renders extraRedirectURIs of mcpCapi, mcpKubernetes and mcpPrometheus
     set:

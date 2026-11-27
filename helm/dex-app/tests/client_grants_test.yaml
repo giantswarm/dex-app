@@ -1,0 +1,85 @@
+suite: client grant restrictions
+templates:
+  - templates/secret-gs.yaml
+tests:
+  - it: excludes client credentials on every built-in client
+    values:
+      - ./values/inline-static-clients.yaml
+    set:
+      isManagementCluster: true
+      oidc.grantTypes: [authorization_code, client_credentials]
+    asserts:
+      - matchRegex:
+          path: stringData["config.yaml"]
+          pattern: 'grantTypes: \["authorization_code","client_credentials"\]'
+      - notMatchRegex:
+          path: stringData["config.yaml"]
+          pattern: '(?s)staticClients:.*  grantTypes: \[[^\n]*client_credentials'
+      - matchRegex:
+          path: stringData["config.yaml"]
+          pattern: 'name: dex-k8s-authenticator\n(  .*\n)*  grantTypes: \["authorization_code","refresh_token"'
+
+  - it: renders client grants and connector restrictions on a built-in client
+    set:
+      oidc.staticClients.muster:
+        clientID: muster
+        clientSecret: test-secret
+        redirectURI: https://muster.example.test/callback
+        grantTypes: [authorization_code, refresh_token]
+        allowedConnectors: [staff]
+    asserts:
+      - matchRegex:
+          path: stringData["config.yaml"]
+          pattern: 'name: muster\n(  .*\n)*  grantTypes: \["authorization_code","refresh_token"\]\n  allowedConnectors: \["staff"\]'
+
+  - it: renders an application-only grant in an extra client map entry
+    set:
+      oidc.extraStaticClients:
+        application:
+          secret: test-secret
+          grantTypes: [client_credentials]
+    asserts:
+      - matchRegex:
+          path: stringData["config.yaml"]
+          pattern: 'grantTypes:\n  - client_credentials\n  id: application'
+
+  - it: renders an application-only grant in an extra client list entry
+    set:
+      oidc.extraStaticClients:
+        - id: application
+          secret: test-secret
+          grantTypes: [client_credentials]
+    asserts:
+      - matchRegex:
+          path: stringData["config.yaml"]
+          pattern: 'grantTypes:\n  - client_credentials\n  id: application'
+
+  - it: refuses client credentials on a built-in staff client
+    set:
+      oidc.staticClients.muster.grantTypes: [client_credentials]
+    asserts:
+      - failedTemplate: {}
+
+  - it: refuses client credentials on the Kubernetes login client
+    set:
+      oidc.staticClients.dexK8SAuthenticator.grantTypes: [client_credentials]
+    asserts:
+      - failedTemplate: {}
+
+  - it: refuses an unknown extra client grant in map form
+    set:
+      oidc.extraStaticClients:
+        application:
+          secret: test-secret
+          grantTypes: [not-a-grant]
+    asserts:
+      - failedTemplate: {}
+
+  - it: refuses an unknown extra client grant in list form
+    set:
+      oidc.extraStaticClients:
+        - id: application
+          secret: test-secret
+          grantTypes: [not-a-grant]
+    asserts:
+      - failedTemplate: {}

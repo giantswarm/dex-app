@@ -704,6 +704,17 @@
                 },
                 "clientSecretRef": {
                   "$ref": "#/definitions/staticClientSecretRef"
+                },
+                "grantTypes": {
+                  "$ref": "#/definitions/staffClientGrantTypes"
+                },
+                "allowedConnectors": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "uniqueItems": true
                 }
               }
             },
@@ -715,6 +726,17 @@
                 },
                 "redirectURI": {
                   "type": "string"
+                },
+                "grantTypes": {
+                  "$ref": "#/definitions/staffClientGrantTypes"
+                },
+                "allowedConnectors": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "uniqueItems": true
                 }
               }
             },
@@ -726,6 +748,17 @@
                 },
                 "address": {
                   "type": "string"
+                },
+                "grantTypes": {
+                  "$ref": "#/definitions/staffClientGrantTypes"
+                },
+                "allowedConnectors": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "uniqueItems": true
                 }
               }
             },
@@ -737,6 +770,17 @@
                 },
                 "redirectURI": {
                   "type": "string"
+                },
+                "grantTypes": {
+                  "$ref": "#/definitions/staffClientGrantTypes"
+                },
+                "allowedConnectors": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "uniqueItems": true
                 }
               }
             },
@@ -751,6 +795,17 @@
                 },
                 "clientSecretRef": {
                   "$ref": "#/definitions/staticClientSecretRef"
+                },
+                "grantTypes": {
+                  "$ref": "#/definitions/staffClientGrantTypes"
+                },
+                "allowedConnectors": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "uniqueItems": true
                 }
               }
             },
@@ -777,6 +832,17 @@
                 },
                 "clientSecretRef": {
                   "$ref": "#/definitions/staticClientSecretRef"
+                },
+                "grantTypes": {
+                  "$ref": "#/definitions/staffClientGrantTypes"
+                },
+                "allowedConnectors": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "uniqueItems": true
                 }
               }
             },
@@ -803,6 +869,17 @@
                 },
                 "clientSecretRef": {
                   "$ref": "#/definitions/staticClientSecretRef"
+                },
+                "grantTypes": {
+                  "$ref": "#/definitions/staffClientGrantTypes"
+                },
+                "allowedConnectors": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "uniqueItems": true
                 }
               }
             },
@@ -829,6 +906,17 @@
                 },
                 "clientSecretRef": {
                   "$ref": "#/definitions/staticClientSecretRef"
+                },
+                "grantTypes": {
+                  "$ref": "#/definitions/staffClientGrantTypes"
+                },
+                "allowedConnectors": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "uniqueItems": true
                 }
               }
             },
@@ -855,19 +943,44 @@
                 },
                 "clientSecretRef": {
                   "$ref": "#/definitions/staticClientSecretRef"
+                },
+                "grantTypes": {
+                  "$ref": "#/definitions/staffClientGrantTypes"
+                },
+                "allowedConnectors": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "uniqueItems": true
                 }
               }
             }
           }
         },
         "extraStaticClients": {
-          "type": ["array", "object", "null"],
+          "type": [
+            "array",
+            "object",
+            "null"
+          ],
           "description": "Extra static clients: a list, or a map keyed by client id so entries from several values sources merge by id.",
           "items": {
-            "type": "object"
+            "type": "object",
+            "properties": {
+              "grantTypes": {
+                "$ref": "#/definitions/grantTypes"
+              }
+            }
           },
           "additionalProperties": {
-            "type": "object"
+            "type": "object",
+            "properties": {
+              "grantTypes": {
+                "$ref": "#/definitions/grantTypes"
+              }
+            }
           }
         },
         "giantswarm": {
@@ -1014,7 +1127,11 @@
     },
     "architecture": {
       "type": "string",
-      "enum": ["", "amd64", "arm64"]
+      "enum": [
+        "",
+        "amd64",
+        "arm64"
+      ]
     },
     "deployDexK8SAuthenticator": {
       "type": "boolean",
@@ -1122,7 +1239,11 @@
       "uniqueItems": true
     },
     "connectors": {
-      "type": ["object", "array", "null"],
+      "type": [
+        "object",
+        "array",
+        "null"
+      ],
       "description": "Connectors keyed by id, or a list of connectors with an id per entry.",
       "additionalProperties": {
         "$ref": "#/definitions/connector"
@@ -1160,13 +1281,25 @@
           "description": "Grant types this connector may be used with (Dex's connector grantTypes); empty allows every connector grant type. The client_credentials grant uses no connector and is not allowed here."
         }
       },
-      "required": ["id"],
+      "required": [
+        "id"
+      ],
       "anyOf": [
-        {"required": ["config"]},
-        {"required": ["connectorConfig"]}
+        {
+          "required": [
+            "config"
+          ]
+        },
+        {
+          "required": [
+            "connectorConfig"
+          ]
+        }
       ],
       "dependencies": {
-        "clientSecretRef": ["config"]
+        "clientSecretRef": [
+          "config"
+        ]
       },
       "additionalProperties": true
     },
@@ -1183,7 +1316,10 @@
           "minLength": 1
         }
       },
-      "required": ["name", "key"],
+      "required": [
+        "name",
+        "key"
+      ],
       "additionalProperties": false
     },
     "connector": {
@@ -1217,13 +1353,26 @@
           "description": "Grant types this connector may be used with (Dex's connector grantTypes); empty allows every connector grant type. The client_credentials grant uses no connector and is not allowed here."
         }
       },
-      "required": ["connectorType", "connectorName"],
+      "required": [
+        "connectorType",
+        "connectorName"
+      ],
       "anyOf": [
-        {"required": ["config"]},
-        {"required": ["connectorConfig"]}
+        {
+          "required": [
+            "config"
+          ]
+        },
+        {
+          "required": [
+            "connectorConfig"
+          ]
+        }
       ],
       "dependencies": {
-        "clientSecretRef": ["config"]
+        "clientSecretRef": [
+          "config"
+        ]
       },
       "additionalProperties": false
     },
@@ -1243,6 +1392,22 @@
         "key"
       ],
       "additionalProperties": false
+    },
+    "staffClientGrantTypes": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "authorization_code",
+          "refresh_token",
+          "implicit",
+          "password",
+          "urn:ietf:params:oauth:grant-type:device_code",
+          "urn:ietf:params:oauth:grant-type:token-exchange"
+        ]
+      },
+      "uniqueItems": true,
+      "description": "Built-in clients cannot use client_credentials. Empty preserves all other server-enabled grants."
     }
   }
 }

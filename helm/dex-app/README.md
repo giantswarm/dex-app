@@ -53,6 +53,40 @@ Some notes:
 
 - If you configure more than one connector, make sure to set a unique `id` for each one. Be aware that this version of Dex is configured to prefix all user group names with the connector ID. So if your connector's `id` is `customer`, a membership in group `devops` will appear as `customer:devops`.
 
+### Connectors and clients from several values sources
+
+Helm merges maps from several values sources (`-f` files, Flux `valuesFrom`) key by key, but a list from a later source replaces the earlier list whole. `oidc.giantswarm.connectors`, `oidc.customer.connectors` and `oidc.extraStaticClients` therefore also accept a map keyed by id, so each source can add its own entries:
+
+```yaml
+oidc:
+  giantswarm:
+    connectors:
+      giantswarm-hub:
+        connectorType: oidc
+        connectorName: Hub
+        config:
+          issuer: https://dex.hub.example.com
+          clientID: federation-spoke
+          redirectURI: https://dex.spoke.example.com/callback
+        clientSecretRef:
+          name: dex-connector-giantswarm-hub
+          key: client-secret
+  extraStaticClients:
+    federation-spoke:
+      name: Federation for spoke
+      secretRef:
+        name: dex-client-federation-spoke
+        key: secret
+      redirectURIs:
+      - https://dex.spoke.example.com/callback
+```
+
+- The key is the id: an `id` inside a map entry is ignored, and `idEnv` is refused for an extra static client.
+- Give each id a single writer. Two sources that set the same id merge field by field into one entry.
+- A list in one source and a map in another do not merge: the later source replaces the collection.
+- A connector `clientSecretRef` needs `config` (not `connectorConfig`). Dex does not start until the referenced Secret and key exist, and restarts when the Secret changes.
+- Map entries are validated strictly (type, name, configuration, no unknown fields). List entries only need an `id` and a configuration, so lists written before the map form keep rendering.
+
 ### Other connector types
 
 Example connector configuration for Keycloak:
@@ -144,23 +178,42 @@ As a result, you should see Dex deployed in your workload cluster.
 Dex app exposes a web interface, which is accessible over https. Therefore, it creates an ingress, which needs to be configured with a TLS certificate signed by a certification authority, which needs to be trusted by the browsers.
 The app consists of several components, which also need to be able to communicate with each other internally over https. So the certification authority signing the certificates needs to be trusted by the individual app components as well.
 
-By default, the app will use cert-manager to issue a TLS certificate signed by Let's Encrypt. To use a custom cert-manager ClusterIssuer, change the value of the `ingress.tls.clusterIssuer` property in the user values.
+In case a custom certification authority is used, it needs to be exposed to the individual app components and set as trusted, otherwise the components will not be able to communicate with each other and the app may not work as expected.
+Based on the cluster setup, this can be achieved by providing an additional set of values to the app configuration:
+
+1. Add a base64-encoded certificate of the certification authority to the User Values configmap or secret. This option is useful when using custom, self-signed certificates in a cluster:
 
 ```yaml
 ingress:
   tls:
-    clusterIssuer: my-custom-cluster-issuer
+    letsencrypt: false
+    caPemB64: "base64-encoded CA certificate"
 ```
 
-To disable the automatic certificate generation by cert-manager and use a custom TLS certificate instead, set the `ingress.tls.clusterIssuer` property to a falsy value (for example an empty string) in the user values:
+2. Provide a reference to an existing Secret resource, which contains the custom certification authority. This option is useful for cluster setup, where TLS certificates signed by a custom certification authority are provided by an external service:
 
 ```yaml
 ingress:
   tls:
-    clusterIssuer: ""
+    letsencrypt: false
+
+trustedRootCA:
+  name: "name-of-the property-in-the-secret"
+  secretName: "name-of-the-custom-ca-secret"
 ```
 
-Then create a Secret in the `dex` namespace, which contains the TLS certificate and private key in the following format:
+3. When disabling `letsencrypt`, a secret called `dex-tls` will be created and propagated with the b64-encoded values provided by the user.
+Alternatively, the user can manage the creation of this secret by themselves and enable its usage like so:
+
+```yaml
+ingress:
+  tls:
+    letsencrypt: false
+    externalSecret:
+      enabled: true
+```
+
+The following secret then needs to be applied to the namespace `dex` is running in:
 
 ```yaml
 apiVersion: v1
@@ -172,28 +225,6 @@ data:
   ca.crt: ...
   tls.crt: ...
   tls.key: ...
-```
-
-In case a custom certification authority is used, it needs to be exposed to the individual app components and set as trusted, otherwise the components will not be able to communicate with each other and the app may not work as expected. This can be achieved by providing an additional set of values to the app configuration:
-
-Provide a reference to an existing Secret resource, which contains the custom certification authority:
-
-```yaml
-trustedRootCA:
-  name: ca.crt
-  secretName: "name-of-the-custom-ca-secret"
-```
-
-The referenced Secret needs to be created in the `dex` namespace and contain the custom CA certificate in a property with a name matching the one set in the user values (`trustedRootCA.name`):
-
-```yaml
-apiVersion: v1
-kind: Secret
-type: Opaque
-metadata:
-  name: name-of-the-custom-ca-secret
-data:
-  ca.crt: ...
 ```
 
 ### Proxy configuration
@@ -210,10 +241,67 @@ cluster:
     noProxy: "kubernetes-api-ip-range" # comma-separated list of hostnames and IP ranges, whose traffic should not go through the proxy. # Kubernetes API IP range needs to be defined here in order for Dex to work correctly
 ```
 
+### OAuth2 response types
+
+Dex only accepts the response types listed in `oidc.responseTypes`:
+
+```yaml
+oidc:
+  responseTypes:
+    - "code"
+```
+
+The default is `code` only (authorization code flow).
+
+`token` and `id_token` enable the OAuth2 implicit flow.
+The implicit flow is considered insecure and using it is highly discouraged.
+If a client of yours genuinely needs the implicit or hybrid flow, set this value explicitly to add them back.
+
+Note that this list is also what dex publishes as `response_types_supported` in its OIDC discovery document, so clients that pick a flow from provider metadata will follow it.
+
+### OAuth2 grant types
+
+`oidc.grantTypes` sets Dex's `oauth2.grantTypes`, the grants Dex allows. Empty, the default, leaves
+Dex's own list, which does not include `client_credentials`. A list replaces that default, so name
+every grant the installation's clients use:
+
+```yaml
+oidc:
+  grantTypes:
+    - authorization_code
+    - refresh_token
+    - urn:ietf:params:oauth:grant-type:device_code
+    - urn:ietf:params:oauth:grant-type:token-exchange
+    - client_credentials
+```
+
+Each client's `grantTypes` further restricts the server-wide list. Built-in clients always
+exclude `client_credentials`; configure an extra application client to use that grant.
+See [Client grant restrictions](docs/client-grants.md).
+
+A connector can be limited to some grants with its own `grantTypes`, for example an `oidc`
+connector used only to exchange tokens (RFC 8693), which then never appears as a login option:
+
+```yaml
+oidc:
+  giantswarm:
+    connectors:
+      applications:
+        connectorType: oidc
+        connectorName: Applications
+        grantTypes:
+          - urn:ietf:params:oauth:grant-type:token-exchange
+        config:
+          issuer: https://dex.example.com
+```
+
+`client_credentials` belongs in `oidc.grantTypes` and an extra client's `grantTypes`: it authenticates the client
+directly and uses no connector, so Dex refuses it in a connector's `grantTypes`.
+
 ### Static clients
 
 In addition to a few pre-defined static clients Dex app supports the possibility to define custom static clients as well.
-They need to be defined as an array of object in a specific property of the configuration yaml file called `extraStaticClients`.
+They are defined in `oidc.extraStaticClients`, either as a list or as a map keyed by client id (see [Connectors and clients from several values sources](#connectors-and-clients-from-several-values-sources)).
 The structure of each custom static client object is exactly the same as in upstream Dex, plus `secretRef`:
 
 ```yaml
@@ -323,8 +411,8 @@ oidc:
 
 - A pre-defined client (`gitopsui`, `muster`, `mcpKubernetes`, `mcpCapi`, `mcpPrometheus`) with both `clientSecret` and `clientSecretRef` uses the reference and ignores the inline value, so a client moves from an inline secret to a referenced Secret by adding the reference where the plaintext values live, even while the encrypted values still carry the old inline secret; the release notes (`helm get notes`) name the client until the inline value is deleted. One with a `clientID` and neither is left out of the configuration and named in the release notes, so values shared by several installations can declare a client whose secret only some of them carry. An extra static client that is not `public` needs exactly one of the inline secret and the reference; so does `dexK8SAuthenticator`, whose `clientSecret` has a chart default: its `clientSecretRef` goes together with `clientSecret: ""`. Both on one of those fails the render naming the client.
 - `secretRef` needs a literal `id` (not `idEnv`), and two client ids must not map to the same variable name.
-- A referenced Secret or key that does not exist keeps the dex pod from starting (the projected volume and the environment variable both name it) instead of running the client with an empty secret.
-- A rotated referenced Secret reaches dex without any other change: dex reads the environment only at start-up, so the chart also projects every referenced Secret into the container as a file named like the client's variable (under `/etc/dex-client-secrets`) and the liveness probe, after the upstream `/healthz/live` check, compares each file with the variable. The kubelet rewrites the files about a minute after the Secret changed, the probe fails naming the variable (`the referenced Secret behind DEX_CLIENT_SECRET_<ID> changed: restarting dex to load it` in the pod's events), the container restarts and dex starts with the new secret. This is a container restart, not a roll of the Deployment: the restart count grows by one and a single-replica dex is unavailable for the seconds the restart takes. Clients with an inline secret change through the configuration and its `checksum/config` roll as before.
+- A referenced Secret or key that does not exist keeps the dex pod from starting (`CreateContainerConfigError`) instead of running the client with an empty secret.
+- dex reads the environment at start-up: a rotated referenced Secret takes effect on the next roll of the dex Deployment (for example `kubectl -n <namespace> rollout restart deployment dex`).
 
 ## Update Process
 

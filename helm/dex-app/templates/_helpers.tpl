@@ -228,6 +228,13 @@ secret: {{ .client.clientSecret }}
 {{- end -}}
 {{- end -}}
 
+{{- define "dex.staticClient.authorization" -}}
+grantTypes: {{ (.grantTypes | default (list "authorization_code" "refresh_token" "implicit" "password" "urn:ietf:params:oauth:grant-type:device_code" "urn:ietf:params:oauth:grant-type:token-exchange")) | toJson }}
+{{- with .allowedConnectors }}
+allowedConnectors: {{ . | toJson }}
+{{- end }}
+{{- end -}}
+
 {{/*
 The further redirect URIs of a pre-defined static client (`extraRedirectURIs`),
 one list item each, indented to follow the client's `redirectURI`. Takes the

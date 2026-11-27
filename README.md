@@ -132,7 +132,7 @@ Note:
 
 ### Installing the Chart in Giant Swarm workload clusters
 
-The app is installed in workload clusters, via our [app platform](https://docs.giantswarm.io/tutorials/fleet-management/app-platform/). 
+The app is installed in workload clusters, via our [app platform](https://docs.giantswarm.io/tutorials/fleet-management/app-platform/).
 Before doing so, please create the following `ConfigMap` resource in the namespace named after that workload cluster to provide the contents of your `values.yaml` file.
 
 ```yaml
@@ -175,7 +175,7 @@ As a result, you should see Dex deployed in your workload cluster.
 
 ### Ingress, TLS and custom certification authorities
 
-Dex app exposes a web interface, which is accessible over https. Therefore, it creates an ingress, which needs to be configured with a TLS certificate signed by a certification authority, which needs to be trusted by the browsers. 
+Dex app exposes a web interface, which is accessible over https. Therefore, it creates an ingress, which needs to be configured with a TLS certificate signed by a certification authority, which needs to be trusted by the browsers.
 The app consists of several components, which also need to be able to communicate with each other internally over https. So the certification authority signing the certificates needs to be trusted by the individual app components as well.
 
 In case a custom certification authority is used, it needs to be exposed to the individual app components and set as trusted, otherwise the components will not be able to communicate with each other and the app may not work as expected.
@@ -275,8 +275,9 @@ oidc:
     - client_credentials
 ```
 
-The list applies to every client. Dex has no grant types per client, so with `client_credentials`
-every confidential client can get a token for itself, with its client id as subject.
+Each client's `grantTypes` further restricts the server-wide list. Built-in clients always
+exclude `client_credentials`; configure an extra application client to use that grant.
+See [Client grant restrictions](docs/client-grants.md).
 
 A connector can be limited to some grants with its own `grantTypes`, for example an `oidc`
 connector used only to exchange tokens (RFC 8693), which then never appears as a login option:
@@ -294,7 +295,7 @@ oidc:
           issuer: https://dex.example.com
 ```
 
-`client_credentials` belongs only in `oidc.grantTypes`: that grant authenticates the client
+`client_credentials` belongs in `oidc.grantTypes` and an extra client's `grantTypes`: it authenticates the client
 directly and uses no connector, so Dex refuses it in a connector's `grantTypes`.
 
 ### Static clients
@@ -345,7 +346,7 @@ staticClients:
     clientAddress: "dex.installation.basedomain.io"
     clientSecret: "default-client-dex-authenticator-secret"
     trustedPeers:
-    - "client-id" 
+    - "client-id"
 extraStaticClients:
 - id: "client-id"
   name: "client-name-1"

@@ -38,30 +38,36 @@ renders the configuration and the container environment of inline clients unchan
         redirectURIs:
         - https://gitops.example.test/oauth2/callback
         - http://localhost:9001/oauth2/callback
+        grantTypes: ["authorization_code","refresh_token","implicit","password","urn:ietf:params:oauth:grant-type:device_code","urn:ietf:params:oauth:grant-type:token-exchange"]
       - id: grafana
         public: true
         redirectURIs:
         - https://grafana.example.test/login/generic_oauth
         name: grafana
+        grantTypes: ["authorization_code","refresh_token","implicit","password","urn:ietf:params:oauth:grant-type:device_code","urn:ietf:params:oauth:grant-type:token-exchange"]
       - id: zQiFLUnrTFQwrybYzeY53hWWfhOKWRAU
         public: true
         name: gscliauth
+        grantTypes: ["authorization_code","refresh_token","implicit","password","urn:ietf:params:oauth:grant-type:device_code","urn:ietf:params:oauth:grant-type:token-exchange"]
       - id: muster
         secret: muster-secret
         name: muster
         redirectURIs:
         - https://muster.example.test/callback
+        grantTypes: ["authorization_code","refresh_token","implicit","password","urn:ietf:params:oauth:grant-type:device_code","urn:ietf:params:oauth:grant-type:token-exchange"]
       - id: happa
         public: true
         redirectURIs:
         - https://happa.example.test/oauth/callback
         - http://localhost:7000
         name: happa
+        grantTypes: ["authorization_code","refresh_token","implicit","password","urn:ietf:params:oauth:grant-type:device_code","urn:ietf:params:oauth:grant-type:token-exchange"]
       - id: mcp-kubernetes
         secret: mcp-kubernetes-secret
         name: MCP Kubernetes
         redirectURIs:
         - https://mcp.example.test/callback
+        grantTypes: ["authorization_code","refresh_token","implicit","password","urn:ietf:params:oauth:grant-type:device_code","urn:ietf:params:oauth:grant-type:token-exchange"]
       - id: dex-k8s-authenticator
         redirectURIs:
         - https://login.example.test/admin/callback
@@ -73,6 +79,7 @@ renders the configuration and the container environment of inline clients unchan
         - zQiFLUnrTFQwrybYzeY53hWWfhOKWRAU
         - mcp-kubernetes
         - muster
+        grantTypes: ["authorization_code","refresh_token","implicit","password","urn:ietf:params:oauth:grant-type:device_code","urn:ietf:params:oauth:grant-type:token-exchange"]
       - id: extra-confidential
         name: Extra confidential
         redirectURIs:

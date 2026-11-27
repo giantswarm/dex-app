@@ -321,6 +321,23 @@
       "type": "object",
       "description": "Dex configuration",
       "properties": {
+        "fullnameOverride": {
+          "type": "string",
+          "description": "Name of the dex subchart's objects",
+          "default": "dex"
+        },
+        "serviceAccount": {
+          "type": "object",
+          "description": "ServiceAccount of the dex pods",
+          "properties": {
+            "name": {
+              "type": "string",
+              "description": "Name of the ServiceAccount the dex pods run as",
+              "default": "dex-app"
+            }
+          },
+          "additionalProperties": true
+        },
         "replicaCount": {
           "type": "integer",
           "description": "Number of replicas (pods) to launch",

@@ -17,7 +17,7 @@ data:
     listen: http://0.0.0.0:5555
     web_path_prefix: "/"
     debug: "false"
-    logo_uri: {{ $values.logoURI }}
+    logo_uri: {{ $values.dex.logoURI }}
     {{- if $values.trustedRootCA }}
     trusted_root_ca_file: /app/ssl/ca.crt
     {{- end }}
@@ -72,7 +72,7 @@ data:
     listen: http://0.0.0.0:5555
     web_path_prefix: "/"
     debug: "false"
-    logo_uri: {{ .Values.logoURI }}
+    logo_uri: {{ .Values.dex.logoURI }}
     {{- if .Values.trustedRootCA }}
     trusted_root_ca_file: /app/ssl/ca.crt
     {{- end }}

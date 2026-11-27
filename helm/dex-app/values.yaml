@@ -248,6 +248,11 @@ oidc:
   # hybrid flow.
   responseTypes:
     - "code"
+  # -- OAuth2 grant types Dex allows, rendered as Dex's `oauth2.grantTypes`.
+  # Empty leaves Dex's default, which does not include `client_credentials`.
+  # The list applies to every client: Dex has no per-client grant types, so
+  # `client_credentials` lets every confidential client get a token for itself.
+  grantTypes: []
   signer:
     # -- How often Dex rotates its signing keys, rendered as Dex's
     # `signer.config.keysRotationPeriod`. Empty falls back to the deprecated

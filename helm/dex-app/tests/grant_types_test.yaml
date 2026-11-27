@@ -1,0 +1,107 @@
+suite: OAuth2 and connector grant types
+templates:
+  - templates/secret-gs.yaml
+tests:
+  - it: leaves Dex's default grant types when none are set
+    asserts:
+      - notMatchRegex:
+          path: stringData["config.yaml"]
+          pattern: "grantTypes:"
+
+  - it: renders the installation's grant types
+    set:
+      oidc.grantTypes:
+        - authorization_code
+        - refresh_token
+        - client_credentials
+    asserts:
+      - matchRegex:
+          path: stringData["config.yaml"]
+          pattern: 'oauth2:\n  responseTypes: \["code"\]\n  grantTypes: \["authorization_code","refresh_token","client_credentials"\]\n'
+
+  - it: refuses an unknown grant type
+    set:
+      oidc.grantTypes:
+        - not_a_grant
+    asserts:
+      - failedTemplate: {}
+
+  - it: renders a connector's grant types
+    set:
+      oidc.giantswarm.connectors:
+        self:
+          connectorType: oidc
+          connectorName: Applications
+          grantTypes:
+            - urn:ietf:params:oauth:grant-type:token-exchange
+          config:
+            issuer: https://dex.example.test
+    asserts:
+      - matchRegex:
+          path: stringData["config.yaml"]
+          pattern: '- type: oidc\n  id: self\n  name: Applications\n  grantTypes: \["urn:ietf:params:oauth:grant-type:token-exchange"\]\n  config:\n'
+
+  - it: renders no grant types on a connector without them
+    set:
+      oidc.giantswarm.connectors:
+        hub:
+          connectorType: oidc
+          connectorName: Hub
+          config:
+            issuer: https://hub.example.test
+    asserts:
+      - notMatchRegex:
+          path: stringData["config.yaml"]
+          pattern: "grantTypes:"
+
+  - it: refuses client credentials on a Giant Swarm connector map entry
+    set:
+      oidc.giantswarm.connectors:
+        applications:
+          connectorType: oidc
+          connectorName: Applications
+          grantTypes:
+            - client_credentials
+          config:
+            issuer: https://dex.example.test
+    asserts:
+      - failedTemplate: {}
+
+  - it: refuses client credentials on a Giant Swarm connector list entry
+    set:
+      oidc.giantswarm.connectors:
+        - id: applications
+          connectorType: oidc
+          connectorName: Applications
+          grantTypes:
+            - client_credentials
+          config:
+            issuer: https://dex.example.test
+    asserts:
+      - failedTemplate: {}
+
+  - it: refuses client credentials on a customer connector map entry
+    set:
+      oidc.customer.connectors:
+        applications:
+          connectorType: oidc
+          connectorName: Applications
+          grantTypes:
+            - client_credentials
+          config:
+            issuer: https://dex.example.test
+    asserts:
+      - failedTemplate: {}
+
+  - it: refuses client credentials on a customer connector list entry
+    set:
+      oidc.customer.connectors:
+        - id: applications
+          connectorType: oidc
+          connectorName: Applications
+          grantTypes:
+            - client_credentials
+          config:
+            issuer: https://dex.example.test
+    asserts:
+      - failedTemplate: {}

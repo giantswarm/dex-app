@@ -651,6 +651,10 @@
           "minItems": 1,
           "uniqueItems": true
         },
+        "grantTypes": {
+          "$ref": "#/definitions/grantTypes",
+          "description": "OAuth2 grant types Dex allows (oauth2.grantTypes), for every client. Empty leaves Dex's default, which does not include client_credentials; a list replaces that default."
+        },
         "signer": {
           "type": "object",
           "properties": {
@@ -1086,6 +1090,37 @@
   },
   "additionalProperties": true,
   "definitions": {
+    "grantTypes": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "authorization_code",
+          "refresh_token",
+          "implicit",
+          "password",
+          "urn:ietf:params:oauth:grant-type:device_code",
+          "urn:ietf:params:oauth:grant-type:token-exchange",
+          "client_credentials"
+        ]
+      },
+      "uniqueItems": true
+    },
+    "connectorGrantTypes": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "authorization_code",
+          "refresh_token",
+          "implicit",
+          "password",
+          "urn:ietf:params:oauth:grant-type:device_code",
+          "urn:ietf:params:oauth:grant-type:token-exchange"
+        ]
+      },
+      "uniqueItems": true
+    },
     "connectors": {
       "type": ["object", "array", "null"],
       "description": "Connectors keyed by id, or a list of connectors with an id per entry.",
@@ -1119,6 +1154,10 @@
         },
         "clientSecretRef": {
           "$ref": "#/definitions/connectorSecretRef"
+        },
+        "grantTypes": {
+          "$ref": "#/definitions/connectorGrantTypes",
+          "description": "Grant types this connector may be used with (Dex's connector grantTypes); empty allows every connector grant type. The client_credentials grant uses no connector and is not allowed here."
         }
       },
       "required": ["id"],
@@ -1172,6 +1211,10 @@
         },
         "clientSecretRef": {
           "$ref": "#/definitions/connectorSecretRef"
+        },
+        "grantTypes": {
+          "$ref": "#/definitions/connectorGrantTypes",
+          "description": "Grant types this connector may be used with (Dex's connector grantTypes); empty allows every connector grant type. The client_credentials grant uses no connector and is not allowed here."
         }
       },
       "required": ["connectorType", "connectorName"],
